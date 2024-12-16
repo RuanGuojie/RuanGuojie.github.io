@@ -55,7 +55,7 @@ education:
   - area: PhD Plant Science
     institution: University of Missouri
     date_start: 2024-08-01
-    date_end: -
+    date_end: 2028
     summary: |
       Thesis on _Why LLMs are awesome_. Supervised by [Prof Joe Smith](https://example.com). Presented papers at 5 IEEE conferences with the contributions being published in 2 Springer journals.
     button:
