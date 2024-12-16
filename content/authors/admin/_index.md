@@ -75,7 +75,7 @@ education:
   - area: BSc. Agronomy (DingYing Innovation Class)
     institution: South China Agricultural University
     date_start: 2016-09-01
-    date_end: 2020-06-31
+    date_end: 2020-06-30
     summary: |
       GPA: 4.01/5.0
       
