@@ -38,7 +38,7 @@ profiles:
   - icon: brands/github
     url: https://github.com/RuanGuojie
   - icon: brands/linkedin
-    url: https://www.linkedin.com/Guojie Ruan
+    url: https://www.linkedin.com/in/guojie-ruan-031947326
   - icon: academicons/google-scholar
     url: https://scholar.google.com/
   - icon: academicons/orcid
@@ -53,9 +53,10 @@ education:
   - area: PhD Student in Plant Science
     institution: University of Missouri
     date_start: 2024-08-01
-    date_end: 2028
+    date_end: 2028-06-01
     summary: |
       Precision and Automated Agriculture Lab
+      Supervisor: Jianfeng Zhou
     button:
       text: 'Read Thesis'
       url: 'https://example.com'
@@ -65,12 +66,18 @@ education:
     date_end: 2023-06-01
     summary: |
       National Engineering and Technology Center for Information Agriculture
+      “Double First-class” disciplines (双一流学科：作物学)
+      Thesis: Winter wheat smart nitrogen recommendation algorithms based on multi-source data fusion
+      Supervisor: Professor Qiang Cao https://faculty.njau.edu.cn/qiangcao/zh_CN/index.htm
+
   - area: BSc. Agronomy (Ding Ying Innovation Class)
     institution: South China Agricultural University
     date_start: 2016-09-01
     date_end: 2020-06-30
     summary: |
+      “Double First-class” disciplines (双一流学科：作物学)
       GPA: 4.04/5.0
+      Thesis: Comparative study on Seed Storability of Chinese Soybean Landrace Population
 
 
 
@@ -83,11 +90,11 @@ skills:
         description: ''
         percent: 80
         icon: code-bracket
-      - name: Data Science
+      - name: ENVI
         description: ''
         percent: 100
         icon: chart-bar
-      - name: SQL
+      - name: ArcGIS
         description: ''
         percent: 40
         icon: circle-stack
