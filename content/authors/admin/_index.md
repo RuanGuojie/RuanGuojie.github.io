@@ -1,6 +1,6 @@
 ---
 # Display name
-title: Guojie Ruan
+title: Guojie Rua
 
 # Name pronunciation (optional)
 name_pronunciation: Gwok Git Yuen
