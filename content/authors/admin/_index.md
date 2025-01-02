@@ -51,7 +51,7 @@ interests:
 
 education:
   - area: PhD Student in Plant Science
-    institution: University of Missouri
+    institution: University of Missouri, USA
     date_start: 2024-08-01
     date_end: 2028-06-01
     summary: |
@@ -61,7 +61,7 @@ education:
       text: 'Read Thesis'
       url: 'https://example.com'
   - area: MSc. in Crop Cultivation and Farming System
-    institution: Nanjing Agricultural University
+    institution: Nanjing Agricultural University, Nanjing, China
     date_start: 2020-09-01
     date_end: 2023-06-01
     summary: |
@@ -71,7 +71,7 @@ education:
       Supervisor: Professor Qiang Cao https://faculty.njau.edu.cn/qiangcao/zh_CN/index.htm
 
   - area: BSc. in Agronomy (Ding Ying Innovation Class)
-    institution: South China Agricultural University
+    institution: South China Agricultural University, Guangzhou, China
     date_start: 2016-09-01
     date_end: 2020-06-30
     summary: |
