@@ -31,8 +31,8 @@ organizations:
 # Need to use another icon? Simply download the SVG icon to your `assets/media/icons/` folder.
 profiles:
   - icon: at-symbol
-    url: 'grxmq@missouri.edu'
-    label: E-mail Me
+    url: ''
+    label: E-mail Me grxmq@missouri.edu
   - icon: brands/x
     url: https://twitter.com/maison_ruan
   - icon: brands/github
