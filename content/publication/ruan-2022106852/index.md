@@ -44,6 +44,7 @@ tags:
 - Data fusion
 - Active canopy sensors
 - Feature selection
+featured: true
 links:
 - name: URL
   url: https://www.sciencedirect.com/science/article/pii/S0168169922001697
