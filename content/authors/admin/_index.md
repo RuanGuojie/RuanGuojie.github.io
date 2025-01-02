@@ -60,7 +60,7 @@ education:
     button:
       text: 'Read Thesis'
       url: 'https://example.com'
-  - area: MSc in Crop Cultivation and Farming System
+  - area: MSc. in Crop Cultivation and Farming System
     institution: Nanjing Agricultural University
     date_start: 2020-09-01
     date_end: 2023-06-01
@@ -70,7 +70,7 @@ education:
       Thesis: Winter wheat smart nitrogen recommendation algorithms based on multi-source data fusion
       Supervisor: Professor Qiang Cao https://faculty.njau.edu.cn/qiangcao/zh_CN/index.htm
 
-  - area: BSc. Agronomy (Ding Ying Innovation Class)
+  - area: BSc. in Agronomy (Ding Ying Innovation Class)
     institution: South China Agricultural University
     date_start: 2016-09-01
     date_end: 2020-06-30
