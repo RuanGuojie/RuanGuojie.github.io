@@ -146,5 +146,5 @@ awards:
 ---
 
 ## About Me
-<div style="text-align: justify;">
+
 Guojie Ruan joined PAAL in the fall of 2024. He is self-motivated and enthusiastic PhD student specializing in precision agriculture, with a focus on crop remote sensing monitoring, precision nitrogen management, and data-driven modeling. He is committed to delivering interdisciplinary research that can improve the model and provide a better understanding of the changing climate and human impacts on agroecosystems.
