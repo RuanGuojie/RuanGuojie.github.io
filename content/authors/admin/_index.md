@@ -46,8 +46,8 @@ profiles:
 
 interests:
   - Precision Agriculture
-  - Plant Phenomics and Soil Health
-  - Agricultural Remote Sensing
+  - Plant Phenotyping and Soil Mapping
+  - Agroecosystem modelling
 
 education:
   - area: PhD Student in Plant Science
