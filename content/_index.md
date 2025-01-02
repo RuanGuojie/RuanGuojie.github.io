@@ -35,7 +35,7 @@ sections:
       title: '📚 My Research'
       subtitle: ''
       text: |
-         <div style="text-align: justify; font-size: 0.9rem;">
+         <div style="text-align: justify; font-size: 1rem;">
          Currently, I focus on Digital Soil Mapping (DSM) using GeoAI. 
          1) Exploring the geostatistical (Empirical Bayesian Kriging), machine learning (Random Forest and Geographically Weighted Regression), and hybrid (Regression Kriging) DSM methods to predict soil health and fertility using ArcGIS Pro with multi-source sensing data (yield map, digital elevation model, ECa, and VIs). 
          2) Improving crop growth and soil health simulations by incorporating time-series observation data (VIs, soil moisture, weather information) into process-based model with data assimilation (Ensemble Kalman Filter). 
