@@ -34,12 +34,8 @@ sections:
     content:
       title: '📚 My Research'
       subtitle: ''
-      text: |-
-        Use this area to speak to your mission. I'm a research scientist in the Moonshot team at DeepMind. I blog about machine learning, deep learning, and moonshots.
-
-        I apply a range of qualitative and quantitative methods to comprehensively investigate the role of science and technology in the economy.
-        
-        Please reach out to collaborate 😃
+      text: |
+        Currently, I focus on Digital soil Mapping (DSM) using GeoAI. 1) Exploring the geostatistical (Empirical Bayesian Kriging), machine learning (Random Forest and Geographically Weighted Regression), and hybrid (Regression Kriging) DSM methods to predict soil health and fertility using ArcGIS Pro with multi-source sensing data (yield map, digital elevation model, ECa, and VIs). 2) Improving crop growth and soil health simulations by incorporating time-series observation data (VIs, soil moisture, weather information) into process-based model with data assimilation (Ensemble Kalman Filter). 3) Providing new insights for soybean production by multi-objective optimal management zone delineation and driven-factors analysis of DSM. The research results are expected to be adapted by US soybean farmers to continue soybean profitability, sustainability, and climate change resilience. 😃
     design:
       columns: '1'
   - block: collection
