@@ -67,8 +67,8 @@ education:
     summary: |
       National Engineering and Technology Center for Information Agriculture. (国家信息农业工程技术中心)
       “Double First-class” disciplines of Crop Science. (国家双一流建设学科：作物学)
-      Rank #15 for Agricultural Science by EduRank.
       Rank #14 for agriculture & forestry with the QS World University Rankings by Subject 2025.
+      Rank #15 for Agricultural Science by EduRank.
       Thesis: Winter wheat smart nitrogen recommendation algorithms based on multi-source data fusion.
       Supervisor: Professor Qiang Cao https://faculty.njau.edu.cn/qiangcao/zh_CN/index.htm
 
