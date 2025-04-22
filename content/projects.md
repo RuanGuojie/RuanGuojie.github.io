@@ -9,6 +9,16 @@ design:
 
 # Page sections
 sections:
+  # ✅ 地图部分（新增）
+  - block: markdown
+    content:
+      title: Sensor Map
+      markdown: |
+        {{< rawhtml >}}
+        <iframe src="/maps/sensor-map.html" width="100%" height="600px" style="border: none;"></iframe>
+        {{< /rawhtml >}}
+
+  # ✅ 原有项目展示部分
   - block: collection
     content:
       title: Selected Projects
@@ -21,3 +31,4 @@ sections:
       fill_image: false
       columns: 3
 ---
+
