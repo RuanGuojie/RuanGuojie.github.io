@@ -15,7 +15,7 @@ sections:
       title: Sensor Map
       markdown: |
         {{< rawhtml >}}
-        <iframe src="/uploads/maps/sensor-map.html" width="100%" height="600px" style="border: none;"></iframe>
+        <iframe src="/content/maps/sensor-map.md" width="100%" height="600px" style="border: none;"></iframe>
         {{< /rawhtml >}}
 
   - block: collection

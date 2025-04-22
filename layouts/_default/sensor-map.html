@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>传感器地图</title>
+  <title>{{ .Title }}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
@@ -25,7 +25,7 @@
     const map = L.map('map').setView([38.8990, -92.2092], 18);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
+      attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
     fetch('/uploads/data/sensor.geojson')
@@ -33,7 +33,7 @@
       .then(data => {
         L.geoJSON(data, {
           onEachFeature: function (feature, layer) {
-            let props = feature.properties;
+            const props = feature.properties;
             layer.bindPopup(`
               <b>传感器:</b> ${props.Name}<br>
               <b>经度:</b> ${props.Longitude}<br>
