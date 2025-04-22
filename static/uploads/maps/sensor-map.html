@@ -6,8 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    html, body { margin: 0; padding: 0; height: 100%; }
-    #map { height: 100vh; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -18,7 +25,7 @@
     const map = L.map('map').setView([38.8990, -92.2092], 18);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
+      attribution: '© OpenStreetMap'
     }).addTo(map);
 
     fetch('/uploads/data/sensor.geojson')
