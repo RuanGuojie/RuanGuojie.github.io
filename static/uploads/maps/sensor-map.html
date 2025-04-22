@@ -21,7 +21,7 @@
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    fetch('/data/sensor.geojson')
+    fetch('/uploads/data/sensor.geojson')
       .then(res => res.json())
       .then(data => {
         L.geoJSON(data, {
