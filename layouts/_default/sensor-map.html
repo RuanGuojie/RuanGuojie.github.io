@@ -22,25 +22,39 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
+    // 初始化地图并设置中心点和缩放等级
     const map = L.map('map').setView([38.8990, -92.2092], 18);
 
+    // 添加底图图层
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    fetch('/uploads/data/sensor.geojson')
-      .then(res => res.json())
+    // 加载 GeoJSON 数据文件（路径必须匹配 Hugo static 文件夹）
+    fetch('/data/sensor.geojson')
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`GeoJSON 加载失败: ${res.statusText}`);
+        }
+        return res.json();
+      })
       .then(data => {
         L.geoJSON(data, {
           onEachFeature: function (feature, layer) {
             const props = feature.properties;
-            layer.bindPopup(`
-              <b>传感器:</b> ${props.Name}<br>
-              <b>经度:</b> ${props.Longitude}<br>
-              <b>纬度:</b> ${props.Latitude}
-            `);
+            if (props) {
+              layer.bindPopup(`
+                <b>传感器:</b> ${props.Name || 'N/A'}<br>
+                <b>经度:</b> ${props.Longitude || 'N/A'}<br>
+                <b>纬度:</b> ${props.Latitude || 'N/A'}
+              `);
+            }
           }
         }).addTo(map);
+      })
+      .catch(err => {
+        console.error(err);
+        alert('地图数据加载失败，请检查路径和格式。');
       });
   </script>
 </body>
