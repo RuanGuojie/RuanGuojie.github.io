@@ -53,15 +53,15 @@
       [38.898748, -92.209152]
     ];
     var ndviLayer = L.imageOverlay("/images/NDVI.png", ndviBounds, {
-      opacity: 0.5
+      opacity: 1
     }).addTo(map);
 
     // EC-Shallow
     var ecsLayer = L.imageOverlay("/images/ECS.PNG", [
       [38.899755, -92.210554],
       [38.898716, -92.209279]
-    ], {opacity: 0.5
-    }).addTo(map);
+    ], {opacity: 1
+    });
 
 
     // control
