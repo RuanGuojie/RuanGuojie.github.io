@@ -1,4 +1,4 @@
-## 项目传感器地图（基于 GeoJSON）
+## Bradford Research Farm
 
 <div id="map" style="height: 500px; margin-top: 20px;"></div>
 
@@ -13,11 +13,15 @@
   document.addEventListener("DOMContentLoaded", function () {
     var map = L.map("map").setView([0, 0], 2); // 初始视图
 
-    // 添加地图底图层（OpenStreetMap）
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap 贡献者',
-    }).addTo(map);
+    // 使用 Esri 提供的卫星图层
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        attribution:
+          "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
+        maxZoom: 19,
+      }
+    ).addTo(map);
 
     // 加载 GeoJSON 数据
     fetch("/data/sensor.geojson")
