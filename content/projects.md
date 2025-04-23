@@ -8,17 +8,19 @@ design:
 
 sections:
 
-  - block: feature
+  - block: markdown
     content:
       title: Sensor Map
-      items:
-        - title: 查看交互式地图
-          content: 点击按钮查看完整地图页面，包含所有传感器信息。
-          icon: map
-          cta:
-            label: 打开地图
-            url: /maps/sensor-map.html
-            style: primary
+      markdown: |
+        ## 查看交互式地图 🗺️
+
+        本项目包含一个交互式传感器地图。点击下方按钮可在新页面中打开地图：
+
+        <p>
+          <a href="/maps/sensor-map.html" target="_blank" style="display:inline-block;padding:0.75rem 1.5rem;background:#3b82f6;color:#fff;border-radius:0.5rem;text-decoration:none;font-weight:bold;">
+            打开地图
+          </a>
+        </p>
 
   - block: collection
     content:
@@ -32,4 +34,3 @@ sections:
       fill_image: false
       columns: 3
 ---
-
