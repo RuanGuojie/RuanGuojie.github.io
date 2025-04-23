@@ -47,7 +47,7 @@
         map.fitBounds(sensorLayer.getBounds());
       });
 
-    // NDVI 图层（PNG + World File）
+    // NDVI（PNG + World File）
     var ndviBounds = [
       [38.899727, -92.210584],
       [38.898748, -92.209152]
@@ -56,9 +56,18 @@
       opacity: 0.5
     }).addTo(map);
 
-    // 图层控制器（可选开关）
+    // EC-Shallow
+    var ecsLayer = L.imageOverlay("/images/ECS.PNG", [
+      [38.899755, -92.210554],
+      [38.898716, -92.209279]
+    ], {opacity: 0.5
+    }).addTo(map);
+
+
+    // control
     var overlayMaps = {
-      "NDVI layer": ndviLayer
+      "NDVI layer": ndviLayer,
+      "ECa-shallow": ecsLayer
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
