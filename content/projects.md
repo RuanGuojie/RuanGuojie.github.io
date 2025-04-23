@@ -74,7 +74,7 @@
     // control
     var overlayMaps = {
       "NDVI": ndviLayer,
-      "ECa-shallow": ecsLayer，
+      "ECa-shallow": ecsLayer,
       "Yield": yieldLayer
     };
 
