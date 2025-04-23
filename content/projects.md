@@ -63,11 +63,18 @@
     ], {opacity: 1.0
     });
 
+    var yieldLayer = L.imageOverlay("/images/yield.png", [
+      [38.899703, -92.210552],
+      [38.898761, -92.209174]
+    ], {opacity: 1.0
+    });
+
 
     // control
     var overlayMaps = {
       "NDVI": ndviLayer,
-      "ECa-shallow": ecsLayer
+      "ECa-shallow": ecsLayer，
+      "Yield": yieldLayer
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
