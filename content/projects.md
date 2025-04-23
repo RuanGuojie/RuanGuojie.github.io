@@ -89,8 +89,6 @@
     ], {opacity: 1.0
     });
 
-
-
     // control
     var overlayMaps = {
       "NDVI": ndviLayer,
