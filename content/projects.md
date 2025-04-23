@@ -75,7 +75,7 @@
     var overlayMaps = {
       "NDVI": ndviLayer,
       "ECa-shallow": ecsLayer，
-      "Yield": yieldLayer,
+      "Yield": yieldLayer
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
