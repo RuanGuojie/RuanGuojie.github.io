@@ -78,9 +78,15 @@
     });
 
     var socLayer = L.imageOverlay("/images/SOC.PNG", [
-      [38.8987564818, -92.2105473201],
-      [38.8997064818, -92.2091673201]
-    ], {opacity: 0.5
+      [38.899711, -92.210552],
+      [38.898761, -92.209172]
+    ], {opacity: 1.0
+    });
+
+    var wasLayer = L.imageOverlay("/images/WAS.PNG", [
+      [38.899711, -92.210552],
+      [38.898761, -92.209172]
+    ], {opacity: 1.0
     });
 
 
@@ -91,7 +97,8 @@
       "ECa-shallow": ecsLayer,
       "Yield": yieldLayer,
       "TN": tnLayer,
-      "SOC": socLayer
+      "SOC": socLayer,
+      "WAS": wasLayer
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
