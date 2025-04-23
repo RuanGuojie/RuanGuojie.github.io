@@ -12,18 +12,16 @@ sections:
     content:
       title: Sensor Map
       markdown: |
-        {{< leafletmap >}}
+        <iframe src="/maps/sensor-map.html" width="100%" height="600px" style="border:none; min-height:600px; display:block;"></iframe>
 
   - block: collection
     content:
       title: Selected Projects
-      text: I enjoy making things. Here are a selection of projects that I have worked on over the years.
       filters:
         folders:
           - project
     design:
       view: article-grid
-      fill_image: false
       columns: 3
 ---
 
