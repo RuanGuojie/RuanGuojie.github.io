@@ -77,13 +77,21 @@
     ], {opacity: 1.0
     });
 
+    var socLayer = L.imageOverlay("/images/SOC.PNG", [
+      [38.8987564818, -92.2105473201],
+      [38.8997064818, -92.2091673201]
+    ], {opacity: 0.5
+    });
+
+
 
     // control
     var overlayMaps = {
       "NDVI": ndviLayer,
       "ECa-shallow": ecsLayer,
       "Yield": yieldLayer,
-      "TN": tnLayer
+      "TN": tnLayer,
+      "SOC": socLayer
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
