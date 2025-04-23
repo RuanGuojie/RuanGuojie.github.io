@@ -8,14 +8,15 @@ design:
 
 sections:
 
-  # ✅ 地图部分
-  - block: markdown
-    content:
-      title: Sensor Map
-      markdown: |
-        <iframe src="/maps/sensor-map/" width="100%" height="600px" style="border:none; display:block; min-height:600px;"></iframe>
+  # ✅ 直接嵌入 HTML，不依赖 markdown
+  - block: html
+    content: |
+      <section>
+        <h2 style="text-align: center;">Sensor Map</h2>
+        <iframe src="/maps/sensor-map/" width="100%" height="600px" style="border:none; display:block;"></iframe>
+      </section>
 
-  # ✅ 你原来的项目集部分
+  # ✅ 你的项目展示 block
   - block: collection
     content:
       title: Selected Projects
