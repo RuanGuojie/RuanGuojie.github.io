@@ -92,27 +92,39 @@
     var phLayer = L.imageOverlay("/images/PH.PNG", [
       [38.898761, -92.209172],  // bottom-left
       [38.899711, -92.210552]   // top-right
-    ], {opacity: 0.5
+    ], {opacity: 1.0
     });
 
     var kLayer = L.imageOverlay("/images/K.PNG", [
       [38.898761, -92.209172],  // bottom-left
       [38.899711, -92.210552]   // top-right
-    ], {opacity: 0.5
+    ], {opacity: 1.0
     });
 
+    var cecLayer = L.imageOverlay("/images/CEC.PNG", [
+      [38.898761, -92.209172],
+      [38.899711, -92.210552]
+    ], {opacity: 1.0
+    });
 
+    var pLayer = L.imageOverlay("/images/P.PNG", [
+      [38.898761, -92.209172],
+      [38.899711, -92.210552]
+    ], {opacity: 0.5
+    });
 
     // control
     var overlayMaps = {
       "NDVI": ndviLayer,
-      "ECa-shallow": ecsLayer,
+      "ECa": ecsLayer,
       "Yield": yieldLayer,
       "TN": tnLayer,
       "SOC": socLayer,
       "WAS": wasLayer,
       "pH": phLayer,
-      "K": kLayer
+      "K": kLayer,
+      "P": pLayer,
+      "CEC": cecLayer
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
