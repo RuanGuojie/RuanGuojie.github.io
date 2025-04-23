@@ -110,7 +110,7 @@
     var pLayer = L.imageOverlay("/images/P.PNG", [
       [38.898761, -92.209172],
       [38.899711, -92.210552]
-    ], {opacity: 0.5
+    ], {opacity: 1.0
     });
 
     // control
