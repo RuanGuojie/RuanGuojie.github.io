@@ -8,15 +8,20 @@ design:
 
 sections:
 
-  # ✅ 直接嵌入 HTML，不依赖 markdown
-  - block: html
-    content: |
-      <section>
-        <h2 style="text-align: center;">Sensor Map</h2>
-        <iframe src="/maps/sensor-map/" width="100%" height="600px" style="border:none; display:block;"></iframe>
-      </section>
+  # ✅ 地图按钮（代替 iframe）
+  - block: feature
+    content:
+      title: Sensor Map
+      items:
+        - icon: map
+          title: 查看交互式地图
+          content: 点击下方按钮在新页面中查看完整地图。
+          cta:
+            label: 前往地图
+            url: /maps/sensor-map/
+            style: primary
 
-  # ✅ 你的项目展示 block
+  # ✅ 你原有的项目集
   - block: collection
     content:
       title: Selected Projects
