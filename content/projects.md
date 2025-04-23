@@ -11,23 +11,26 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    var map = L.map("map").setView([0, 0], 2); // 初始视图
+    var map = L.map("map").setView([38.8996, -92.2104], 17); // 大致初始位置
 
-    // 使用 Esri 提供的卫星图层
-    L.tileLayer(
+    // 卫星底图
+    var satellite = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
         attribution:
           "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
         maxZoom: 19,
       }
-    ).addTo(map);
+    );
+
+    satellite.addTo(map);
 
     // 加载 GeoJSON 数据
+    var sensorLayer;
     fetch("/data/sensor.geojson")
       .then((response) => response.json())
       .then((geojsonData) => {
-        var geoLayer = L.geoJSON(geojsonData, {
+        sensorLayer = L.geoJSON(geojsonData, {
           onEachFeature: function (feature, layer) {
             let popupContent = "";
 
@@ -41,8 +44,23 @@
           },
         }).addTo(map);
 
-        // 自动缩放视图到数据边界
-        map.fitBounds(geoLayer.getBounds());
+        map.fitBounds(sensorLayer.getBounds());
       });
+
+    // NDVI 图层（PNG + World File）
+    var ndviBounds = [
+      [38.8994632657, -92.2105835508],
+      [38.8997271657, -92.2101976913]
+    ];
+    var ndviLayer = L.imageOverlay("/images/NDVI.png", ndviBounds, {
+      opacity: 0.5
+    }).addTo(map);
+
+    // 图层控制器（可选开关）
+    var overlayMaps = {
+      "NDVI 图层": ndviLayer
+    };
+
+    L.control.layers(null, overlayMaps).addTo(map);
   });
 </script>
