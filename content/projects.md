@@ -47,7 +47,7 @@
         map.fitBounds(sensorLayer.getBounds());
       });
 
-    // NDVI（PNG + World File）
+    // NDVI
     var ndviBounds = [
       [38.899727, -92.210584],
       [38.898748, -92.209152]
@@ -63,18 +63,19 @@
     ], {opacity: 1.0
     });
 
+
+    // Yield
     var yieldLayer = L.imageOverlay("/images/yield.png", [
       [38.899703, -92.210552],
       [38.898761, -92.209174]
     ], {opacity: 1.0
     });
 
-
     // control
     var overlayMaps = {
       "NDVI": ndviLayer,
       "ECa-shallow": ecsLayer，
-      "Yield": yieldLayer
+      "Yield": yieldLayer,
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
