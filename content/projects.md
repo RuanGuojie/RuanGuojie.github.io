@@ -71,7 +71,7 @@
     ], {opacity: 1.0
     });
 
-    var tnLayer = L.imageOverlay("/images/TN.png", [
+    var tnLayer = L.imageOverlay("/images/TN.PNG", [
       [38.899711, -92.210552],
       [38.898761, -92.209172]
     ], {opacity: 1.0
@@ -96,7 +96,7 @@
       "Yield": yieldLayer,
       "TN": tnLayer,
       "SOC": socLayer,
-      "WAS": wasLayer
+      "WAS": wasLayer,
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
