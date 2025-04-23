@@ -95,6 +95,13 @@
     ], {opacity: 0.5
     });
 
+    var kLayer = L.imageOverlay("/images/K.PNG", [
+      [38.898761, -92.209172],  // bottom-left
+      [38.899711, -92.210552]   // top-right
+    ], {opacity: 0.5
+    });
+
+
 
     // control
     var overlayMaps = {
@@ -104,7 +111,8 @@
       "TN": tnLayer,
       "SOC": socLayer,
       "WAS": wasLayer,
-      "pH": phLayer
+      "pH": phLayer,
+      "K": kLayer
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
