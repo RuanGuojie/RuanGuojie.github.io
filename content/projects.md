@@ -58,7 +58,7 @@
 
     // 图层控制器（可选开关）
     var overlayMaps = {
-      "NDVI 图层": ndviLayer
+      "NDVI layer": ndviLayer
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
