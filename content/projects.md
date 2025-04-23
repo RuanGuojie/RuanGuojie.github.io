@@ -49,8 +49,8 @@
 
     // NDVI 图层（PNG + World File）
     var ndviBounds = [
-      [38.6364862857, -92.2105835508],
-      [38.8997271657, -91.8256877784]
+      [38.8995, -92.2107],
+      [38.8999, -92.2102]
     ];
     var ndviLayer = L.imageOverlay("/images/NDVI.png", ndviBounds, {
       opacity: 0.5
