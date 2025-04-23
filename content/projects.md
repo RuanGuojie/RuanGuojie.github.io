@@ -1,21 +1,24 @@
-## 项目地图（OpenStreetMap 测试）
+---
+title: "Projects"
+date: 2025-04-22
+---
 
-<div id="map" style="height: 400px;"></div>
+## 项目地图展示（OpenStreetMap + Leaflet）
 
+这是一个地图嵌入测试，中心位置是上海。
+
+<div id="map" style="height: 400px; margin-top: 20px;"></div>
+
+<!-- Leaflet 样式和脚本（使用 jsDelivr 国内可访问） -->
 <link
   rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-  integrity="sha256-sA+e2AtJOCbZo7GkTq7t4J8C8LkhzN4niwHqjvZqs+k="
-  crossorigin=""
+  href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"
 />
-<script
-  src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-  integrity="sha256-nP4cPp2YkJpsZgDdhZYtKPtFfXUfZMtfsDp5Gk6sjRk="
-  crossorigin=""
-></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    var map = L.map("map").setView([31.2304, 121.4737], 13); // 上海位置
+    var map = L.map("map").setView([31.2304, 121.4737], 12); // 上海位置
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
@@ -24,7 +27,7 @@
 
     L.marker([31.2304, 121.4737])
       .addTo(map)
-      .bindPopup("你好，这里是上海")
+      .bindPopup("你好，这里是上海的一个项目点")
       .openPopup();
   });
 </script>
