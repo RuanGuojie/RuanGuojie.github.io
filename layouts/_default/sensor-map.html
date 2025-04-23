@@ -1,61 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>{{ .Title }}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-    #map {
-      height: 100vh;
-      width: 100%;
-    }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
+{{ define "main" }}
+<div id="map" style="height:100vh; width:100%;"></div>
 
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    // 初始化地图并设置中心点和缩放等级
-    const map = L.map('map').setView([38.8990, -92.2092], 18);
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([38.8990, -92.2092], 18);
 
-    // 添加底图图层
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
 
-    // 加载 GeoJSON 数据文件（路径必须匹配 Hugo static 文件夹）
-    fetch('/data/sensor.geojson')
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`GeoJSON 加载失败: ${res.statusText}`);
+  fetch('/data/sensor.geojson')
+    .then(res => res.json())
+    .then(data => {
+      L.geoJSON(data, {
+        onEachFeature: function (feature, layer) {
+          const p = feature.properties;
+          layer.bindPopup(`
+            <b>传感器:</b> ${p.Name || 'N/A'}<br>
+            <b>经度:</b> ${p.Longitude || 'N/A'}<br>
+            <b>纬度:</b> ${p.Latitude || 'N/A'}
+          `);
         }
-        return res.json();
-      })
-      .then(data => {
-        L.geoJSON(data, {
-          onEachFeature: function (feature, layer) {
-            const props = feature.properties;
-            if (props) {
-              layer.bindPopup(`
-                <b>传感器:</b> ${props.Name || 'N/A'}<br>
-                <b>经度:</b> ${props.Longitude || 'N/A'}<br>
-                <b>纬度:</b> ${props.Latitude || 'N/A'}
-              `);
-            }
-          }
-        }).addTo(map);
-      })
-      .catch(err => {
-        console.error(err);
-        alert('地图数据加载失败，请检查路径和格式。');
-      });
-  </script>
-</body>
-</html>
+      }).addTo(map);
+    });
+</script>
+{{ end }}
