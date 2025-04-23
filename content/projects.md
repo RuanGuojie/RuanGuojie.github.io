@@ -71,11 +71,19 @@
     ], {opacity: 1.0
     });
 
+    var tnLayer = L.imageOverlay("/images/TN.png", [
+      [38.899711, -92.210552],
+      [38.898761, -92.209172]
+    ], {opacity: 1.0
+    });
+
+
     // control
     var overlayMaps = {
       "NDVI": ndviLayer,
       "ECa-shallow": ecsLayer,
-      "Yield": yieldLayer
+      "Yield": yieldLayer,
+      "TN": tnLayer
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
