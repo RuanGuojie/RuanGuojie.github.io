@@ -23,9 +23,11 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install TailwindCSS CLI
+      - name: Install TailwindCSS CLI (Standalone Binary)
         run: |
-          npm install -g tailwindcss postcss autoprefixer
+          curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64
+          chmod +x tailwindcss-linux-x64
+          sudo mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
 
       - name: Install Hugo (Extended)
         uses: peaceiris/actions-hugo@v2
