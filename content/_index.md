@@ -21,7 +21,7 @@ sections:
     design:
       css_class: "bg-primary-700"
       background:
-        color: black
+        color: white
         image:
           filename: stacked-peaks.svg
           size: cover
