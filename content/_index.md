@@ -19,14 +19,7 @@ sections:
         text: Download CV
         url: uploads/resume.pdf
     design:
-      css_class: "bg-primary-700"
-      background:
-        color: white
-        image:
-          filename: stacked-peaks.svg
-          size: cover
-          filters:
-            brightness: 1.0
+      css_class: "bg-gradient-to-b from-primary-50 via-primary-100 to-white"
   - block: markdown
     content:
       title: '📚 My Research'
