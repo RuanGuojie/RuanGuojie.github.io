@@ -18,7 +18,9 @@ sections:
       button:
         text: Download CV
         url: uploads/resume.pdf
-    design: {}
+    design:
+      background:
+        css_class: "bg-gradient-to-br from-indigo-50 via-white to-emerald-50"
   - block: markdown
     content:
       title: '📚 My Research'
