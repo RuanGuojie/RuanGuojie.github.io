@@ -3,6 +3,10 @@ title: 'Experience'
 date: 2023-10-24
 type: landing
 
+header:
+  navbar:
+    enable: true
+    
 design:
   spacing: '5rem'
 
