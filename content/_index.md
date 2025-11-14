@@ -20,7 +20,11 @@ sections:
         url: uploads/resume.pdf
     design:
       background:
-        css_class: "bg-gradient-to-br from-indigo-50 via-white to-emerald-50"
+        gradient: true
+        gradient_start: "#e8f0ff"
+        gradient_end: "#fff4e6"
+        gradient_mid: "#fff5f7"
+        gradient_angle: 180
   - block: markdown
     content:
       title: '📚 My Research'
