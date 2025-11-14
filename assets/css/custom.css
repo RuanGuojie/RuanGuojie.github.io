@@ -1,4 +1,0 @@
-/* Apply the gradient to landing page only */
-body.page-home {
-  @apply home-gradient;
-}

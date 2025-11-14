@@ -59,7 +59,3 @@ features:
   privacy_pack:
     enable: false
 
-
-custom_css:
-  - css/custom.css
-  - css/home-gradient.css
