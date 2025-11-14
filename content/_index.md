@@ -19,7 +19,7 @@ sections:
         text: Download CV
         url: uploads/resume.pdf
     design:
-      css_class: "bg-gradient-to-b from-primary-50 via-primary-100 to-white"
+      css_class: hbx-bg-gradient
   - block: markdown
     content:
       title: '📚 My Research'
