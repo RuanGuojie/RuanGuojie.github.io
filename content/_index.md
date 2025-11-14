@@ -19,12 +19,7 @@ sections:
         text: Download CV
         url: uploads/resume.pdf
     design:
-      background:
-        gradient: true
-        gradient_start: "#e8f0ff"
-        gradient_end: "#fff4e6"
-        gradient_mid: "#fff5f7"
-        gradient_angle: 180
+      background: black
   - block: markdown
     content:
       title: '📚 My Research'
