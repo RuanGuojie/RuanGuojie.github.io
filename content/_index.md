@@ -19,7 +19,6 @@ sections:
         text: Download CV
         url: uploads/resume.pdf
     design:
-      background: black
   - block: markdown
     content:
       title: '📚 My Research'
