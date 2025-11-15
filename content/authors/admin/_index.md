@@ -108,7 +108,7 @@ skills:
       - name: Drone
         description: ''
         percent: 80
-        icon: paper-airplane
+        icon: custom/drone
 
   - name: Hobbies
     color: '#eeac02'
