@@ -108,7 +108,7 @@ skills:
       - name: Drone
         description: ''
         percent: 80
-        icon: drone
+        icon: mdi-quadcopter
 
   - name: Hobbies
     color: '#eeac02'
