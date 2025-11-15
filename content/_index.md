@@ -74,9 +74,11 @@ sections:
     content:
       title: Recent posters
       subtitle: ''
-      text: ''
+      text: |
+        <img src="/uploads/poster1.jpg"
+          style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
       # Page type to display. E.g. post, talk, publication...
-      page_type: post
+      page_type: blog
       # Choose how many pages you would like to display (0 = all pages)
       count: 5
       # Filter on criteria
