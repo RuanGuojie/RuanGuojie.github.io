@@ -148,7 +148,14 @@ awards:
     awarder: 
     icon: 
     summary: |
-      
+
+memberships:
+  - title: 'American Geophysical Union (AGU) (2009-present)'
+    url: 
+    date: ''
+    awarder: ''
+    icon: 
+    summary: |
       
 ---
 
