@@ -104,7 +104,7 @@ skills:
       - name: ArcGIS
         description: ''
         percent: 40
-        icon: circle-stack
+        icon: globe-americas
       - name: Drone
         description: ''
         percent: 80
