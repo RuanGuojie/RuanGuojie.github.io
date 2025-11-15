@@ -30,11 +30,14 @@ sections:
       subtitle: ''
       text: |
          <div style="text-align: justify; font-size: 1rem;">
-         Currently, I focus on Digital Soil Mapping (DSM) using GeoAI. 
-         1) Exploring the geostatistical (Empirical Bayesian Kriging), machine learning (Random Forest and Geographically Weighted Regression), and hybrid (Regression Kriging) DSM methods to predict soil health and fertility using ArcGIS Pro with multi-source sensing data (yield map, digital elevation model, ECa, and VIs). 
-         2) Improving crop growth and soil health simulations by incorporating time-series observation data (VIs, soil moisture, weather information) into process-based model with data assimilation (Ensemble Kalman Filter). 
-         3) Providing new insights for soybean production by multi-objective optimal management zone delineation and driven-factors analysis of DSM. 
-         The research results are expected to be adapted by US soybean farmers to continue soybean profitability, sustainability, and climate change resilience. 
+         Currently, I focus on Digital Soil Mapping (DSM) using GeoAI. <dv>
+         1) Exploring the geostatistical (Empirical Bayesian Kriging), machine learning (Random Forest and Geographically Weighted Regression), and hybrid (Regression Kriging) DSM methods to predict soil health and fertility using ArcGIS Pro with multi-source sensing data (yield map, digital elevation model, ECa, and VIs). <dv>
+         2) Improving crop growth and soil health simulations by incorporating time-series observation data (VIs, soil moisture, weather information) into process-based model with data assimilation (Ensemble Kalman Filter). <dv>
+         3) Providing new insights for soybean production by multi-objective optimal management zone delineation and driven-factors analysis of DSM. <dv>
+         The research results are expected to be adapted by US soybean farmers to continue soybean profitability, sustainability, and climate change resilience.<dv>
+         <dv>
+         Publications: 5 <dv>
+         Citations: 130
          </div>
     design:
       columns: '1'
