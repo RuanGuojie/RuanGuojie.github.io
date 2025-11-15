@@ -109,6 +109,10 @@ skills:
         description: ''
         percent: 
         icon: "custom/drone"
+      - name: Photoshop
+        description: ''
+        percent: 
+        icon: "custom/photoshop"
 
   - name: Hobbies
     color: '#eeac02'
@@ -130,6 +134,10 @@ skills:
         description: ''
         percent: 
         icon: "custom/plant"
+      - name: Coffee
+        description: ''
+        percent: 
+        icon: "custom/coffee"
 
 languages:
   - name: English
