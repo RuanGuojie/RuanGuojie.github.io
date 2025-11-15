@@ -55,8 +55,8 @@ education:
     date_start: 2024-08-01
     date_end: 2028-06-01
     summary: |
-      Precision and Automated Agriculture Lab (PAAL)
-      Supervisor: Jianfeng Zhou
+      Precision and Automated Agriculture Lab (PAAL) <br>
+      Supervisor: Jianfeng Zhou <br>
       Visit PAAL at 127 Agricultural Engineering Building, Columbia, MO 65211 
     button:
       text: 'Read Thesis'
