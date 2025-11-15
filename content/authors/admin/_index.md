@@ -74,7 +74,7 @@ education:
       Rank #14 for agriculture & forestry with the QS World University Rankings by Subject 2025. <br>
       Rank #15 for Agricultural Science by EduRank. <br>
       Thesis: Winter wheat smart nitrogen recommendation algorithms based on multi-source data fusion. <br>
-      Supervisor: Professor Qiang Cao https://faculty.njau.edu.cn/qiangcao/zh_CN/index.htm
+      Supervisor: <a href="https://faculty.njau.edu.cn/qiangcao/zh_CN/index.htm" target="_blank">Professor Qiang Cao</a>
 
   - area: BSc. in Agronomy (Ding Ying Innovation Class)
     institution: South China Agricultural University, Guangzhou, China
