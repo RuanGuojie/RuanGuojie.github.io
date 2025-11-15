@@ -108,7 +108,7 @@ skills:
       - name: Drone
         description: ''
         percent: 
-        icon: 'custom/drone'
+        icon: "custom/drone"
 
   - name: Hobbies
     color: '#eeac02'
@@ -129,7 +129,7 @@ skills:
       - name: Horticulture
         description: ''
         percent: 
-        icon: 'custom/plant'
+        icon: "custom/plant"
 
 languages:
   - name: English
