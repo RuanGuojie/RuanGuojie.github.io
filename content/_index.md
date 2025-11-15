@@ -36,7 +36,7 @@ sections:
          3) Providing new insights for soybean production by multi-objective optimal management zone delineation and driven-factors analysis of DSM. <br>
          The research results are expected to be adapted by US soybean farmers to continue soybean profitability, sustainability, and climate change resilience.<br>
          <br>
-         Publications: <span style="font-weight:700; font-size:1.8rem;">5</span> <br>
+         Publications: <span style="font-weight:700; font-size:1.8rem;">4</span> <br>
          Citations: <span style="font-weight:700; font-size:1.8rem;">130</span>
          </div>
     design:
