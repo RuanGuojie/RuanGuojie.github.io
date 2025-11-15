@@ -66,11 +66,11 @@ education:
     date_start: 2020-09-01
     date_end: 2023-06-01
     summary: |
-      National Engineering and Technology Center for Information Agriculture. (国家信息农业工程技术中心)
-      “Double First-class” disciplines of Crop Science. (国家双一流建设学科：作物学)
-      Rank #14 for agriculture & forestry with the QS World University Rankings by Subject 2025.
-      Rank #15 for Agricultural Science by EduRank.
-      Thesis: Winter wheat smart nitrogen recommendation algorithms based on multi-source data fusion.
+      National Engineering and Technology Center for Information Agriculture. (国家信息农业工程技术中心) <br>
+      “Double First-class” disciplines of Crop Science. (国家双一流建设学科：作物学) <br>
+      Rank #14 for agriculture & forestry with the QS World University Rankings by Subject 2025. <br>
+      Rank #15 for Agricultural Science by EduRank. <br>
+      Thesis: Winter wheat smart nitrogen recommendation algorithms based on multi-source data fusion. <br>
       Supervisor: Professor Qiang Cao https://faculty.njau.edu.cn/qiangcao/zh_CN/index.htm
 
   - area: BSc. in Agronomy (Ding Ying Innovation Class)
@@ -78,9 +78,9 @@ education:
     date_start: 2016-09-01
     date_end: 2020-06-30
     summary: |
-      “Double First-class” disciplines of Crop Science.(国家双一流建设学科：作物学)
-      Rank #28 for agriculture & forestry with the QS World University Rankings by Subject 2025.
-      GPA: 4.04/5.0
+      “Double First-class” disciplines of Crop Science.(国家双一流建设学科：作物学) <br>
+      Rank #28 for agriculture & forestry with the QS World University Rankings by Subject 2025. <br>
+      GPA: 4.04/5.0 <br>
       Thesis: Comparative study on Seed Storability of Chinese Soybean Landrace Population.
 
 
