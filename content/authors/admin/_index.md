@@ -121,6 +121,10 @@ skills:
         description: ''
         percent: 80
         icon: camera
+      - name: Horticulture
+        description: ''
+        percent: 80
+        icon: plant
 
 languages:
   - name: English
