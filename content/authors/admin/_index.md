@@ -105,6 +105,11 @@ skills:
         description: ''
         percent: 40
         icon: circle-stack
+      - name: Drone
+        description: ''
+        percent: 80
+        icon: drone
+
   - name: Hobbies
     color: '#eeac02'
     color_border: '#f0bf23'
