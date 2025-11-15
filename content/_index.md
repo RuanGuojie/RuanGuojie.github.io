@@ -30,11 +30,11 @@ sections:
       subtitle: ''
       text: |
          <div style="text-align: justify; font-size: 1rem;">
-         Currently, I focus on Digital Soil Mapping (DSM) using GeoAI. <br>
-         1) Exploring the geostatistical (Empirical Bayesian Kriging), machine learning (Random Forest and Geographically Weighted Regression), and hybrid (Regression Kriging) DSM methods to predict soil health and fertility using ArcGIS Pro with multi-source sensing data (yield map, digital elevation model, ECa, and VIs). <br>
-         2) Improving crop growth and soil health simulations by incorporating time-series observation data (VIs, soil moisture, weather information) into process-based model with data assimilation (Ensemble Kalman Filter). <br>
-         3) Providing new insights for soybean production by multi-objective optimal management zone delineation and driven-factors analysis of DSM. <br>
-         The research results are expected to be adapted by US soybean farmers to continue soybean profitability, sustainability, and climate change resilience.<br>
+         Currently, I focus on Digital Agriculture / Smart Agriculture on Plant Science. <br>
+         1) Exploring the geostatistical (Empirical Bayesian Kriging), machine learning (Random Forest and Geographically Weighted Regression), and hybrid (Regression Kriging) Digital Soil Mapping (DSM) methods to predict soil health and fertility using ArcGIS Pro with multi-source sensing data (yield map, digital elevation model, ECa, and VIs). <br>
+         2) Mapping in-season corn leaf nutrient levels (N, P, K, Ca, Mg) based on spatial-temporal neural networks by integrating hyperspectral, multispectral, RGB, and thermal imagery.<br>
+         3) Advancing crop production through multi-objective optimization of management zone delineation and analysis of data-driven contributing factors. <br>
+         The research results are expected to be adapted by US Corn belt farmers to continue soybean profitability, sustainability, and climate change resilience.<br>
          <br>
          Publications: <span style="font-weight:700; font-size:1.8rem;">4</span> <br>
          Citations: <span style="font-weight:700; font-size:1.8rem;">130</span>
