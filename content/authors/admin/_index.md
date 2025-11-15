@@ -150,10 +150,10 @@ awards:
     summary: |
 
 memberships:
-  - title: 'American Geophysical Union (AGU) (2009-present)'
+  - title: 'American Geophysical Union (AGU) (2025-present)'
     url: 
-    date: ''
-    awarder: ''
+    date: '2025-12-17'
+    awarder: 
     icon: 
     summary: |
       
