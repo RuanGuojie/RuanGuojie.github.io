@@ -100,7 +100,7 @@ skills:
       - name: ENVI
         description: ''
         percent: 100
-        icon: chart-bar
+        icon: square-3-stack-3d
       - name: ArcGIS
         description: ''
         percent: 40
@@ -108,7 +108,7 @@ skills:
       - name: Drone
         description: ''
         percent: 80
-        icon: mdi-quadcopter
+        icon: paper-airplane
 
   - name: Hobbies
     color: '#eeac02'
