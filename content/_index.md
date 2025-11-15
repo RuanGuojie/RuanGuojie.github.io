@@ -34,8 +34,8 @@ sections:
          (1) Exploring the geostatistical (Empirical Bayesian Kriging), machine learning (Random Forest and Geographically Weighted Regression), and hybrid (Regression Kriging) Digital Soil Mapping (DSM) methods to predict soil health and fertility using ArcGIS Pro with multi-source sensing data (yield map, digital elevation model, ECa, and VIs). <br>
          (2) Mapping in-season cross-scale corn leaf nutrient levels (N, P, K, Ca, Mg) based on spatial-temporal neural networks by integrating hyperspectral, multispectral, RGB, and thermal imagery.<br>
          (3) Monitoring the spatiotemporal variability of crop phenological stages based on 3D reconstruction (leaf count) and object detection (seedling vigor and tasseling) <br>
-         (4) Linkages between the temporal dynamics of soil‐sensor observations and soil hydrological properties
-         The research results are expected to be adapted by US Corn belt farmers to continue soybean profitability, sustainability, and climate change resilience.<br>
+         (4) Linkages between the temporal dynamics of soil‐sensor observations and soil hydrological properties. <br>
+         Our mission is to equip stakeholders with high-quality data and trustworthy modeling tools to improve crop production efficiency and resilience to climate change.<br>
          <br>
          Publications: <span style="font-weight:700; font-size:1.8rem;">4</span> <br>
          Citations: <span style="font-weight:700; font-size:1.8rem;">130</span>
