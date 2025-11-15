@@ -124,7 +124,7 @@ skills:
       - name: Horticulture
         description: ''
         percent: 80
-        icon: plant
+        icon: sprout
 
 languages:
   - name: English
