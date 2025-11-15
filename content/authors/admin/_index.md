@@ -145,7 +145,7 @@ awards:
   - title: 'Excellent Master Dissertation Award of Jiangsu Province (江苏省优秀硕士论文)'
     url: 
     date: '2024-11-27'
-    awarder: 
+    awarder: Jiangsu Education Department
     icon: 
     summary: |
 ---
