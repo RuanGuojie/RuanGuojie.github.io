@@ -107,7 +107,7 @@ skills:
         icon: globe-americas
       - name: Drone
         description: ''
-        percent: 80
+        percent: 
         icon: custom/drone
 
   - name: Hobbies
@@ -128,7 +128,7 @@ skills:
         icon: camera
       - name: Horticulture
         description: ''
-        percent: 80
+        percent: 
         icon: custom/plant
 
 languages:
