@@ -32,10 +32,11 @@ sections:
     content:
       title: Awards
       username: admin
-  - block: resume-memberships
+  - block: markdown
     content:
-      title: Professional memberships
-      username: admin
+      title: Professional Memberships
+      text: |
+        American Geophysical Union (AGU) (2025-present)
   - block: resume-languages
     content:
       title: Languages

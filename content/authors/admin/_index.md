@@ -148,21 +148,6 @@ awards:
     awarder: 
     icon: 
     summary: |
-
-memberships:
-  - title: 'National Scholarship for Graduates (国家奖学金)'
-    url: 
-    date: '2022-12-07'
-    awarder: Ministry of Education of China
-    icon: 
-    summary: |
-      
-  - title: 'Excellent Master Dissertation Award of Jiangsu Province (江苏省优秀硕士论文)'
-    url: 
-    date: '2024-11-27'
-    awarder: 
-    icon: 
-    summary: |
 ---
 
 ## About Me
