@@ -57,8 +57,8 @@ education:
     summary: |
       Precision and Automated Agriculture Lab (PAAL) <br>
       Supervisor: Jianfeng Zhou <br>
-      <a href="https://www.google.com/maps/place/127+Agricultural+Engineering+Building,+Columbia,+MO+65211" target="_blank">
-        📍 Visit PAAL at 127 Agricultural Engineering Building, Columbia, MO 65211
+      <a href="https://www.google.com/maps/place/1406+Rollins+St,+Columbia,+MO+65201" target="_blank">
+        Visit PAAL at 127 Agricultural Engineering Building, Columbia, MO 65201
       </a>
  
     button:
