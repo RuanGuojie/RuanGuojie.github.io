@@ -148,15 +148,6 @@ awards:
     awarder: 
     icon: 
     summary: |
-
-memberships:
-  - title: 'American Geophysical Union (AGU) (2025-present)'
-    url: 
-    date: '2025-12-17'
-    awarder: 
-    icon: 
-    summary: |
-      
 ---
 
 ## About Me
