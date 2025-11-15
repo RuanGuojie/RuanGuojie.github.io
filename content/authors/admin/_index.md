@@ -51,11 +51,8 @@ interests:
 
 education:
   - area: PhD Student in Plant Science
-    institution: |
-      <span style="display:flex;align-items:center;gap:6px;">
-        <img src="custom/mu" style="height:20px;">
-        University of Missouri, USA
-      </span>
+    institution: University of Missouri, USA
+    institution_logo: "custom/mu"
     date_start: 2024-08-01
     date_end: 2028-06-01
     summary: |
