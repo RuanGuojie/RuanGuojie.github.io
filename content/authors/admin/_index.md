@@ -125,9 +125,9 @@ skills:
 languages:
   - name: English
     percent: 80
-  - name: Chinese
-    percent: 100
   - name: Cantonese
+    percent: 100
+  - name: Mandarin
     percent: 100
 
 # Awards.
