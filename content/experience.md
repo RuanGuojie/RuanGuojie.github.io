@@ -32,9 +32,9 @@ sections:
     content:
       title: Awards
       username: admin
-  - block: resume-awards
+  - block: resume-memberships
     content:
-      title: Awards
+      title: Professional memberships
       username: admin
   - block: resume-languages
     content:
