@@ -36,4 +36,8 @@ sections:
     content:
       title: Languages
       username: admin
+    block: resume-awards
+    content:
+      title: Professional Memberships
+      username: admin
 ---
