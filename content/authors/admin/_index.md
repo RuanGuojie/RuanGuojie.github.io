@@ -67,6 +67,7 @@ education:
       url: 'https://example.com'
   - area: MSc. in Crop Cultivation and Farming System
     institution: Nanjing Agricultural University, Nanjing, China
+    icon: "custom/njau"
     date_start: 2020-09-01
     date_end: 2023-06-01
     summary: |
