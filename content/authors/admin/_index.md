@@ -80,6 +80,7 @@ education:
 
   - area: BSc. in Agronomy (Ding Ying Innovation Class)
     institution: South China Agricultural University, Guangzhou, China
+    icon: "custom/scau"
     date_start: 2016-09-01
     date_end: 2020-06-30
     summary: |
