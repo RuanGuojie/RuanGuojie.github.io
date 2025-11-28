@@ -168,7 +168,7 @@
         map2.fitBounds(sensorLayer2.getBounds());
       });
 
-    var ecsLayer2 = L.imageOverlay("/images2/ECS.PNG", [
+    var ecsLayer2 = L.imageOverlay("/images2/ECS.png", [
       [38.912300, -92.266332],
       [38.908232, -92.257788]
     ], {opacity: 1.0});
@@ -178,9 +178,39 @@
       [38.908232, -92.257788]
     ], {opacity: 1.0});
 
+    var socLayer2 = L.imageOverlay("/images2/SOC.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var WASLayer2 = L.imageOverlay("/images2/WAS.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var PLayer2 = L.imageOverlay("/images2/P.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var KLayer2 = L.imageOverlay("/images2/K.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var PHLayer2 = L.imageOverlay("/images2/PH.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
     var overlayMaps2 = {
       "ECa": ecsLayer2,
-      "TN": TNLayer2
+      "TN": TNLayer2,
+      "SOC": socLayer2,
+      "WAS": WASLayer2,
+      "P": PLayer2,
+      "K": KLayer2,
+      "pH": PHLayer2,
     };
 
     L.control.layers(null, overlayMaps2).addTo(map2);
