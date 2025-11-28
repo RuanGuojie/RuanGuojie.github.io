@@ -210,9 +210,8 @@
             }
             layer.bindPopup(popupContent || "无属性数据");
           },
-        }).addTo(map2);
+        });
 
-        // 修复关键点：在这里才把 GeoJSON 加入 layer control
         layerControl2.addOverlay(sensorLayer2, "Samples");
 
         map2.fitBounds(sensorLayer2.getBounds());
