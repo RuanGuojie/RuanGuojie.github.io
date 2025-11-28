@@ -212,9 +212,10 @@
           },
         });
 
-        layerControl2.addOverlay(sensorLayer2, "Samples");
-
         map2.fitBounds(sensorLayer2.getBounds());
+
+        overlayMap2.addOverlay(sensorLayer2, "Samples");
+
       });
   });
 </script>
