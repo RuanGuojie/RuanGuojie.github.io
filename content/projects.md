@@ -130,3 +130,59 @@
     L.control.layers(null, overlayMaps).addTo(map);
   });
 </script>
+
+
+## MU Digital Farm
+<div id="map2" style="height: 500px; margin-top: 20px;"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var map2 = L.map("map2").setView([38.911116, -92.263274], 17);
+
+    var satellite2 = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        attribution:
+          "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
+        maxZoom: 19,
+      }
+    );
+    satellite2.addTo(map2);
+
+    var sensorLayer2;
+    fetch("/data/sensor2.geojson")
+      .then((response) => response.json())
+      .then((geojsonData) => {
+        sensorLayer2 = L.geoJSON(geojsonData, {
+          onEachFeature: function (feature, layer) {
+            let popupContent = "";
+            if (feature.properties) {
+              popupContent = Object.entries(feature.properties)
+                .map(([key, val]) => `<strong>${key}</strong>: ${val}`)
+                .join("<br>");
+            }
+            layer.bindPopup(popupContent || "无属性数据");
+          },
+        }).addTo(map2);
+
+        map2.fitBounds(sensorLayer2.getBounds());
+      });
+
+    var ecsLayer2 = L.imageOverlay("/images2/ECS.PNG", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+    
+    var TNLayer2 = L.imageOverlay("/images2/TN.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var overlayMaps2 = {
+      "ECa": ecsLayer2,
+      "TN": TNLayer2
+    };
+
+    L.control.layers(null, overlayMaps2).addTo(map2);
+  });
+</script>
