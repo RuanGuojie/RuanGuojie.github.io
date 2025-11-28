@@ -149,25 +149,6 @@
     );
     satellite2.addTo(map2);
 
-    var sensorLayer2;
-    fetch("/data/sensor2.geojson")
-      .then((response) => response.json())
-      .then((geojsonData) => {
-        sensorLayer2 = L.geoJSON(geojsonData, {
-          onEachFeature: function (feature, layer) {
-            let popupContent = "";
-            if (feature.properties) {
-              popupContent = Object.entries(feature.properties)
-                .map(([key, val]) => `<strong>${key}</strong>: ${val}`)
-                .join("<br>");
-            }
-            layer.bindPopup(popupContent || "无属性数据");
-          },
-        }).addTo(map2);
-
-        map2.fitBounds(sensorLayer2.getBounds());
-      });
-
     var ecsLayer2 = L.imageOverlay("/images2/ECS.png", [
       [38.912300, -92.266332],
       [38.908232, -92.257788]
@@ -211,9 +192,30 @@
       "P": PLayer2,
       "K": KLayer2,
       "pH": PHLayer2,
-      "sample": sensorLayer2,
     };
 
     L.control.layers(null, overlayMaps2).addTo(map2);
+
+    fetch("/data/sensor2.geojson")
+      .then((response) => response.json())
+      .then((geojsonData) => {
+
+        var sensorLayer2 = L.geoJSON(geojsonData, {
+          onEachFeature: function (feature, layer) {
+            let popupContent = "";
+            if (feature.properties) {
+              popupContent = Object.entries(feature.properties)
+                .map(([key, val]) => `<strong>${key}</strong>: ${val}`)
+                .join("<br>");
+            }
+            layer.bindPopup(popupContent || "无属性数据");
+          },
+        }).addTo(map2);
+
+        // 修复关键点：在这里才把 GeoJSON 加入 layer control
+        layerControl2.addOverlay(sensorLayer2, "Samples");
+
+        map2.fitBounds(sensorLayer2.getBounds());
+      });
   });
 </script>
