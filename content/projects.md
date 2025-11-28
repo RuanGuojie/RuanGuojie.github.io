@@ -163,7 +163,7 @@
             }
             layer.bindPopup(popupContent || "无属性数据");
           },
-        }).addTo(sensorLayer2);
+        }).addTo(map2);
 
         map2.fitBounds(sensorLayer2.getBounds());
       });
