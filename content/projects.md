@@ -194,7 +194,7 @@
       "pH": PHLayer2,
     };
 
-    L.control.layers(null, overlayMaps2).addTo(map2);
+    var layerControl2 = L.control.layers(null, overlayMaps2).addTo(map2);
 
     fetch("/data/sensor2.geojson")
       .then((response) => response.json())
@@ -214,7 +214,7 @@
 
         map2.fitBounds(sensorLayer2.getBounds());
 
-        overlayMaps2.addOverlay(sensorLayer2, "Samples");
+        layerControl2.addOverlay(sensorLayer2, "Samples");;
 
       });
   });
