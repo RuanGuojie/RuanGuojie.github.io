@@ -42,7 +42,7 @@
 
             layer.bindPopup(popupContent || "无属性数据");
           },
-        }).addTo(map);
+        });
 
         map.fitBounds(sensorLayer.getBounds());
       });
@@ -115,6 +115,7 @@
 
     // control
     var overlayMaps = {
+      "sample": sensorLayer,
       "NDVI": ndviLayer,
       "ECa": ecsLayer,
       "Yield": yieldLayer,
@@ -163,7 +164,7 @@
             }
             layer.bindPopup(popupContent || "无属性数据");
           },
-        }).addTo(map2);
+        });
 
         map2.fitBounds(sensorLayer2.getBounds());
       });
@@ -171,7 +172,7 @@
     var ecsLayer2 = L.imageOverlay("/images2/ECS.png", [
       [38.912300, -92.266332],
       [38.908232, -92.257788]
-    ], {opacity: 1.0});
+    ], {opacity: 1.0}).addTo(map2);
     
     var TNLayer2 = L.imageOverlay("/images2/TN.png", [
       [38.912300, -92.266332],
@@ -204,6 +205,7 @@
     ], {opacity: 1.0});
 
     var overlayMaps2 = {
+      "sample":sensorLayer2,
       "ECa": ecsLayer2,
       "TN": TNLayer2,
       "SOC": socLayer2,
