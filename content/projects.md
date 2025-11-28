@@ -115,7 +115,6 @@
 
     // control
     var overlayMaps = {
-      "sample": sensorLayer,
       "NDVI": ndviLayer,
       "ECa": ecsLayer,
       "Yield": yieldLayer,
@@ -125,7 +124,8 @@
       "pH": phLayer,
       "K": kLayer,
       "P": pLayer,
-      "CEC": cecLayer
+      "CEC": cecLayer,
+      "sample": sensorLayer,
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
@@ -205,7 +205,6 @@
     ], {opacity: 1.0});
 
     var overlayMaps2 = {
-      "sample":sensorLayer2,
       "ECa": ecsLayer2,
       "TN": TNLayer2,
       "SOC": socLayer2,
@@ -213,6 +212,7 @@
       "P": PLayer2,
       "K": KLayer2,
       "pH": PHLayer2,
+      "sample":sensorLayer2,
     };
 
     L.control.layers(null, overlayMaps2).addTo(map2);
