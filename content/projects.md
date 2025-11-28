@@ -163,7 +163,7 @@
             }
             layer.bindPopup(popupContent || "无属性数据");
           },
-        });
+        }).addTo(sensorLayer2);
 
         map2.fitBounds(sensorLayer2.getBounds());
       });
@@ -211,6 +211,7 @@
       "P": PLayer2,
       "K": KLayer2,
       "pH": PHLayer2,
+      "sample": sensorLayer2,
     };
 
     L.control.layers(null, overlayMaps2).addTo(map2);
