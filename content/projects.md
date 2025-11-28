@@ -125,7 +125,6 @@
       "K": kLayer,
       "P": pLayer,
       "CEC": cecLayer,
-      "sample": sensorLayer,
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
@@ -212,7 +211,6 @@
       "P": PLayer2,
       "K": KLayer2,
       "pH": PHLayer2,
-      "sample":sensorLayer2,
     };
 
     L.control.layers(null, overlayMaps2).addTo(map2);
