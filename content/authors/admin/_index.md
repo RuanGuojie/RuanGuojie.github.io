@@ -141,6 +141,10 @@ skills:
         description: ''
         percent: 
         icon: "custom/coffee"
+      - name: Movies
+        description: ''
+        percent: 
+        icon: "custom/movies"
 
 languages:
   - name: English

@@ -36,7 +36,7 @@ sections:
     content:
       title: Professional Memberships
       text: |
-        American Geophysical Union (AGU) (2025-present)
+        American Geophysical Union (AGU,美国地球物理学会) (2025-present)
   - block: resume-languages
     content:
       title: Languages
