@@ -25,27 +25,6 @@
 
     satellite.addTo(map);
 
-    // 加载 GeoJSON 数据
-    var sensorLayer;
-    fetch("/data/sensor.geojson")
-      .then((response) => response.json())
-      .then((geojsonData) => {
-        sensorLayer = L.geoJSON(geojsonData, {
-          onEachFeature: function (feature, layer) {
-            let popupContent = "";
-
-            if (feature.properties) {
-              popupContent = Object.entries(feature.properties)
-                .map(([key, val]) => `<strong>${key}</strong>: ${val}`)
-                .join("<br>");
-            }
-
-            layer.bindPopup(popupContent || "无属性数据");
-          },
-        });
-
-        map.fitBounds(sensorLayer.getBounds());
-      });
 
     // NDVI
     var ndviBounds = [
@@ -127,7 +106,29 @@
       "CEC": cecLayer,
     };
 
-    L.control.layers(null, overlayMaps).addTo(map);
+    var layerControl = L.control.layers(null, overlayMaps).addTo(map);
+
+    fetch("/data/sensor.geojson")
+      .then((response) => response.json())
+      .then((geojsonData) => {
+
+        var sensorLayer = L.geoJSON(geojsonData, {
+          onEachFeature: function (feature, layer) {
+            let popupContent = "";
+            if (feature.properties) {
+              popupContent = Object.entries(feature.properties)
+                .map(([key, val]) => `<strong>${key}</strong>: ${val}`)
+                .join("<br>");
+            }
+            layer.bindPopup(popupContent || "无属性数据");
+          },
+        });
+
+        map.fitBounds(sensorLayer.getBounds());
+
+        layerControl.addOverlay(sensorLayer, "Samples");;
+
+      });
   });
 </script>
 
