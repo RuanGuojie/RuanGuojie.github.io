@@ -6,7 +6,7 @@
 # Appearance
 appearance:
   mode: system
-  color: teal # theme color,Options include blue, cyan, green, indigo, purple, red, rose, sky, teal, and zinc
+  color: teal # theme color, https://tailwindcss.com/docs/colors
 
 # SEO
 marketing:
