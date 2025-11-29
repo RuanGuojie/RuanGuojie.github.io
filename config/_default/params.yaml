@@ -6,7 +6,7 @@
 # Appearance
 appearance:
   mode: system
-  color: zinc # theme color, https://tailwindcss.com/docs/colors
+  color: lime-500 # theme color, https://tailwindcss.com/docs/colors
 
 # SEO
 marketing:
