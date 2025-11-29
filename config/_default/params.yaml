@@ -6,7 +6,7 @@
 # Appearance
 appearance:
   mode: system
-  color: lime # theme color, https://tailwindcss.com/docs/colors
+  color: pink # theme color, https://tailwindcss.com/docs/colors
 
 # SEO
 marketing:
