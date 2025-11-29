@@ -6,7 +6,7 @@
 # Appearance
 appearance:
   mode: system
-  color: ocean  # theme color
+  color: black  # theme color
 
 # SEO
 marketing:
