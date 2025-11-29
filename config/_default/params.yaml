@@ -6,7 +6,7 @@
 # Appearance
 appearance:
   mode: system
-  color: Forest # theme color,Options include blue, cyan, green, indigo, purple, red, rose, sky, teal, and zinc
+  color: 38C99E # theme color,Options include blue, cyan, green, indigo, purple, red, rose, sky, teal, and zinc
 
 # SEO
 marketing:
