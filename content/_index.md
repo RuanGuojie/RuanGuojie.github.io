@@ -13,13 +13,14 @@ sections:
     content:
       # Choose a user profile to display (a folder name within `content/authors/`)
       username: admin
-      text: "?"
+      text: ""
       # Show a call-to-action button under your biography? (optional)
       button:
         text: Download CV
         url: uploads/resume.pdf
     design:
       #Apply a gradient background
+      show_title: false
       css_class: hbx-bg-gradient
       avatar:
         size: medium # Picture size Options: small (150px), medium (200px, default), large (320px), xl (400px), xxl (500px)
