@@ -6,7 +6,7 @@
 # Appearance
 appearance:
   mode: system
-  color: black  # theme color
+  color: zinc  # theme color
 
 # SEO
 marketing:
