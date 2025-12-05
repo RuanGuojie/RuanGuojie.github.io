@@ -13,7 +13,6 @@ sections:
     content:
       # Choose a user profile to display (a folder name within `content/authors/`)
       username: admin
-      title: "你好"
       text: ""
       # Show a call-to-action button under your biography? (optional)
       button:
@@ -83,6 +82,8 @@ sections:
         <img src="/uploads/poster1.jpg"
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
         <img src="/uploads/poster2.jpg"
+          style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
+        <img src="/uploads/poster3.jpg"
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
       # Page type to display. E.g. post, talk, publication...
       page_type: blog
