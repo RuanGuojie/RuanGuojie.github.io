@@ -79,7 +79,7 @@ sections:
       title: Recent posters
       subtitle: ''
       text: |
-        <img src="/uploads/poster1.jpg"
+        <img src="/uploads/poster4.jpg"
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
         <img src="/uploads/poster2.jpg"
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
