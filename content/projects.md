@@ -56,31 +56,31 @@
     ], {opacity: 1.0
     });
 
-    var tnLayer = L.imageOverlay("/images/TN.PNG", [
+    var tnLayer = L.imageOverlay("/images/TN.png", [
       [38.899711, -92.210552],
       [38.898761, -92.209172]
     ], {opacity: 1.0
     });
 
-    var socLayer = L.imageOverlay("/images/SOC.PNG", [
+    var socLayer = L.imageOverlay("/images/SOC.png", [
       [38.899711, -92.210552],
       [38.898761, -92.209172]
     ], {opacity: 1.0
     });
 
-    var wasLayer = L.imageOverlay("/images/WAS.PNG", [
+    var wasLayer = L.imageOverlay("/images/WAS.png", [
       [38.899711, -92.210552],
       [38.898761, -92.209172]
     ], {opacity: 1.0
     });
 
-    var phLayer = L.imageOverlay("/images/PH.PNG", [
+    var phLayer = L.imageOverlay("/images/PH.png", [
       [38.898761, -92.209172],  // bottom-left
       [38.899711, -92.210552]   // top-right
     ], {opacity: 1.0
     });
 
-    var kLayer = L.imageOverlay("/images/K.PNG", [
+    var kLayer = L.imageOverlay("/images/K.png", [
       [38.898761, -92.209172],  // bottom-left
       [38.899711, -92.210552]   // top-right
     ], {opacity: 1.0
@@ -92,11 +92,32 @@
     ], {opacity: 1.0
     });
 
-    var pLayer = L.imageOverlay("/images/P.PNG", [
+    var pLayer = L.imageOverlay("/images/P.png", [
       [38.898761, -92.209172],
       [38.899711, -92.210552]
     ], {opacity: 1.0
     });
+
+    var caLayer = L.imageOverlay("/images/Ca.png", [
+      [38.898761, -92.209172],
+      [38.899711, -92.210552]
+    ], {opacity: 1.0
+    });
+
+    var mgLayer = L.imageOverlay("/images/Mg.png", [
+      [38.898761, -92.209172],
+      [38.899711, -92.210552]
+    ], {opacity: 1.0
+    });
+
+    var proteinLayer = L.imageOverlay("/images/Protein.png", [
+      [38.899609, -92.210481],
+      [38.898819, -92.209280]
+    ], {opacity: 1.0
+    });
+
+
+
 
     // control
     var overlayMaps = {
@@ -104,12 +125,15 @@
       "ECa": ecsLayer,
       "DEM": demLayer,
       "Yield": yieldLayer,
+      "Protein": proteinLayer,
       "TN": tnLayer,
       "SOC": socLayer,
       "WAS": wasLayer,
       "pH": phLayer,
       "K": kLayer,
       "P": pLayer,
+      "Ca": caLayer,
+      "Mg": mgLayer,
       "CEC": cecLayer,
     };
 
