@@ -50,7 +50,7 @@
     });
 
     // Yield
-    var yieldLayer = L.imageOverlay("/images/yield.png", [
+    var yieldLayer = L.imageOverlay("/images/Yield.png", [
       [38.899703, -92.210552],
       [38.898761, -92.209174]
     ], {opacity: 1.0
