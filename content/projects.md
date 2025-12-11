@@ -42,6 +42,12 @@
     ], {opacity: 1.0
     });
 
+    // DEM
+    var demLayer = L.imageOverlay("/images/DEM.png", [
+      [38.899605, -92.210477],
+      [38.898815, -92.209277]
+    ], {opacity: 1.0
+    });
 
     // Yield
     var yieldLayer = L.imageOverlay("/images/yield.png", [
@@ -96,6 +102,7 @@
     var overlayMaps = {
       "NDVI": ndviLayer,
       "ECa": ecsLayer,
+      "DEM": demLayer,
       "Yield": yieldLayer,
       "TN": tnLayer,
       "SOC": socLayer,
