@@ -205,6 +205,11 @@
       [38.912300, -92.266332],
       [38.908232, -92.257788]
     ], {opacity: 1.0});
+
+    var ecdLayer2 = L.imageOverlay("/images2/ECD.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
     
     var TNLayer2 = L.imageOverlay("/images2/TN.png", [
       [38.912300, -92.266332],
@@ -238,7 +243,8 @@
 
     var overlayMaps2 = {
       "RGB": rgbLayer2,
-      "ECa": ecsLayer2,
+      "ECa_S": ecsLayer2,
+      "ECa_D": ecdLayer2,
       "TN": TNLayer2,
       "SOC": socLayer2,
       "WAS": WASLayer2,
