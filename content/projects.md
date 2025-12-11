@@ -36,7 +36,7 @@
     }).addTo(map);
 
     // EC-Shallow
-    var ecsLayer = L.imageOverlay("/images/ECS.PNG", [
+    var ecsLayer = L.imageOverlay("/images/ECS.png", [
       [38.899755, -92.210554],
       [38.898716, -92.209279]
     ], {opacity: 1.0
