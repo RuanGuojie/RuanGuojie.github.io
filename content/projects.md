@@ -42,6 +42,13 @@
     ], {opacity: 1.0
     });
 
+    // EC-deep
+    var ecdLayer = L.imageOverlay("/images/ECD.png", [
+      [38.899755, -92.210554],
+      [38.898716, -92.209279]
+    ], {opacity: 1.0
+    });
+
     // DEM
     var demLayer = L.imageOverlay("/images/DEM.png", [
       [38.899878, -92.211008],
@@ -116,13 +123,20 @@
     ], {opacity: 1.0
     });
 
+    var respLayer = L.imageOverlay("/images/RESP.png", [
+      [38.898761, -92.209172],
+      [38.899711, -92.210552]
+    ], {opacity: 1.0
+    });
+
 
 
 
     // control
     var overlayMaps = {
       "NDVI": ndviLayer,
-      "ECa": ecsLayer,
+      "ECa_S": ecsLayer,
+      "ECa_D": ecdLayer,
       "DEM": demLayer,
       "Yield": yieldLayer,
       "Protein": proteinLayer,
@@ -135,6 +149,7 @@
       "Ca": caLayer,
       "Mg": mgLayer,
       "CEC": cecLayer,
+      "Resp": respLayer,
     };
 
     var layerControl = L.control.layers(null, overlayMaps).addTo(map);
