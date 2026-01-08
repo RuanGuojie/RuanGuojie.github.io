@@ -78,7 +78,7 @@ education:
       Thesis: Winter wheat smart nitrogen recommendation algorithms based on multi-source data fusion. <br>
       Supervisor: <a href="https://faculty.njau.edu.cn/qiangcao/zh_CN/index.htm" target="_blank">Professor Qiang Cao</a>
 
-  - area: BSc. in Agronomy (Ding Ying Innovation Class)
+  - area: BSc. in Agronomy (Ding Ying Innovation Program)
     institution: South China Agricultural University, Guangzhou, China
     icon: "custom/scau"
     date_start: 2016-09-01
