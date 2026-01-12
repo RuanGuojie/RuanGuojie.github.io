@@ -72,7 +72,7 @@ education:
     date_end: 2023-06-01
     summary: |
       National Engineering and Technology Center for Information Agriculture. (国家信息农业工程技术中心) <br>
-      “Double First-class” disciplines of Crop Science. (国家双一流建设学科：作物学) <br>
+      Double First-Class Disciplines: Crop Science. (国家双一流建设学科：作物学) <br>
       Ranked #14 globally in Agriculture & Forestry in the QS World University Rankings by Subject 2025 <br>
       Ranked #15 for Agricultural Science by EduRank 2025. <br>
       Thesis: Winter wheat smart nitrogen recommendation algorithms based on multi-source data fusion. <br>
@@ -84,7 +84,7 @@ education:
     date_start: 2016-09-01
     date_end: 2020-06-30
     summary: |
-      “Double First-class” disciplines of Crop Science.(国家双一流建设学科：作物学) <br>
+      Double First-Class Disciplines: Crop Science.(国家双一流建设学科：作物学) <br>
       Ranked 28th globally in Agriculture & Forestry in the QS World University Rankings by Subject 2025 <br>
       GPA: 4.04/5.0 <br>
       Thesis: Comparative study on Seed Storability of Chinese Soybean Landrace Population.
