@@ -36,7 +36,8 @@ sections:
     content:
       title: Professional Memberships
       text: |
-        American Geophysical Union (AGU,美国地球物理学会) (2025-present)
+        American Geophysical Union (AGU,美国地球物理学会) (2025-present) <br>
+        American Society of Agricultural & Biological Engineers (ASABE,美国农业与生物工程师学会)
   - block: resume-languages
     content:
       title: Languages
