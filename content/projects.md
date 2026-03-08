@@ -429,19 +429,12 @@
   height: 18px;
 }
 
-/* Native fullscreen (desktop) */
-.globe-wrapper:-webkit-full-screen #map3d,
-.globe-wrapper:fullscreen #map3d {
-  height: 100vh !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-}
-
+/* Shared fullscreen layer styles */
 .globe-wrapper:-webkit-full-screen .layer-control,
 .globe-wrapper:fullscreen .layer-control,
 .globe-wrapper.fake-fs .layer-control {
   position: fixed;
-  bottom: 20px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
@@ -452,6 +445,16 @@
   border: 1px solid rgba(255,255,255,0.25);
   box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
   color: #fff;
+  padding: 14px 18px;
+}
+
+.globe-wrapper:-webkit-full-screen .layer-control .layer-control-title,
+.globe-wrapper:fullscreen .layer-control .layer-control-title,
+.globe-wrapper.fake-fs .layer-control .layer-control-title {
+  color: rgba(255,255,255,0.5);
+  opacity: 1;
+  margin-bottom: 10px;
+  font-size: 11px;
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn,
@@ -460,6 +463,8 @@
   color: rgba(255,255,255,0.7);
   border-color: rgba(255,255,255,0.18);
   background: rgba(255,255,255,0.06);
+  padding: 8px 14px;
+  font-size: 13px;
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn:hover,
@@ -485,11 +490,18 @@
   border-color: rgba(255,255,255,0.3);
 }
 
-.globe-wrapper:-webkit-full-screen .layer-control .layer-control-title,
-.globe-wrapper:fullscreen .layer-control .layer-control-title,
-.globe-wrapper.fake-fs .layer-control .layer-control-title {
-  color: rgba(255,255,255,0.5);
-  opacity: 1;
+.globe-wrapper:-webkit-full-screen .layer-control .layer-grid,
+.globe-wrapper:fullscreen .layer-control .layer-grid,
+.globe-wrapper.fake-fs .layer-control .layer-grid {
+  gap: 8px;
+}
+
+/* Native fullscreen */
+.globe-wrapper:-webkit-full-screen #map3d,
+.globe-wrapper:fullscreen #map3d {
+  height: 100vh !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
 }
 
 /* Fake fullscreen for iOS */
@@ -513,6 +525,47 @@
 
 .globe-wrapper.fake-fs .fs-btn {
   z-index: 999999;
+}
+
+/* Mobile fullscreen: compact layer panel */
+@media (max-width: 600px) {
+  .globe-wrapper:-webkit-full-screen .layer-control,
+  .globe-wrapper:fullscreen .layer-control,
+  .globe-wrapper.fake-fs .layer-control {
+    bottom: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    max-width: 95vw;
+  }
+
+  .globe-wrapper:-webkit-full-screen .layer-control .layer-control-title,
+  .globe-wrapper:fullscreen .layer-control .layer-control-title,
+  .globe-wrapper.fake-fs .layer-control .layer-control-title {
+    margin-bottom: 8px;
+    font-size: 10px;
+  }
+
+  .globe-wrapper:-webkit-full-screen .layer-control .layer-grid,
+  .globe-wrapper:fullscreen .layer-control .layer-grid,
+  .globe-wrapper.fake-fs .layer-control .layer-grid {
+    gap: 6px;
+  }
+
+  .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn,
+  .globe-wrapper:fullscreen .layer-control .lyr-btn,
+  .globe-wrapper.fake-fs .layer-control .lyr-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 6px;
+    border-radius: 8px;
+  }
+
+  .globe-wrapper:-webkit-full-screen .layer-control .lyr-dot,
+  .globe-wrapper:fullscreen .layer-control .lyr-dot,
+  .globe-wrapper.fake-fs .layer-control .lyr-dot {
+    width: 6px;
+    height: 6px;
+  }
 }
 </style>
 
@@ -645,10 +698,6 @@ document.addEventListener("DOMContentLoaded", function() {
     var isFakeFs = false;
     var savedScrollY = 0;
 
-    function canNativeFullscreen() {
-      return !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
-    }
-
     function isNativeFullscreen() {
       return !!(document.fullscreenElement || document.webkitFullscreenElement);
     }
@@ -671,8 +720,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (fsBtn && wrapper) {
       fsBtn.addEventListener('click', function() {
-        if (canNativeFullscreen() && !(/iPad|iPhone|iPod/.test(navigator.userAgent))) {
-          // Desktop: native fullscreen
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) || !wrapper.requestFullscreen && !wrapper.webkitRequestFullscreen) {
+          if (!isFakeFs) enterFakeFullscreen();
+          else exitFakeFullscreen();
+        } else {
           if (!isNativeFullscreen()) {
             if (wrapper.requestFullscreen) wrapper.requestFullscreen();
             else if (wrapper.webkitRequestFullscreen) wrapper.webkitRequestFullscreen();
@@ -680,17 +731,9 @@ document.addEventListener("DOMContentLoaded", function() {
             if (document.exitFullscreen) document.exitFullscreen();
             else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
           }
-        } else {
-          // iOS: fake fullscreen
-          if (!isFakeFs) {
-            enterFakeFullscreen();
-          } else {
-            exitFakeFullscreen();
-          }
         }
       });
 
-      // Sync on native fullscreen exit (e.g. pressing Esc)
       document.addEventListener('fullscreenchange', function() {
         if (!document.fullscreenElement) viewer.resize();
       });
