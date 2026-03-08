@@ -281,98 +281,123 @@
 
 ## 3D Globe Agriculture
 <div class="cesium-container">
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
-  
-  <div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; position: relative; z-index: 1; background-color: #1c1c1c;"></div>
-  
-  <div style="position: relative; z-index: 9999; margin-top: 15px; padding: 15px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e9ecef;">
-    <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
-    <div style="display: flex; flex-wrap: wrap; gap: 15px; font-size: 16px; color: #333;">
-      <div style="display: flex; align-items: center;">
-        <input id="chk-ndvi" class="lyr-cb" type="checkbox" value="/data/NDVI.KMZ" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
-        <label for="chk-ndvi" style="margin: 0; padding: 5px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;">NDVI</label>
-      </div>
-      <div style="display: flex; align-items: center;">
-        <input id="chk-lcc" class="lyr-cb" type="checkbox" value="/data/lcc.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
-        <label for="chk-lcc" style="margin: 0; padding: 5px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;">LCC</label>
-      </div>
-      <div style="display: flex; align-items: center;">
-        <input id="chk-corn" class="lyr-cb" type="checkbox" value="/data/maize.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
-        <label for="chk-corn" style="margin: 0; padding: 5px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;">Corn</label>
-      </div>
-      <div style="display: flex; align-items: center;">
-        <input id="chk-soy" class="lyr-cb" type="checkbox" value="/data/soybean.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
-        <label for="chk-soy" style="margin: 0; padding: 5px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;">Soybean</label>
-      </div>
-      <div style="display: flex; align-items: center;">
-        <input id="chk-rice" class="lyr-cb" type="checkbox" value="/data/rice.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
-        <label for="chk-rice" style="margin: 0; padding: 5px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;">Rice</label>
-      </div>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+
+<div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; position: relative; z-index: 1; background-color: #1c1c1c;"></div>
+
+<div id="layer-panel" style="position: relative; z-index: 9999; margin-top: 15px; padding: 15px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e9ecef; -webkit-user-select: none; user-select: none;">
+  <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
+  <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 16px; color: #333;">
+    <div class="lyr-btn" data-layer="/data/NDVI.KMZ" style="display: flex; align-items: center; padding: 8px 14px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.1); touch-action: manipulation;">
+      <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
+      <span>NDVI</span>
+    </div>
+    <div class="lyr-btn" data-layer="/data/lcc.kmz" style="display: flex; align-items: center; padding: 8px 14px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.1); touch-action: manipulation;">
+      <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
+      <span>LCC</span>
+    </div>
+    <div class="lyr-btn" data-layer="/data/maize.kmz" style="display: flex; align-items: center; padding: 8px 14px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.1); touch-action: manipulation;">
+      <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
+      <span>Corn</span>
+    </div>
+    <div class="lyr-btn" data-layer="/data/soybean.kmz" style="display: flex; align-items: center; padding: 8px 14px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.1); touch-action: manipulation;">
+      <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
+      <span>Soybean</span>
+    </div>
+    <div class="lyr-btn" data-layer="/data/rice.kmz" style="display: flex; align-items: center; padding: 8px 14px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; -webkit-tap-highlight-color: rgba(0,0,0,0.1); touch-action: manipulation;">
+      <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
+      <span>Rice</span>
     </div>
   </div>
+</div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      try {
-        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
-        var viewer = new Cesium.Viewer("map3d", {
-          terrain: Cesium.Terrain.fromWorldTerrain(),
-          baseLayerPicker: false,
-          geocoder: false,
-          animation: false,
-          timeline: false,
-          navigationHelpButton: false
-        });
-        window.loaded3DLayers = {};
-
-        function toggleLayer(cb) {
-          var kmlUrl = cb.value;
-          if (cb.checked) {
-            viewer.dataSources.add(
-              Cesium.KmlDataSource.load(kmlUrl, {
-                camera: viewer.scene.camera,
-                canvas: viewer.scene.canvas,
-                clampToGround: true
-              })
-            ).then(function (dataSource) {
-              window.loaded3DLayers[kmlUrl] = dataSource;
-            }).catch(function (error) {
-              alert("图层加载失败: " + kmlUrl);
-              cb.checked = false;
-            });
-          } else {
-            var activeLayer = window.loaded3DLayers[kmlUrl];
-            if (activeLayer) {
-              viewer.dataSources.remove(activeLayer);
-              delete window.loaded3DLayers[kmlUrl];
-            }
-          }
-        }
-
-        var checkboxes = document.querySelectorAll('.lyr-cb');
-        checkboxes.forEach(function (cb) {
-          // Desktop: normal change event
-          cb.addEventListener('change', function () {
-            toggleLayer(this);
-          });
-
-          // Mobile fix: label click programmatically toggles checkbox
-          var label = document.querySelector('label[for="' + cb.id + '"]');
-          if (label) {
-            label.addEventListener('click', function (e) {
-              e.preventDefault();
-              e.stopPropagation();
-              cb.checked = !cb.checked;
-              toggleLayer(cb);
-            });
-          }
-        });
-
-      } catch (error) {
-        document.getElementById("map3d").innerHTML =
-          "<div style='padding: 20px; color: red;'>3D地球初始化失败：" + error.message + "</div>";
-      }
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  try {
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
+    var viewer = new Cesium.Viewer("map3d", {
+      terrain: Cesium.Terrain.fromWorldTerrain(),
+      baseLayerPicker: false,
+      geocoder: false,
+      animation: false,
+      timeline: false,
+      navigationHelpButton: false
     });
-  </script>
+
+    window.loaded3DLayers = {};
+    var layerStates = {};
+
+    function toggleLayer(btn) {
+      var kmlUrl = btn.getAttribute('data-layer');
+      var icon = btn.querySelector('.lyr-icon');
+      var isActive = layerStates[kmlUrl] || false;
+
+      if (!isActive) {
+        layerStates[kmlUrl] = true;
+        btn.style.borderColor = '#2196F3';
+        btn.style.background = '#e3f2fd';
+        icon.textContent = '✓';
+        icon.style.borderColor = '#2196F3';
+        icon.style.color = '#2196F3';
+
+        viewer.dataSources.add(
+          Cesium.KmlDataSource.load(kmlUrl, {
+            camera: viewer.scene.camera,
+            canvas: viewer.scene.canvas,
+            clampToGround: true
+          })
+        ).then(function(dataSource) {
+          window.loaded3DLayers[kmlUrl] = dataSource;
+        }).catch(function(error) {
+          alert("图层加载失败: " + kmlUrl);
+          layerStates[kmlUrl] = false;
+          btn.style.borderColor = '#ccc';
+          btn.style.background = '';
+          icon.textContent = '';
+          icon.style.borderColor = '#999';
+        });
+      } else {
+        layerStates[kmlUrl] = false;
+        btn.style.borderColor = '#ccc';
+        btn.style.background = '';
+        icon.textContent = '';
+        icon.style.borderColor = '#999';
+
+        var activeLayer = window.loaded3DLayers[kmlUrl];
+        if (activeLayer) {
+          viewer.dataSources.remove(activeLayer);
+          delete window.loaded3DLayers[kmlUrl];
+        }
+      }
+    }
+
+    var buttons = document.querySelectorAll('.lyr-btn');
+    buttons.forEach(function(btn) {
+      var touched = false;
+
+      btn.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        touched = true;
+        toggleLayer(btn);
+      }, {passive: false});
+
+      btn.addEventListener('click', function(e) {
+        if (touched) {
+          touched = false;
+          return;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        toggleLayer(btn);
+      });
+    });
+
+  } catch (error) {
+    document.getElementById("map3d").innerHTML =
+      "<div style='padding: 20px; color: red;'>3D地球初始化失败：" + error.message + "</div>";
+  }
+});
+</script>
 </div>
