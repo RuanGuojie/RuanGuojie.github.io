@@ -280,49 +280,52 @@
 </script>
 
 
----
-title: "Interactive 3D Data Globe"
-summary: "展示自定义地理空间数据的交互式 3D 地球引擎"
-date: 2026-03-07
-tags:
-  - 3D Mapping
-  - GIS
----
+## 3D Globe Agriculture
 
-<script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
-<link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<div id="map3d" style="height: 600px; margin-top: 20px; border-radius: 4px; z-index: 1;"></div>
 
-<div id="cesiumContainer" style="width: 100%; height: 700px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
-
-<div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
-  <strong>图层控制：</strong>
-  <button onclick="loadKmlLayer('/data/layer1.kml')" style="margin-right: 10px; padding: 5px 10px; cursor: pointer;">加载图层 1</button>
-  <button onclick="loadKmlLayer('/data/layer2.kml')" style="padding: 5px 10px; cursor: pointer;">加载图层 2</button>
-  <button onclick="viewer.dataSources.removeAll()" style="margin-left: 10px; padding: 5px 10px; color: red; cursor: pointer;">清除所有图层</button>
+<div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
+  <strong style="margin-right: 15px;">3D 图层控制 (KML):</strong>
+  <button onclick="window.loadKmlLayer('/data/field_boundary.kml')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer;">边界图层</button>
+  <button onclick="window.loadKmlLayer('/data/flight_path.kml')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer;">无人机航线</button>
+  <button onclick="window.clear3DLayers()" style="padding: 5px 12px; color: #dc3545; cursor: pointer;">清除图层</button>
 </div>
 
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+
 <script>
-  // 1. 填入你的免费 Cesium ion Token (必须填写才能显示底图)
-  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
+  document.addEventListener("DOMContentLoaded", function () {
+    // 1. 填入你的 Cesium ion Token（如果不填，底图可能会显示为无贴图的网格或报错）
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
 
-  // 2. 初始化 3D 地球
-  const viewer = new Cesium.Viewer('cesiumContainer', {
-    terrainProvider: Cesium.createWorldTerrain(), // 开启 3D 地形
-    baseLayerPicker: false, // 隐藏默认底图选择器以保持界面简洁
-    geocoder: false // 隐藏搜索框
-  });
-
-  // 3. 定义加载 KML 的函数
-  function loadKmlLayer(kmlPath) {
-    viewer.dataSources.add(Cesium.KmlDataSource.load(kmlPath, {
-      camera: viewer.scene.camera,
-      canvas: viewer.scene.canvas
-    })).then(function(dataSource){
-      // 飞向加载的数据图层
-      viewer.flyTo(dataSource);
-    }).catch(function(error) {
-      console.error("图层加载失败: ", error);
-      alert("无法加载图层，请检查 KML 文件路径是否正确。");
+    // 2. 初始化 3D 地球
+    var viewer = new Cesium.Viewer("map3d", {
+      terrainProvider: Cesium.createWorldTerrain(), // 开启全球 3D 地形
+      baseLayerPicker: false,    // 隐藏底图选择器
+      geocoder: false,           // 隐藏右上角搜索框
+      animation: false,          // 隐藏左下角动画控件
+      timeline: false,           // 隐藏底部时间轴
+      navigationHelpButton: false // 隐藏帮助按钮
     });
-  }
+
+    // 3. 将加载和清除图层的函数挂载到 window 上，以便 HTML 中的 onclick 可以调用
+    window.loadKmlLayer = function(kmlUrl) {
+      viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, {
+        camera: viewer.scene.camera,
+        canvas: viewer.scene.canvas,
+        clampToGround: true // 尝试将 KML 贴合到 3D 地形表面
+      })).then(function(dataSource){
+        // 加载成功后，视角平滑飞向该图层
+        viewer.flyTo(dataSource);
+      }).catch(function(error) {
+        console.error("KML 加载失败:", error);
+        alert("图层加载失败，请检查路径: " + kmlUrl);
+      });
+    };
+
+    window.clear3DLayers = function() {
+      viewer.dataSources.removeAll();
+    };
+  });
 </script>
