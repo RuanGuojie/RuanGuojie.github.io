@@ -278,3 +278,51 @@
       });
   });
 </script>
+
+
+---
+title: "Interactive 3D Data Globe"
+summary: "展示自定义地理空间数据的交互式 3D 地球引擎"
+date: 2026-03-07
+tags:
+  - 3D Mapping
+  - GIS
+---
+
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+
+<div id="cesiumContainer" style="width: 100%; height: 700px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
+
+<div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+  <strong>图层控制：</strong>
+  <button onclick="loadKmlLayer('/data/layer1.kml')" style="margin-right: 10px; padding: 5px 10px; cursor: pointer;">加载图层 1</button>
+  <button onclick="loadKmlLayer('/data/layer2.kml')" style="padding: 5px 10px; cursor: pointer;">加载图层 2</button>
+  <button onclick="viewer.dataSources.removeAll()" style="margin-left: 10px; padding: 5px 10px; color: red; cursor: pointer;">清除所有图层</button>
+</div>
+
+<script>
+  // 1. 填入你的免费 Cesium ion Token (必须填写才能显示底图)
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
+
+  // 2. 初始化 3D 地球
+  const viewer = new Cesium.Viewer('cesiumContainer', {
+    terrainProvider: Cesium.createWorldTerrain(), // 开启 3D 地形
+    baseLayerPicker: false, // 隐藏默认底图选择器以保持界面简洁
+    geocoder: false // 隐藏搜索框
+  });
+
+  // 3. 定义加载 KML 的函数
+  function loadKmlLayer(kmlPath) {
+    viewer.dataSources.add(Cesium.KmlDataSource.load(kmlPath, {
+      camera: viewer.scene.camera,
+      canvas: viewer.scene.canvas
+    })).then(function(dataSource){
+      // 飞向加载的数据图层
+      viewer.flyTo(dataSource);
+    }).catch(function(error) {
+      console.error("图层加载失败: ", error);
+      alert("无法加载图层，请检查 KML 文件路径是否正确。");
+    });
+  }
+</script>
