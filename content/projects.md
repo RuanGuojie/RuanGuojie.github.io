@@ -308,7 +308,7 @@
         if (checkbox.checked) {
           viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, { camera: viewer.scene.camera, canvas: viewer.scene.canvas, clampToGround: true })).then(function(dataSource){
             window.loaded3DLayers[kmlUrl] = dataSource; 
-            viewer.flyTo(dataSource); 
+            //viewer.flyTo(dataSource); 
           }).catch(function(error) {
             alert("图层加载失败: " + kmlUrl);
             checkbox.checked = false; 
