@@ -446,6 +446,9 @@
   box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
   color: #fff;
   padding: 14px 18px;
+  max-height: 35vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .layer-control-title,
@@ -455,6 +458,37 @@
   opacity: 1;
   margin-bottom: 10px;
   font-size: 11px;
+  flex-shrink: 0;
+}
+
+.globe-wrapper:-webkit-full-screen .layer-control .layer-grid,
+.globe-wrapper:fullscreen .layer-control .layer-grid,
+.globe-wrapper.fake-fs .layer-control .layer-grid {
+  gap: 8px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Thin scrollbar */
+.globe-wrapper:-webkit-full-screen .layer-control .layer-grid::-webkit-scrollbar,
+.globe-wrapper:fullscreen .layer-control .layer-grid::-webkit-scrollbar,
+.globe-wrapper.fake-fs .layer-control .layer-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.globe-wrapper:-webkit-full-screen .layer-control .layer-grid::-webkit-scrollbar-track,
+.globe-wrapper:fullscreen .layer-control .layer-grid::-webkit-scrollbar-track,
+.globe-wrapper.fake-fs .layer-control .layer-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.globe-wrapper:-webkit-full-screen .layer-control .layer-grid::-webkit-scrollbar-thumb,
+.globe-wrapper:fullscreen .layer-control .layer-grid::-webkit-scrollbar-thumb,
+.globe-wrapper.fake-fs .layer-control .layer-grid::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn,
@@ -465,6 +499,7 @@
   background: rgba(255,255,255,0.06);
   padding: 8px 14px;
   font-size: 13px;
+  flex-shrink: 0;
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn:hover,
@@ -488,12 +523,6 @@
 .globe-wrapper:fullscreen .layer-control .lyr-dot,
 .globe-wrapper.fake-fs .layer-control .lyr-dot {
   border-color: rgba(255,255,255,0.3);
-}
-
-.globe-wrapper:-webkit-full-screen .layer-control .layer-grid,
-.globe-wrapper:fullscreen .layer-control .layer-grid,
-.globe-wrapper.fake-fs .layer-control .layer-grid {
-  gap: 8px;
 }
 
 /* Native fullscreen */
@@ -527,7 +556,7 @@
   z-index: 999999;
 }
 
-/* Mobile fullscreen: compact layer panel */
+/* Mobile fullscreen: compact */
 @media (max-width: 600px) {
   .globe-wrapper:-webkit-full-screen .layer-control,
   .globe-wrapper:fullscreen .layer-control,
@@ -536,6 +565,7 @@
     padding: 10px 12px;
     border-radius: 10px;
     max-width: 95vw;
+    max-height: 30vh;
   }
 
   .globe-wrapper:-webkit-full-screen .layer-control .layer-control-title,
@@ -720,7 +750,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (fsBtn && wrapper) {
       fsBtn.addEventListener('click', function() {
-        if (/iPad|iPhone|iPod/.test(navigator.userAgent) || !wrapper.requestFullscreen && !wrapper.webkitRequestFullscreen) {
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) || (!wrapper.requestFullscreen && !wrapper.webkitRequestFullscreen)) {
           if (!isFakeFs) enterFakeFullscreen();
           else exitFakeFullscreen();
         } else {
