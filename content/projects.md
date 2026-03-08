@@ -291,23 +291,23 @@
     <div style="display: flex; flex-wrap: wrap; gap: 15px; font-size: 16px; color: #333;">
       <div style="display: flex; align-items: center;">
         <input id="chk-ndvi" class="lyr-cb" type="checkbox" value="/data/NDVI.KMZ" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
-        <label for="chk-ndvi" onclick="" style="margin: 0; padding: 5px 0; cursor: pointer;">NDVI</label>
+        <label for="chk-ndvi" style="margin: 0; padding: 5px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;">NDVI</label>
       </div>
       <div style="display: flex; align-items: center;">
         <input id="chk-lcc" class="lyr-cb" type="checkbox" value="/data/lcc.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
-        <label for="chk-lcc" onclick="" style="margin: 0; padding: 5px 0; cursor: pointer;">LCC</label>
+        <label for="chk-lcc" style="margin: 0; padding: 5px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;">LCC</label>
       </div>
       <div style="display: flex; align-items: center;">
         <input id="chk-corn" class="lyr-cb" type="checkbox" value="/data/maize.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
-        <label for="chk-corn" onclick="" style="margin: 0; padding: 5px 0; cursor: pointer;">Corn</label>
+        <label for="chk-corn" style="margin: 0; padding: 5px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;">Corn</label>
       </div>
       <div style="display: flex; align-items: center;">
         <input id="chk-soy" class="lyr-cb" type="checkbox" value="/data/soybean.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
-        <label for="chk-soy" onclick="" style="margin: 0; padding: 5px 0; cursor: pointer;">Soybean</label>
+        <label for="chk-soy" style="margin: 0; padding: 5px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;">Soybean</label>
       </div>
       <div style="display: flex; align-items: center;">
         <input id="chk-rice" class="lyr-cb" type="checkbox" value="/data/rice.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
-        <label for="chk-rice" onclick="" style="margin: 0; padding: 5px 0; cursor: pointer;">Rice</label>
+        <label for="chk-rice" style="margin: 0; padding: 5px 0; cursor: pointer; -webkit-tap-highlight-color: transparent;">Rice</label>
       </div>
     </div>
   </div>
@@ -316,32 +316,62 @@
     document.addEventListener("DOMContentLoaded", function () {
       try {
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
-        var viewer = new Cesium.Viewer("map3d", { terrain: Cesium.Terrain.fromWorldTerrain(), baseLayerPicker: false, geocoder: false, animation: false, timeline: false, navigationHelpButton: false });
-        window.loaded3DLayers = {};
-        
-        var checkboxes = document.querySelectorAll('.lyr-cb');
-        checkboxes.forEach(function(cb) {
-          cb.addEventListener('change', function() {
-            var kmlUrl = this.value; 
-            if (this.checked) {
-              viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, { camera: viewer.scene.camera, canvas: viewer.scene.canvas, clampToGround: true })).then(function(dataSource){
-                window.loaded3DLayers[kmlUrl] = dataSource; 
-                viewer.flyTo(dataSource); 
-              }).catch(function(error) {
-                alert("图层加载失败: " + kmlUrl);
-                cb.checked = false; 
-              });
-            } else {
-              var activeLayer = window.loaded3DLayers[kmlUrl];
-              if (activeLayer) {
-                viewer.dataSources.remove(activeLayer);
-                delete window.loaded3DLayers[kmlUrl]; 
-              }
-            }
-          });
+        var viewer = new Cesium.Viewer("map3d", {
+          terrain: Cesium.Terrain.fromWorldTerrain(),
+          baseLayerPicker: false,
+          geocoder: false,
+          animation: false,
+          timeline: false,
+          navigationHelpButton: false
         });
+        window.loaded3DLayers = {};
+
+        function toggleLayer(cb) {
+          var kmlUrl = cb.value;
+          if (cb.checked) {
+            viewer.dataSources.add(
+              Cesium.KmlDataSource.load(kmlUrl, {
+                camera: viewer.scene.camera,
+                canvas: viewer.scene.canvas,
+                clampToGround: true
+              })
+            ).then(function (dataSource) {
+              window.loaded3DLayers[kmlUrl] = dataSource;
+            }).catch(function (error) {
+              alert("图层加载失败: " + kmlUrl);
+              cb.checked = false;
+            });
+          } else {
+            var activeLayer = window.loaded3DLayers[kmlUrl];
+            if (activeLayer) {
+              viewer.dataSources.remove(activeLayer);
+              delete window.loaded3DLayers[kmlUrl];
+            }
+          }
+        }
+
+        var checkboxes = document.querySelectorAll('.lyr-cb');
+        checkboxes.forEach(function (cb) {
+          // Desktop: normal change event
+          cb.addEventListener('change', function () {
+            toggleLayer(this);
+          });
+
+          // Mobile fix: label click programmatically toggles checkbox
+          var label = document.querySelector('label[for="' + cb.id + '"]');
+          if (label) {
+            label.addEventListener('click', function (e) {
+              e.preventDefault();
+              e.stopPropagation();
+              cb.checked = !cb.checked;
+              toggleLayer(cb);
+            });
+          }
+        });
+
       } catch (error) {
-        document.getElementById("map3d").innerHTML = "<div style='padding: 20px; color: red;'>3D地球初始化失败：" + error.message + "</div>";
+        document.getElementById("map3d").innerHTML =
+          "<div style='padding: 20px; color: red;'>3D地球初始化失败：" + error.message + "</div>";
       }
     });
   </script>
