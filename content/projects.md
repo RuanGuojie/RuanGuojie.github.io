@@ -285,33 +285,39 @@
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
 
-<div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; z-index: 1; background-color: #1c1c1c;"></div>
-
-<div style="position: relative; z-index: 10; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
+<div style="position: relative; z-index: 9999; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
   <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
   
-  <button onclick="window.loadKmlLayer('/data/NDVI.KMZ')" style="touch-action: manipulation; padding: 6px 14px; margin-right: 8px; margin-bottom: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">NDVI</button>
-  
-  <button onclick="window.loadKmlLayer('/data/lcc.kmz')" style="touch-action: manipulation; padding: 6px 14px; margin-right: 8px; margin-bottom: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">LCC</button>
-  
-  <button onclick="window.loadKmlLayer('/data/maize.kmz')" style="touch-action: manipulation; padding: 6px 14px; margin-right: 8px; margin-bottom: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">Corn</button>
-  
-  <button onclick="window.loadKmlLayer('/data/soybean.kmz')" style="touch-action: manipulation; padding: 6px 14px; margin-right: 8px; margin-bottom: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">Soybean</button>
-  
-  <button onclick="window.loadKmlLayer('/data/rice.kmz')" style="touch-action: manipulation; padding: 6px 14px; margin-right: 8px; margin-bottom: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">Rice</button>
-  
-  <button onclick="window.clear3DLayers()" style="touch-action: manipulation; padding: 6px 14px; margin-bottom: 8px; color: #dc3545; background-color: white; border: 1px solid #dc3545; border-radius: 3px; cursor: pointer; font-size: 15px;">Clear</button>
+  <div style="display: flex; flex-wrap: wrap; gap: 15px; font-size: 15px; color: #333;">
+    <label style="display: flex; align-items: center; cursor: pointer;">
+      <input type="checkbox" value="/data/NDVI.KMZ" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> NDVI
+    </label>
+    
+    <label style="display: flex; align-items: center; cursor: pointer;">
+      <input type="checkbox" value="/data/lcc.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> LCC
+    </label>
+    
+    <label style="display: flex; align-items: center; cursor: pointer;">
+      <input type="checkbox" value="/data/maize.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Corn
+    </label>
+    
+    <label style="display: flex; align-items: center; cursor: pointer;">
+      <input type="checkbox" value="/data/soybean.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Soybean
+    </label>
+    
+    <label style="display: flex; align-items: center; cursor: pointer;">
+      <input type="checkbox" value="/data/rice.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Rice
+    </label>
+  </div>
 </div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     try {
-      // 1. 填入你的 Cesium ion Token
       Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
 
-      // 2. 初始化 3D 地球 (已更新为适配 1.114 的新版地形 API)
       var viewer = new Cesium.Viewer("map3d", {
-        terrain: Cesium.Terrain.fromWorldTerrain(), // 👈 就是这里修改了新语法
+        terrain: Cesium.Terrain.fromWorldTerrain(), 
         baseLayerPicker: false,
         geocoder: false,
         animation: false,
@@ -319,22 +325,35 @@
         navigationHelpButton: false
       });
 
-      // 3. 加载 KML 图层的功能
-      window.loadKmlLayer = function(kmlUrl) {
-        viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, {
-          camera: viewer.scene.camera,
-          canvas: viewer.scene.canvas,
-          clampToGround: true // 尝试贴合地形
-        })).then(function(dataSource){
-          //viewer.flyTo(dataSource);
-        }).catch(function(error) {
-          alert("图层加载失败: " + kmlUrl + "\n请确认文件路径正确。");
-        });
-      };
+      // 新增：建一个“库房”来记住目前加载了哪些图层
+      window.loaded3DLayers = {};
 
-      // 4. 清除图层的功能
-      window.clear3DLayers = function() {
-        viewer.dataSources.removeAll();
+      // 新增：专门处理勾选框打勾和取消的函数
+      window.toggleKmlLayer = function(checkbox) {
+        var kmlUrl = checkbox.value; // 获取文件路径
+        
+        if (checkbox.checked) {
+          // 如果是打勾，就加载它
+          Cesium.KmlDataSource.load(kmlUrl, {
+            camera: viewer.scene.camera,
+            canvas: viewer.scene.canvas,
+            clampToGround: true
+          }).then(function(dataSource){
+            viewer.dataSources.add(dataSource);
+            window.loaded3DLayers[kmlUrl] = dataSource; // 把加载好的图层存进库房
+            viewer.flyTo(dataSource); // 飞过去看
+          }).catch(function(error) {
+            alert("图层加载失败: " + kmlUrl);
+            checkbox.checked = false; // 加载失败就把勾去掉
+          });
+        } else {
+          // 如果是取消打勾，就从库房里找到它并移除
+          var activeLayer = window.loaded3DLayers[kmlUrl];
+          if (activeLayer) {
+            viewer.dataSources.remove(activeLayer);
+            delete window.loaded3DLayers[kmlUrl]; // 从库房清空记录
+          }
+        }
       };
 
     } catch (error) {
