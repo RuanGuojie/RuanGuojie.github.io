@@ -287,27 +287,27 @@
 <div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; position: relative; z-index: 1; background-color: #1c1c1c;"></div>
 </div>
 
-<!-- 关键：把控制面板放在 cesium-container 外面 -->
+<!-- 控制面板在 cesium-container 外面 -->
 <div id="layer-panel" ontouchstart="" style="position: relative; z-index: 99999; margin-top: 15px; padding: 15px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e9ecef; -webkit-user-select: none; user-select: none; pointer-events: auto;">
   <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
   <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 16px; color: #333;">
-    <button class="lyr-btn" data-layer="data/NDVI.KMZ" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
+    <button class="lyr-btn" data-layer="/data/NDVI.KMZ" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
       <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
       <span>NDVI</span>
     </button>
-    <button class="lyr-btn" data-layer="data/lcc.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
+    <button class="lyr-btn" data-layer="/data/lcc.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
       <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
       <span>LCC</span>
     </button>
-    <button class="lyr-btn" data-layer="data/maize.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
+    <button class="lyr-btn" data-layer="/data/maize.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
       <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
       <span>Corn</span>
     </button>
-    <button class="lyr-btn" data-layer="data/soybean.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
+    <button class="lyr-btn" data-layer="/data/soybean.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
       <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
       <span>Soybean</span>
     </button>
-    <button class="lyr-btn" data-layer="data/rice.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
+    <button class="lyr-btn" data-layer="/data/rice.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
       <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
       <span>Rice</span>
     </button>
