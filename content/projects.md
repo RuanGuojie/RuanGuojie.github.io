@@ -288,9 +288,9 @@
 <div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; z-index: 1; background-color: #1c1c1c;"></div>
 
 <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
-  <strong style="margin-right: 15px;">3D 图层控制:</strong>
+  <strong style="margin-right: 15px;">3D Layers Control:</strong>
   <button onclick="window.loadKmlLayer('/data/NDVI.KMZ')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 3px;">NDVI</button>
-  <button onclick="window.clear3DLayers()" style="padding: 5px 12px; color: #dc3545; cursor: pointer;">清除图层</button>
+  <button onclick="window.clear3DLayers()" style="padding: 5px 12px; color: #dc3545; cursor: pointer;">Clear</button>
 </div>
 
 <script>
