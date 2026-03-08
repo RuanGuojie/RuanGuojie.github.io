@@ -280,23 +280,19 @@
 </script>
 
 ## 3D Globe Agriculture
-
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
-
 <div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; position: relative; z-index: 1; background-color: #1c1c1c;"></div>
-
-<div style="position: relative; z-index: 10; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
+<div style="position: relative; z-index: 9999; margin-top: 15px; padding: 15px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e9ecef;">
   <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
-  <div style="display: flex; flex-wrap: wrap; gap: 15px; font-size: 15px; color: #333;">
-    <label style="display: flex; align-items: center; cursor: pointer; touch-action: manipulation;"><input type="checkbox" value="/data/NDVI.KMZ" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> NDVI</label>
-    <label style="display: flex; align-items: center; cursor: pointer; touch-action: manipulation;"><input type="checkbox" value="/data/lcc.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> LCC</label>
-    <label style="display: flex; align-items: center; cursor: pointer; touch-action: manipulation;"><input type="checkbox" value="/data/maize.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Corn</label>
-    <label style="display: flex; align-items: center; cursor: pointer; touch-action: manipulation;"><input type="checkbox" value="/data/soybean.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Soybean</label>
-    <label style="display: flex; align-items: center; cursor: pointer; touch-action: manipulation;"><input type="checkbox" value="/data/rice.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Rice</label>
+  <div style="display: flex; flex-wrap: wrap; gap: 15px; font-size: 16px; color: #333;">
+    <div style="display: flex; align-items: center;"><input id="chk-ndvi" type="checkbox" value="/data/NDVI.KMZ" onchange="window.toggleKmlLayer(this)" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;"><label for="chk-ndvi" style="cursor: pointer; margin: 0; padding: 5px 0;">NDVI</label></div>
+    <div style="display: flex; align-items: center;"><input id="chk-lcc" type="checkbox" value="/data/lcc.kmz" onchange="window.toggleKmlLayer(this)" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;"><label for="chk-lcc" style="cursor: pointer; margin: 0; padding: 5px 0;">LCC</label></div>
+    <div style="display: flex; align-items: center;"><input id="chk-corn" type="checkbox" value="/data/maize.kmz" onchange="window.toggleKmlLayer(this)" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;"><label for="chk-corn" style="cursor: pointer; margin: 0; padding: 5px 0;">Corn</label></div>
+    <div style="display: flex; align-items: center;"><input id="chk-soy" type="checkbox" value="/data/soybean.kmz" onchange="window.toggleKmlLayer(this)" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;"><label for="chk-soy" style="cursor: pointer; margin: 0; padding: 5px 0;">Soybean</label></div>
+    <div style="display: flex; align-items: center;"><input id="chk-rice" type="checkbox" value="/data/rice.kmz" onchange="window.toggleKmlLayer(this)" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;"><label for="chk-rice" style="cursor: pointer; margin: 0; padding: 5px 0;">Rice</label></div>
   </div>
 </div>
-
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     try {
@@ -308,7 +304,7 @@
         if (checkbox.checked) {
           viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, { camera: viewer.scene.camera, canvas: viewer.scene.canvas, clampToGround: true })).then(function(dataSource){
             window.loaded3DLayers[kmlUrl] = dataSource; 
-            //viewer.flyTo(dataSource); 
+            viewer.flyTo(dataSource); 
           }).catch(function(error) {
             alert("图层加载失败: " + kmlUrl);
             checkbox.checked = false; 
