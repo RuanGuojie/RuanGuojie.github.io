@@ -281,51 +281,55 @@
 
 
 ## 3D Globe Agriculture
-
-<div id="map3d" style="height: 600px; margin-top: 20px; border-radius: 4px; z-index: 1;"></div>
-
-<div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
-  <strong style="margin-right: 15px;">3D 图层控制 (KML):</strong>
-  <button onclick="window.loadKmlLayer('/data/field_boundary.kml')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer;">边界图层</button>
-  <button onclick="window.loadKmlLayer('/data/flight_path.kml')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer;">无人机航线</button>
-  <button onclick="window.clear3DLayers()" style="padding: 5px 12px; color: #dc3545; cursor: pointer;">清除图层</button>
-</div>
+## 3D Globe Agriculture
 
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
 
+<div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; z-index: 1; background-color: #f0f0f0;"></div>
+
+<div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
+  <strong style="margin-right: 15px;">3D 图层控制:</strong>
+  <button onclick="window.loadKmlLayer('/data/field_boundary.kml')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer;">边界图层</button>
+  <button onclick="window.clear3DLayers()" style="padding: 5px 12px; color: #dc3545; cursor: pointer;">清除图层</button>
+</div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    // 1. 填入你的 Cesium ion Token（如果不填，底图可能会显示为无贴图的网格或报错）
-    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
+    try {
+      // 1. 务必确认这里是否有合法的 Token
+      Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
 
-    // 2. 初始化 3D 地球
-    var viewer = new Cesium.Viewer("map3d", {
-      terrainProvider: Cesium.createWorldTerrain(), // 开启全球 3D 地形
-      baseLayerPicker: false,    // 隐藏底图选择器
-      geocoder: false,           // 隐藏右上角搜索框
-      animation: false,          // 隐藏左下角动画控件
-      timeline: false,           // 隐藏底部时间轴
-      navigationHelpButton: false // 隐藏帮助按钮
-    });
-
-    // 3. 将加载和清除图层的函数挂载到 window 上，以便 HTML 中的 onclick 可以调用
-    window.loadKmlLayer = function(kmlUrl) {
-      viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, {
-        camera: viewer.scene.camera,
-        canvas: viewer.scene.canvas,
-        clampToGround: true // 尝试将 KML 贴合到 3D 地形表面
-      })).then(function(dataSource){
-        // 加载成功后，视角平滑飞向该图层
-        viewer.flyTo(dataSource);
-      }).catch(function(error) {
-        console.error("KML 加载失败:", error);
-        alert("图层加载失败，请检查路径: " + kmlUrl);
+      // 2. 初始化 3D 地球
+      var viewer = new Cesium.Viewer("map3d", {
+        terrainProvider: Cesium.createWorldTerrain(),
+        baseLayerPicker: false,
+        geocoder: false,
+        animation: false,
+        timeline: false,
+        navigationHelpButton: false
       });
-    };
 
-    window.clear3DLayers = function() {
-      viewer.dataSources.removeAll();
-    };
+      window.loadKmlLayer = function(kmlUrl) {
+        viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, {
+          camera: viewer.scene.camera,
+          canvas: viewer.scene.canvas,
+          clampToGround: true
+        })).then(function(dataSource){
+          viewer.flyTo(dataSource);
+        }).catch(function(error) {
+          alert("图层加载失败: " + kmlUrl + "\n请按 F12 查看 Console 报错。");
+        });
+      };
+
+      window.clear3DLayers = function() {
+        viewer.dataSources.removeAll();
+      };
+
+    } catch (error) {
+      // 如果 Cesium 崩溃，把报错信息直接写在原来的空白处
+      document.getElementById("map3d").innerHTML = "<div style='padding: 20px; color: red;'><strong>3D地球初始化失败：</strong><br>" + error.message + "<br>请检查是否替换了 Cesium Token，或按 F12 查看控制台。</div>";
+      console.error("Cesium 初始化详细错误:", error);
+    }
   });
 </script>
