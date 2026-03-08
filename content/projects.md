@@ -288,10 +288,6 @@
 <div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; position: relative; z-index: 1; background-color: #1c1c1c;"></div>
 </div>
 
-<!-- 调试面板 -->
-<div id="debug-log" style="margin-top: 10px; padding: 10px; background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; font-size: 13px; color: #333; max-height: 150px; overflow-y: auto;">调试信息：等待操作...</div>
-
-<!-- 控制面板 -->
 <div id="layer-panel" style="position: relative; z-index: 99999; margin-top: 15px; padding: 15px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e9ecef;">
   <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
   <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 16px; color: #333;">
@@ -319,49 +315,25 @@
 </div>
 
 <script>
-function debugLog(msg) {
-  var el = document.getElementById('debug-log');
-  if (el) {
-    el.innerHTML += '<br>' + new Date().toLocaleTimeString() + ' - ' + msg;
-    el.scrollTop = el.scrollHeight;
-  }
-}
-
 function getMimeType(filename) {
   var ext = filename.split('.').pop().toLowerCase();
   var map = {
-    'png': 'image/png',
-    'jpg': 'image/jpeg',
-    'jpeg': 'image/jpeg',
-    'gif': 'image/gif',
-    'bmp': 'image/bmp',
-    'tif': 'image/tiff',
-    'tiff': 'image/tiff',
-    'webp': 'image/webp',
-    'svg': 'image/svg+xml'
+    'png': 'image/png', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg',
+    'gif': 'image/gif', 'bmp': 'image/bmp', 'tif': 'image/tiff',
+    'tiff': 'image/tiff', 'webp': 'image/webp', 'svg': 'image/svg+xml'
   };
   return map[ext] || 'application/octet-stream';
 }
 
 function loadKmzManually(viewer, kmzUrl) {
-  debugLog('下载: ' + kmzUrl);
   return fetch(kmzUrl)
-    .then(function(response) {
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      debugLog('下载完成，解压中...');
-      return response.arrayBuffer();
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.arrayBuffer();
     })
-    .then(function(arrayBuffer) {
-      return JSZip.loadAsync(arrayBuffer);
-    })
+    .then(function(buf) { return JSZip.loadAsync(buf); })
     .then(function(zip) {
-      debugLog('解压成功，处理文件...');
-
-      var kmlFile = null;
-      var kmlFileName = '';
-      var imageFiles = {};
-
-      // 分类：找出 KML 和所有图片
+      var kmlFile = null, kmlFileName = '', imageFiles = {};
       zip.forEach(function(path, file) {
         var lower = path.toLowerCase();
         if (lower.endsWith('.kml') && !kmlFile) {
@@ -371,58 +343,38 @@ function loadKmzManually(viewer, kmzUrl) {
           imageFiles[path] = file;
         }
       });
-
       if (!kmlFile) throw new Error('KMZ 中未找到 KML');
-      debugLog('KML: ' + kmlFileName + ', 图片: ' + Object.keys(imageFiles).length + ' 个');
 
-      // 先把所有图片转成 Blob URL
-      var imagePromises = [];
-      var imageUrlMap = {};
-
+      var imagePromises = [], imageUrlMap = {};
       Object.keys(imageFiles).forEach(function(imgPath) {
-        var promise = imageFiles[imgPath].async('blob').then(function(blob) {
-          var mime = getMimeType(imgPath);
-          var typedBlob = new Blob([blob], {type: mime});
-          var blobUrl = URL.createObjectURL(typedBlob);
-          imageUrlMap[imgPath] = blobUrl;
-          debugLog('图片转换: ' + imgPath);
-        });
-        imagePromises.push(promise);
+        imagePromises.push(
+          imageFiles[imgPath].async('blob').then(function(blob) {
+            imageUrlMap[imgPath] = URL.createObjectURL(new Blob([blob], {type: getMimeType(imgPath)}));
+          })
+        );
       });
 
       return Promise.all(imagePromises).then(function() {
         return kmlFile.async('string').then(function(kmlString) {
-          // 替换 KML 中所有图片引用为 Blob URL
           Object.keys(imageUrlMap).forEach(function(imgPath) {
-            // 替换各种可能的引用方式
             var escaped = imgPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            var regex = new RegExp(escaped, 'g');
-            kmlString = kmlString.replace(regex, imageUrlMap[imgPath]);
-
-            // 也处理只用文件名引用的情况
+            kmlString = kmlString.replace(new RegExp(escaped, 'g'), imageUrlMap[imgPath]);
             var baseName = imgPath.split('/').pop();
             if (baseName !== imgPath) {
               var escapedBase = baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-              var regexBase = new RegExp(escapedBase, 'g');
-              kmlString = kmlString.replace(regexBase, imageUrlMap[imgPath]);
+              kmlString = kmlString.replace(new RegExp(escapedBase, 'g'), imageUrlMap[imgPath]);
             }
           });
-
-          debugLog('KML 图片路径替换完成，加载到 Cesium...');
-          var kmlBlob = new Blob([kmlString], {type: 'application/vnd.google-earth.kml+xml'});
-          var kmlBlobUrl = URL.createObjectURL(kmlBlob);
-
+          var kmlBlobUrl = URL.createObjectURL(new Blob([kmlString], {type: 'application/vnd.google-earth.kml+xml'}));
           return viewer.dataSources.add(
             Cesium.KmlDataSource.load(kmlBlobUrl, {
               camera: viewer.scene.camera,
               canvas: viewer.scene.canvas,
               clampToGround: true
             })
-          ).then(function(dataSource) {
-            // 保存 blob URL 引用以便后续清理
-            dataSource._blobUrls = [kmlBlobUrl].concat(Object.values(imageUrlMap));
-            debugLog('图层渲染成功!');
-            return dataSource;
+          ).then(function(ds) {
+            ds._blobUrls = [kmlBlobUrl].concat(Object.values(imageUrlMap));
+            return ds;
           });
         });
       });
@@ -430,8 +382,6 @@ function loadKmzManually(viewer, kmzUrl) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  debugLog('页面加载完成');
-
   try {
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
     var viewer = new Cesium.Viewer("map3d", {
@@ -442,60 +392,34 @@ document.addEventListener("DOMContentLoaded", function() {
       timeline: false,
       navigationHelpButton: false
     });
-    debugLog('Cesium 初始化成功');
 
     window.loaded3DLayers = {};
     var layerStates = {};
-    var loadingStates = {};
 
     function toggleLayer(btn) {
       var kmlUrl = btn.getAttribute('data-layer');
       var icon = btn.querySelector('.lyr-icon');
       var isActive = layerStates[kmlUrl] || false;
 
-      // 防止重复点击
-      if (loadingStates[kmlUrl]) {
-        debugLog('图层正在加载中，请等待...');
-        return;
-      }
-
       if (!isActive) {
         layerStates[kmlUrl] = true;
-        loadingStates[kmlUrl] = true;
-        btn.style.borderColor = '#ff9800';
-        btn.style.background = '#fff3e0';
-        icon.textContent = '⏳';
-        icon.style.borderColor = '#ff9800';
-        icon.style.color = '#ff9800';
+        btn.style.borderColor = '#2196F3';
+        btn.style.background = '#e3f2fd';
+        icon.textContent = '✓';
+        icon.style.borderColor = '#2196F3';
+        icon.style.color = '#2196F3';
 
         var isKmz = kmlUrl.toLowerCase().endsWith('.kmz');
-        var loadPromise;
-
-        if (isKmz) {
-          loadPromise = loadKmzManually(viewer, kmlUrl);
-        } else {
-          loadPromise = viewer.dataSources.add(
-            Cesium.KmlDataSource.load(kmlUrl, {
-              camera: viewer.scene.camera,
-              canvas: viewer.scene.canvas,
-              clampToGround: true
-            })
-          );
-        }
+        var loadPromise = isKmz
+          ? loadKmzManually(viewer, kmlUrl)
+          : viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, {
+              camera: viewer.scene.camera, canvas: viewer.scene.canvas, clampToGround: true
+            }));
 
         loadPromise.then(function(dataSource) {
           window.loaded3DLayers[kmlUrl] = dataSource;
-          loadingStates[kmlUrl] = false;
-          btn.style.borderColor = '#2196F3';
-          btn.style.background = '#e3f2fd';
-          icon.textContent = '✓';
-          icon.style.borderColor = '#2196F3';
-          icon.style.color = '#2196F3';
-          debugLog('图层加载成功: ' + kmlUrl);
-        }).catch(function(error) {
-          debugLog('图层加载失败: ' + kmlUrl + ' 错误: ' + error.message);
+        }).catch(function() {
           layerStates[kmlUrl] = false;
-          loadingStates[kmlUrl] = false;
           btn.style.borderColor = '#ccc';
           btn.style.background = '#fff';
           icon.textContent = '';
@@ -510,44 +434,30 @@ document.addEventListener("DOMContentLoaded", function() {
 
         var activeLayer = window.loaded3DLayers[kmlUrl];
         if (activeLayer) {
-          // 清理 Blob URL
           if (activeLayer._blobUrls) {
-            activeLayer._blobUrls.forEach(function(url) {
-              URL.revokeObjectURL(url);
-            });
+            activeLayer._blobUrls.forEach(function(url) { URL.revokeObjectURL(url); });
           }
           viewer.dataSources.remove(activeLayer);
           delete window.loaded3DLayers[kmlUrl];
-          debugLog('图层已移除: ' + kmlUrl);
         }
       }
     }
 
     var buttons = document.querySelectorAll('.lyr-btn');
-    debugLog('找到 ' + buttons.length + ' 个按钮');
-
     buttons.forEach(function(btn) {
       var touched = false;
-
       btn.addEventListener('touchend', function(e) {
         e.preventDefault();
         touched = true;
         toggleLayer(btn);
       }, {passive: false});
-
       btn.addEventListener('click', function(e) {
-        if (touched) {
-          touched = false;
-          return;
-        }
+        if (touched) { touched = false; return; }
         toggleLayer(this);
       });
     });
 
-    debugLog('所有事件绑定完成');
-
   } catch (error) {
-    debugLog('初始化错误: ' + error.message);
     document.getElementById("map3d").innerHTML =
       "<div style='padding: 20px; color: red;'>3D地球初始化失败：" + error.message + "</div>";
   }
