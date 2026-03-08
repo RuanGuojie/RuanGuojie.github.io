@@ -290,7 +290,7 @@
 <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
   <strong style="margin-right: 15px;">3D Layers Control:</strong>
   <button onclick="window.loadKmlLayer('/data/NDVI.KMZ')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 3px;">NDVI</button>
-  <button onclick="window.loadKmlLayer('/data/lcc.kmz')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 3px;">NDVI</button>
+  <button onclick="window.loadKmlLayer('/data/lcc.kmz')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 3px;">LCC</button>
   <button onclick="window.clear3DLayers()" style="padding: 5px 12px; color: #dc3545; cursor: pointer;">Clear</button>
 </div>
 
