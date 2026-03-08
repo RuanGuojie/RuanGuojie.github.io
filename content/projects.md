@@ -287,14 +287,20 @@
 
 <div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; z-index: 1; background-color: #1c1c1c;"></div>
 
-<div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
-  <strong style="margin-right: 15px; font-size: 15px;">3D Layers Control:</strong>
-  <button onclick="window.loadKmlLayer('/data/NDVI.KMZ')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">NDVI</button>
-  <button onclick="window.loadKmlLayer('/data/lcc.kmz')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">LCC</button>
-  <button onclick="window.loadKmlLayer('/data/maize.kmz')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">Corn</button>
-  <button onclick="window.loadKmlLayer('/data/soybean.kmz')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">Soybean</button>
-  <button onclick="window.loadKmlLayer('/data/rice.kmz')" style="padding: 5px 12px; margin-right: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">Rice</button>
-  <button onclick="window.clear3DLayers()" style="padding: 5px 12px; color: #dc3545; cursor: pointer; font-size: 15px;">Clear</button>
+<div style="position: relative; z-index: 10; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
+  <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
+  
+  <button onclick="window.loadKmlLayer('/data/NDVI.KMZ')" style="touch-action: manipulation; padding: 6px 14px; margin-right: 8px; margin-bottom: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">NDVI</button>
+  
+  <button onclick="window.loadKmlLayer('/data/lcc.kmz')" style="touch-action: manipulation; padding: 6px 14px; margin-right: 8px; margin-bottom: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">LCC</button>
+  
+  <button onclick="window.loadKmlLayer('/data/maize.kmz')" style="touch-action: manipulation; padding: 6px 14px; margin-right: 8px; margin-bottom: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">Corn</button>
+  
+  <button onclick="window.loadKmlLayer('/data/soybean.kmz')" style="touch-action: manipulation; padding: 6px 14px; margin-right: 8px; margin-bottom: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">Soybean</button>
+  
+  <button onclick="window.loadKmlLayer('/data/rice.kmz')" style="touch-action: manipulation; padding: 6px 14px; margin-right: 8px; margin-bottom: 8px; cursor: pointer; background-color: #91969b; color: white; border: none; border-radius: 3px; font-size: 15px;">Rice</button>
+  
+  <button onclick="window.clear3DLayers()" style="touch-action: manipulation; padding: 6px 14px; margin-bottom: 8px; color: #dc3545; background-color: white; border: 1px solid #dc3545; border-radius: 3px; cursor: pointer; font-size: 15px;">Clear</button>
 </div>
 
 <script>
