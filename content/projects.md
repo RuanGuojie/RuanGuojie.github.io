@@ -1,6 +1,6 @@
 ## Bradford Research Farm
 
-<div id="map" style="height: 500px; margin-top: 20px;"></div>
+<div id="map" style="height: 500px; margin-top: 20px; position: relative; z-index: 1;"></div>
 
 <!-- Leaflet 样式和脚本 -->
 <link
@@ -180,7 +180,7 @@
 
 
 ## MU Digital Farm
-<div id="map2" style="height: 500px; margin-top: 20px;"></div>
+<div id="map2" style="height: 500px; margin-top: 20px; position: relative; z-index: 1;"></div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
