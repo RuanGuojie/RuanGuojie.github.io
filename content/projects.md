@@ -280,38 +280,213 @@
 </script>
 
 ## 3D Globe Agriculture
-<div class="cesium-container">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&display=swap');
+
+.globe-wrapper * {
+  box-sizing: border-box;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.globe-wrapper #map3d {
+  display: block;
+  width: 100%;
+  height: 600px;
+  margin-top: 20px;
+  border-radius: 12px;
+  position: relative;
+  z-index: 1;
+  background-color: #0a0e17;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.layer-control {
+  position: relative;
+  z-index: 99999;
+  margin-top: 16px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #0f1923 0%, #1a2332 100%);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.layer-control-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.layer-control-title::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3b82f6;
+  box-shadow: 0 0 8px rgba(59,130,246,0.6);
+}
+
+.layer-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lyr-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.03);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  color: rgba(255,255,255,0.55);
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.lyr-btn:hover {
+  border-color: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.06);
+}
+
+.lyr-btn.active {
+  border-color: rgba(59,130,246,0.4);
+  color: #fff;
+  background: rgba(59,130,246,0.12);
+  box-shadow: 0 0 20px rgba(59,130,246,0.1), inset 0 1px 0 rgba(59,130,246,0.15);
+}
+
+.lyr-btn.active .lyr-dot {
+  background: #3b82f6;
+  box-shadow: 0 0 10px rgba(59,130,246,0.6);
+  border-color: transparent;
+}
+
+.lyr-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  background: transparent;
+  flex-shrink: 0;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fs-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.6);
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+}
+
+.fs-btn:hover {
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  border-color: rgba(255,255,255,0.2);
+}
+
+.fs-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.globe-wrapper:-webkit-full-screen #map3d,
+.globe-wrapper:fullscreen #map3d {
+  height: 100vh !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.globe-wrapper:-webkit-full-screen .layer-control,
+.globe-wrapper:fullscreen .layer-control {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(15, 25, 35, 0.85);
+}
+</style>
+
+<div class="globe-wrapper">
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-<div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; position: relative; z-index: 1; background-color: #1c1c1c;"></div>
+<div style="position: relative;">
+  <div id="map3d"></div>
+  <button type="button" class="fs-btn" id="fullscreen-btn" title="全屏">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 3 21 3 21 9"></polyline>
+      <polyline points="9 21 3 21 3 15"></polyline>
+      <line x1="21" y1="3" x2="14" y2="10"></line>
+      <line x1="3" y1="21" x2="10" y2="14"></line>
+    </svg>
+  </button>
 </div>
 
-<div id="layer-panel" style="position: relative; z-index: 99999; margin-top: 15px; padding: 15px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e9ecef;">
-  <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
-  <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 16px; color: #333;">
-    <button type="button" class="lyr-btn" data-layer="/data/NDVI.KMZ" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation;">
-      <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
+<div class="layer-control">
+  <div class="layer-control-title">Layers</div>
+  <div class="layer-grid">
+    <button type="button" class="lyr-btn" data-layer="/data/NDVI.KMZ">
+      <span class="lyr-dot"></span>
       <span>NDVI</span>
     </button>
-    <button type="button" class="lyr-btn" data-layer="/data/lcc.kmz" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation;">
-      <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
+    <button type="button" class="lyr-btn" data-layer="/data/lcc.kmz">
+      <span class="lyr-dot"></span>
       <span>LCC</span>
     </button>
-    <button type="button" class="lyr-btn" data-layer="/data/maize.kmz" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation;">
-      <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
+    <button type="button" class="lyr-btn" data-layer="/data/maize.kmz">
+      <span class="lyr-dot"></span>
       <span>Corn</span>
     </button>
-    <button type="button" class="lyr-btn" data-layer="/data/soybean.kmz" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation;">
-      <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
+    <button type="button" class="lyr-btn" data-layer="/data/soybean.kmz">
+      <span class="lyr-dot"></span>
       <span>Soybean</span>
     </button>
-    <button type="button" class="lyr-btn" data-layer="/data/rice.kmz" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation;">
-      <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
+    <button type="button" class="lyr-btn" data-layer="/data/rice.kmz">
+      <span class="lyr-dot"></span>
       <span>Rice</span>
     </button>
   </div>
+</div>
 </div>
 
 <script>
@@ -390,24 +565,34 @@ document.addEventListener("DOMContentLoaded", function() {
       geocoder: false,
       animation: false,
       timeline: false,
-      navigationHelpButton: false
+      navigationHelpButton: false,
+      fullscreenButton: false
     });
+
+    var fsBtn = document.getElementById('fullscreen-btn');
+    var wrapper = document.querySelector('.globe-wrapper');
+    if (fsBtn && wrapper) {
+      fsBtn.addEventListener('click', function() {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          if (wrapper.requestFullscreen) wrapper.requestFullscreen();
+          else if (wrapper.webkitRequestFullscreen) wrapper.webkitRequestFullscreen();
+        } else {
+          if (document.exitFullscreen) document.exitFullscreen();
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+      });
+    }
 
     window.loaded3DLayers = {};
     var layerStates = {};
 
     function toggleLayer(btn) {
       var kmlUrl = btn.getAttribute('data-layer');
-      var icon = btn.querySelector('.lyr-icon');
       var isActive = layerStates[kmlUrl] || false;
 
       if (!isActive) {
         layerStates[kmlUrl] = true;
-        btn.style.borderColor = '#2196F3';
-        btn.style.background = '#e3f2fd';
-        icon.textContent = '✓';
-        icon.style.borderColor = '#2196F3';
-        icon.style.color = '#2196F3';
+        btn.classList.add('active');
 
         var isKmz = kmlUrl.toLowerCase().endsWith('.kmz');
         var loadPromise = isKmz
@@ -420,17 +605,11 @@ document.addEventListener("DOMContentLoaded", function() {
           window.loaded3DLayers[kmlUrl] = dataSource;
         }).catch(function() {
           layerStates[kmlUrl] = false;
-          btn.style.borderColor = '#ccc';
-          btn.style.background = '#fff';
-          icon.textContent = '';
-          icon.style.borderColor = '#999';
+          btn.classList.remove('active');
         });
       } else {
         layerStates[kmlUrl] = false;
-        btn.style.borderColor = '#ccc';
-        btn.style.background = '#fff';
-        icon.textContent = '';
-        icon.style.borderColor = '#999';
+        btn.classList.remove('active');
 
         var activeLayer = window.loaded3DLayers[kmlUrl];
         if (activeLayer) {
