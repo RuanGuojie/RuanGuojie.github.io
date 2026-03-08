@@ -429,12 +429,7 @@
   height: 18px;
 }
 
-/* Fullscreen */
-.globe-wrapper:-webkit-full-screen,
-.globe-wrapper:fullscreen {
-  z-index: 999999;
-}
-
+/* Native fullscreen (desktop) */
 .globe-wrapper:-webkit-full-screen #map3d,
 .globe-wrapper:fullscreen #map3d {
   height: 100vh !important;
@@ -443,7 +438,8 @@
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control,
-.globe-wrapper:fullscreen .layer-control {
+.globe-wrapper:fullscreen .layer-control,
+.globe-wrapper.fake-fs .layer-control {
   position: fixed;
   bottom: 20px;
   left: 50%;
@@ -459,21 +455,24 @@
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn,
-.globe-wrapper:fullscreen .layer-control .lyr-btn {
+.globe-wrapper:fullscreen .layer-control .lyr-btn,
+.globe-wrapper.fake-fs .layer-control .lyr-btn {
   color: rgba(255,255,255,0.7);
   border-color: rgba(255,255,255,0.18);
   background: rgba(255,255,255,0.06);
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn:hover,
-.globe-wrapper:fullscreen .layer-control .lyr-btn:hover {
+.globe-wrapper:fullscreen .layer-control .lyr-btn:hover,
+.globe-wrapper.fake-fs .layer-control .lyr-btn:hover {
   color: #fff;
   border-color: rgba(255,255,255,0.35);
   background: rgba(255,255,255,0.12);
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn.active,
-.globe-wrapper:fullscreen .layer-control .lyr-btn.active {
+.globe-wrapper:fullscreen .layer-control .lyr-btn.active,
+.globe-wrapper.fake-fs .layer-control .lyr-btn.active {
   color: #93c5fd;
   border-color: rgba(147,197,253,0.4);
   background: rgba(59,130,246,0.18);
@@ -481,14 +480,39 @@
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-dot,
-.globe-wrapper:fullscreen .layer-control .lyr-dot {
+.globe-wrapper:fullscreen .layer-control .lyr-dot,
+.globe-wrapper.fake-fs .layer-control .lyr-dot {
   border-color: rgba(255,255,255,0.3);
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .layer-control-title,
-.globe-wrapper:fullscreen .layer-control .layer-control-title {
+.globe-wrapper:fullscreen .layer-control .layer-control-title,
+.globe-wrapper.fake-fs .layer-control .layer-control-title {
   color: rgba(255,255,255,0.5);
   opacity: 1;
+}
+
+/* Fake fullscreen for iOS */
+.globe-wrapper.fake-fs {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999998 !important;
+  background: #000;
+  overflow: hidden;
+}
+
+.globe-wrapper.fake-fs #map3d {
+  height: 100vh !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  box-shadow: none;
+}
+
+.globe-wrapper.fake-fs .fs-btn {
+  z-index: 999999;
 }
 </style>
 
@@ -618,15 +642,60 @@ document.addEventListener("DOMContentLoaded", function() {
 
     var fsBtn = document.getElementById('fullscreen-btn');
     var wrapper = document.querySelector('.globe-wrapper');
+    var isFakeFs = false;
+    var savedScrollY = 0;
+
+    function canNativeFullscreen() {
+      return !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
+    }
+
+    function isNativeFullscreen() {
+      return !!(document.fullscreenElement || document.webkitFullscreenElement);
+    }
+
+    function enterFakeFullscreen() {
+      savedScrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      wrapper.classList.add('fake-fs');
+      isFakeFs = true;
+      viewer.resize();
+    }
+
+    function exitFakeFullscreen() {
+      wrapper.classList.remove('fake-fs');
+      document.body.style.overflow = '';
+      isFakeFs = false;
+      window.scrollTo(0, savedScrollY);
+      viewer.resize();
+    }
+
     if (fsBtn && wrapper) {
       fsBtn.addEventListener('click', function() {
-        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-          if (wrapper.requestFullscreen) wrapper.requestFullscreen();
-          else if (wrapper.webkitRequestFullscreen) wrapper.webkitRequestFullscreen();
+        if (canNativeFullscreen() && !(/iPad|iPhone|iPod/.test(navigator.userAgent))) {
+          // Desktop: native fullscreen
+          if (!isNativeFullscreen()) {
+            if (wrapper.requestFullscreen) wrapper.requestFullscreen();
+            else if (wrapper.webkitRequestFullscreen) wrapper.webkitRequestFullscreen();
+          } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+          }
         } else {
-          if (document.exitFullscreen) document.exitFullscreen();
-          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+          // iOS: fake fullscreen
+          if (!isFakeFs) {
+            enterFakeFullscreen();
+          } else {
+            exitFakeFullscreen();
+          }
         }
+      });
+
+      // Sync on native fullscreen exit (e.g. pressing Esc)
+      document.addEventListener('fullscreenchange', function() {
+        if (!document.fullscreenElement) viewer.resize();
+      });
+      document.addEventListener('webkitfullscreenchange', function() {
+        if (!document.webkitFullscreenElement) viewer.resize();
       });
     }
 
