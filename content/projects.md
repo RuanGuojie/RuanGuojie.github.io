@@ -279,35 +279,21 @@
   });
 </script>
 
-
 ## 3D Globe Agriculture
 
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
 
-<div style="position: relative; z-index: 9999; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
+<div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; position: relative; z-index: 1; background-color: #1c1c1c;"></div>
+
+<div style="position: relative; z-index: 10; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
   <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
-  
   <div style="display: flex; flex-wrap: wrap; gap: 15px; font-size: 15px; color: #333;">
-    <label style="display: flex; align-items: center; cursor: pointer;">
-      <input type="checkbox" value="/data/NDVI.KMZ" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> NDVI
-    </label>
-    
-    <label style="display: flex; align-items: center; cursor: pointer;">
-      <input type="checkbox" value="/data/lcc.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> LCC
-    </label>
-    
-    <label style="display: flex; align-items: center; cursor: pointer;">
-      <input type="checkbox" value="/data/maize.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Corn
-    </label>
-    
-    <label style="display: flex; align-items: center; cursor: pointer;">
-      <input type="checkbox" value="/data/soybean.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Soybean
-    </label>
-    
-    <label style="display: flex; align-items: center; cursor: pointer;">
-      <input type="checkbox" value="/data/rice.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Rice
-    </label>
+    <label style="display: flex; align-items: center; cursor: pointer; touch-action: manipulation;"><input type="checkbox" value="/data/NDVI.KMZ" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> NDVI</label>
+    <label style="display: flex; align-items: center; cursor: pointer; touch-action: manipulation;"><input type="checkbox" value="/data/lcc.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> LCC</label>
+    <label style="display: flex; align-items: center; cursor: pointer; touch-action: manipulation;"><input type="checkbox" value="/data/maize.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Corn</label>
+    <label style="display: flex; align-items: center; cursor: pointer; touch-action: manipulation;"><input type="checkbox" value="/data/soybean.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Soybean</label>
+    <label style="display: flex; align-items: center; cursor: pointer; touch-action: manipulation;"><input type="checkbox" value="/data/rice.kmz" onchange="window.toggleKmlLayer(this)" style="margin-right: 6px; width: 18px; height: 18px;"> Rice</label>
   </div>
 </div>
 
@@ -315,50 +301,28 @@
   document.addEventListener("DOMContentLoaded", function () {
     try {
       Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
-
-      var viewer = new Cesium.Viewer("map3d", {
-        terrain: Cesium.Terrain.fromWorldTerrain(), 
-        baseLayerPicker: false,
-        geocoder: false,
-        animation: false,
-        timeline: false,
-        navigationHelpButton: false
-      });
-
-      // 新增：建一个“库房”来记住目前加载了哪些图层
+      var viewer = new Cesium.Viewer("map3d", { terrain: Cesium.Terrain.fromWorldTerrain(), baseLayerPicker: false, geocoder: false, animation: false, timeline: false, navigationHelpButton: false });
       window.loaded3DLayers = {};
-
-      // 新增：专门处理勾选框打勾和取消的函数
       window.toggleKmlLayer = function(checkbox) {
-        var kmlUrl = checkbox.value; // 获取文件路径
-        
+        var kmlUrl = checkbox.value; 
         if (checkbox.checked) {
-          // 如果是打勾，就加载它
-          Cesium.KmlDataSource.load(kmlUrl, {
-            camera: viewer.scene.camera,
-            canvas: viewer.scene.canvas,
-            clampToGround: true
-          }).then(function(dataSource){
-            viewer.dataSources.add(dataSource);
-            window.loaded3DLayers[kmlUrl] = dataSource; // 把加载好的图层存进库房
-            viewer.flyTo(dataSource); // 飞过去看
+          viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, { camera: viewer.scene.camera, canvas: viewer.scene.canvas, clampToGround: true })).then(function(dataSource){
+            window.loaded3DLayers[kmlUrl] = dataSource; 
+            viewer.flyTo(dataSource); 
           }).catch(function(error) {
             alert("图层加载失败: " + kmlUrl);
-            checkbox.checked = false; // 加载失败就把勾去掉
+            checkbox.checked = false; 
           });
         } else {
-          // 如果是取消打勾，就从库房里找到它并移除
           var activeLayer = window.loaded3DLayers[kmlUrl];
           if (activeLayer) {
             viewer.dataSources.remove(activeLayer);
-            delete window.loaded3DLayers[kmlUrl]; // 从库房清空记录
+            delete window.loaded3DLayers[kmlUrl]; 
           }
         }
       };
-
     } catch (error) {
-      document.getElementById("map3d").innerHTML = "<div style='padding: 20px; color: red;'><strong>3D地球初始化失败：</strong><br>" + error.message + "</div>";
-      console.error("Cesium 初始化详细错误:", error);
+      document.getElementById("map3d").innerHTML = "<div style='padding: 20px; color: red;'>3D地球初始化失败：" + error.message + "</div>";
     }
   });
 </script>
