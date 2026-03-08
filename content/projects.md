@@ -320,7 +320,7 @@
           canvas: viewer.scene.canvas,
           clampToGround: true // 尝试贴合地形
         })).then(function(dataSource){
-          viewer.flyTo(dataSource);
+          //viewer.flyTo(dataSource);
         }).catch(function(error) {
           alert("图层加载失败: " + kmlUrl + "\n请确认文件路径正确。");
         });
