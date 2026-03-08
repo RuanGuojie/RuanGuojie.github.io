@@ -287,27 +287,30 @@
 <div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; position: relative; z-index: 1; background-color: #1c1c1c;"></div>
 </div>
 
+<!-- 调试信息面板 -->
+<div id="debug-log" style="margin-top: 10px; padding: 10px; background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; font-size: 13px; color: #333; max-height: 150px; overflow-y: auto; display: block;">调试信息：等待操作...</div>
+
 <!-- 控制面板在 cesium-container 外面 -->
-<div id="layer-panel" ontouchstart="" style="position: relative; z-index: 99999; margin-top: 15px; padding: 15px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e9ecef; -webkit-user-select: none; user-select: none; pointer-events: auto;">
+<div id="layer-panel" style="position: relative; z-index: 99999; margin-top: 15px; padding: 15px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e9ecef;">
   <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
   <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 16px; color: #333;">
-    <button class="lyr-btn" data-layer="/data/NDVI.KMZ" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
+    <button type="button" class="lyr-btn" data-layer="/data/NDVI.KMZ" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation;">
       <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
       <span>NDVI</span>
     </button>
-    <button class="lyr-btn" data-layer="/data/lcc.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
+    <button type="button" class="lyr-btn" data-layer="/data/lcc.kmz" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation;">
       <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
       <span>LCC</span>
     </button>
-    <button class="lyr-btn" data-layer="/data/maize.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
+    <button type="button" class="lyr-btn" data-layer="/data/maize.kmz" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation;">
       <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
       <span>Corn</span>
     </button>
-    <button class="lyr-btn" data-layer="/data/soybean.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
+    <button type="button" class="lyr-btn" data-layer="/data/soybean.kmz" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation;">
       <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
       <span>Soybean</span>
     </button>
-    <button class="lyr-btn" data-layer="/data/rice.kmz" ontouchstart="" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation; pointer-events: auto;">
+    <button type="button" class="lyr-btn" data-layer="/data/rice.kmz" style="display: flex; align-items: center; padding: 10px 16px; border: 2px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; font-size: 16px; color: #333; -webkit-appearance: none; appearance: none; touch-action: manipulation;">
       <span class="lyr-icon" style="display: inline-block; width: 20px; height: 20px; border: 2px solid #999; border-radius: 4px; margin-right: 8px; text-align: center; line-height: 20px; font-size: 14px; flex-shrink: 0;"></span>
       <span>Rice</span>
     </button>
@@ -315,8 +318,19 @@
 </div>
 
 <script>
+function debugLog(msg) {
+  var el = document.getElementById('debug-log');
+  if (el) {
+    el.innerHTML += '<br>' + new Date().toLocaleTimeString() + ' - ' + msg;
+    el.scrollTop = el.scrollHeight;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
+  debugLog('页面加载完成');
+
   try {
+    debugLog('开始初始化 Cesium...');
     Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
     var viewer = new Cesium.Viewer("map3d", {
       terrain: Cesium.Terrain.fromWorldTerrain(),
@@ -326,6 +340,7 @@ document.addEventListener("DOMContentLoaded", function() {
       timeline: false,
       navigationHelpButton: false
     });
+    debugLog('Cesium 初始化成功');
 
     window.loaded3DLayers = {};
     var layerStates = {};
@@ -334,6 +349,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var kmlUrl = btn.getAttribute('data-layer');
       var icon = btn.querySelector('.lyr-icon');
       var isActive = layerStates[kmlUrl] || false;
+      debugLog('toggleLayer 被调用: ' + kmlUrl + ', 当前状态: ' + (isActive ? 'ON' : 'OFF'));
 
       if (!isActive) {
         layerStates[kmlUrl] = true;
@@ -342,6 +358,7 @@ document.addEventListener("DOMContentLoaded", function() {
         icon.textContent = '✓';
         icon.style.borderColor = '#2196F3';
         icon.style.color = '#2196F3';
+        debugLog('正在加载图层: ' + kmlUrl);
 
         viewer.dataSources.add(
           Cesium.KmlDataSource.load(kmlUrl, {
@@ -351,8 +368,9 @@ document.addEventListener("DOMContentLoaded", function() {
           })
         ).then(function(dataSource) {
           window.loaded3DLayers[kmlUrl] = dataSource;
+          debugLog('图层加载成功: ' + kmlUrl);
         }).catch(function(error) {
-          alert("图层加载失败: " + kmlUrl);
+          debugLog('图层加载失败: ' + kmlUrl + ' 错误: ' + error.message);
           layerStates[kmlUrl] = false;
           btn.style.borderColor = '#ccc';
           btn.style.background = '#fff';
@@ -365,25 +383,44 @@ document.addEventListener("DOMContentLoaded", function() {
         btn.style.background = '#fff';
         icon.textContent = '';
         icon.style.borderColor = '#999';
+        debugLog('正在移除图层: ' + kmlUrl);
 
         var activeLayer = window.loaded3DLayers[kmlUrl];
         if (activeLayer) {
           viewer.dataSources.remove(activeLayer);
           delete window.loaded3DLayers[kmlUrl];
+          debugLog('图层已移除: ' + kmlUrl);
         }
       }
     }
 
     var buttons = document.querySelectorAll('.lyr-btn');
+    debugLog('找到 ' + buttons.length + ' 个按钮');
+
     buttons.forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
+      // touchstart 记录
+      btn.addEventListener('touchstart', function(e) {
+        debugLog('touchstart 触发: ' + btn.getAttribute('data-layer'));
+      }, {passive: true});
+
+      // touchend 处理
+      btn.addEventListener('touchend', function(e) {
         e.preventDefault();
-        e.stopPropagation();
+        debugLog('touchend 触发: ' + btn.getAttribute('data-layer'));
+        toggleLayer(btn);
+      }, {passive: false});
+
+      // click 处理（桌面端）
+      btn.addEventListener('click', function(e) {
+        debugLog('click 触发: ' + btn.getAttribute('data-layer'));
         toggleLayer(this);
       });
     });
 
+    debugLog('所有事件绑定完成');
+
   } catch (error) {
+    debugLog('初始化错误: ' + error.message);
     document.getElementById("map3d").innerHTML =
       "<div style='padding: 20px; color: red;'>3D地球初始化失败：" + error.message + "</div>";
   }
