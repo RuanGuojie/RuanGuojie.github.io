@@ -301,16 +301,14 @@
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
-/* Light mode (default) */
 .layer-control {
   position: relative;
   z-index: 99999;
   margin-top: 16px;
   padding: 20px 24px;
-  background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
   border-radius: 14px;
-  border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
+  border: 1px solid currentColor;
+  border-color: rgba(128,128,128,0.2);
 }
 
 .layer-control-title {
@@ -320,7 +318,7 @@
   margin-bottom: 16px;
   font-size: 13px;
   font-weight: 500;
-  color: rgba(0,0,0,0.4);
+  opacity: 0.45;
   text-transform: uppercase;
   letter-spacing: 1.5px;
 }
@@ -346,14 +344,15 @@
   align-items: center;
   gap: 10px;
   padding: 10px 18px;
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid rgba(128,128,128,0.25);
   border-radius: 10px;
   cursor: pointer;
-  background: rgba(255,255,255,0.6);
+  background: transparent;
   font-size: 14px;
   font-weight: 500;
   font-family: 'DM Sans', sans-serif;
-  color: rgba(0,0,0,0.5);
+  color: inherit;
+  opacity: 0.55;
   -webkit-appearance: none;
   appearance: none;
   touch-action: manipulation;
@@ -363,14 +362,14 @@
 }
 
 .lyr-btn:hover {
-  border-color: rgba(0,0,0,0.18);
-  color: rgba(0,0,0,0.75);
-  background: rgba(255,255,255,0.85);
+  opacity: 0.8;
+  border-color: rgba(128,128,128,0.4);
 }
 
 .lyr-btn.active {
-  border-color: rgba(59,130,246,0.4);
-  color: #1d4ed8;
+  opacity: 1;
+  border-color: rgba(59,130,246,0.5);
+  color: #3b82f6;
   background: rgba(59,130,246,0.08);
   box-shadow: 0 0 16px rgba(59,130,246,0.08);
 }
@@ -385,7 +384,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 1.5px solid rgba(0,0,0,0.2);
+  border: 1.5px solid rgba(128,128,128,0.4);
   background: transparent;
   flex-shrink: 0;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -426,47 +425,6 @@
   height: 18px;
 }
 
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  .layer-control {
-    background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%);
-    border: 1px solid rgba(255,255,255,0.06);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
-  }
-
-  .layer-control-title {
-    color: rgba(255,255,255,0.4);
-  }
-
-  .layer-control-title::before {
-    box-shadow: 0 0 8px rgba(59,130,246,0.6);
-  }
-
-  .lyr-btn {
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(255,255,255,0.04);
-    color: rgba(255,255,255,0.55);
-  }
-
-  .lyr-btn:hover {
-    border-color: rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.8);
-    background: rgba(255,255,255,0.08);
-  }
-
-  .lyr-btn.active {
-    border-color: rgba(59,130,246,0.4);
-    color: #93bbfd;
-    background: rgba(59,130,246,0.12);
-    box-shadow: 0 0 20px rgba(59,130,246,0.1);
-  }
-
-  .lyr-dot {
-    border: 1.5px solid rgba(255,255,255,0.2);
-  }
-}
-
-/* Fullscreen */
 .globe-wrapper:-webkit-full-screen #map3d,
 .globe-wrapper:fullscreen #map3d {
   height: 100vh !important;
@@ -483,20 +441,6 @@
   margin: 0;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-}
-
-@media (prefers-color-scheme: light) {
-  .globe-wrapper:-webkit-full-screen .layer-control,
-  .globe-wrapper:fullscreen .layer-control {
-    background: rgba(240, 240, 240, 0.85);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .globe-wrapper:-webkit-full-screen .layer-control,
-  .globe-wrapper:fullscreen .layer-control {
-    background: rgba(26, 26, 26, 0.85);
-  }
 }
 </style>
 
