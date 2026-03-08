@@ -280,45 +280,69 @@
 </script>
 
 ## 3D Globe Agriculture
-<link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-<script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
-<div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; position: relative; z-index: 1; background-color: #1c1c1c;"></div>
-<div style="position: relative; z-index: 9999; margin-top: 15px; padding: 15px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e9ecef;">
-  <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
-  <div style="display: flex; flex-wrap: wrap; gap: 15px; font-size: 16px; color: #333;">
-    <div style="display: flex; align-items: center;"><input id="chk-ndvi" type="checkbox" value="/data/NDVI.KMZ" onchange="window.toggleKmlLayer(this)" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;"><label for="chk-ndvi" style="cursor: pointer; margin: 0; padding: 5px 0;">NDVI</label></div>
-    <div style="display: flex; align-items: center;"><input id="chk-lcc" type="checkbox" value="/data/lcc.kmz" onchange="window.toggleKmlLayer(this)" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;"><label for="chk-lcc" style="cursor: pointer; margin: 0; padding: 5px 0;">LCC</label></div>
-    <div style="display: flex; align-items: center;"><input id="chk-corn" type="checkbox" value="/data/maize.kmz" onchange="window.toggleKmlLayer(this)" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;"><label for="chk-corn" style="cursor: pointer; margin: 0; padding: 5px 0;">Corn</label></div>
-    <div style="display: flex; align-items: center;"><input id="chk-soy" type="checkbox" value="/data/soybean.kmz" onchange="window.toggleKmlLayer(this)" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;"><label for="chk-soy" style="cursor: pointer; margin: 0; padding: 5px 0;">Soybean</label></div>
-    <div style="display: flex; align-items: center;"><input id="chk-rice" type="checkbox" value="/data/rice.kmz" onchange="window.toggleKmlLayer(this)" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;"><label for="chk-rice" style="cursor: pointer; margin: 0; padding: 5px 0;">Rice</label></div>
+<div class="cesium-container">
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+  
+  <div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; position: relative; z-index: 1; background-color: #1c1c1c;"></div>
+  
+  <div style="position: relative; z-index: 9999; margin-top: 15px; padding: 15px; background: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e9ecef;">
+    <strong style="display: block; margin-bottom: 12px; font-size: 16px;">3D Layers Control:</strong>
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; font-size: 16px; color: #333;">
+      <div style="display: flex; align-items: center;">
+        <input id="chk-ndvi" class="lyr-cb" type="checkbox" value="/data/NDVI.KMZ" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
+        <label for="chk-ndvi" onclick="" style="margin: 0; padding: 5px 0; cursor: pointer;">NDVI</label>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <input id="chk-lcc" class="lyr-cb" type="checkbox" value="/data/lcc.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
+        <label for="chk-lcc" onclick="" style="margin: 0; padding: 5px 0; cursor: pointer;">LCC</label>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <input id="chk-corn" class="lyr-cb" type="checkbox" value="/data/maize.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
+        <label for="chk-corn" onclick="" style="margin: 0; padding: 5px 0; cursor: pointer;">Corn</label>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <input id="chk-soy" class="lyr-cb" type="checkbox" value="/data/soybean.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
+        <label for="chk-soy" onclick="" style="margin: 0; padding: 5px 0; cursor: pointer;">Soybean</label>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <input id="chk-rice" class="lyr-cb" type="checkbox" value="/data/rice.kmz" style="width: 24px; height: 24px; margin-right: 6px; cursor: pointer;">
+        <label for="chk-rice" onclick="" style="margin: 0; padding: 5px 0; cursor: pointer;">Rice</label>
+      </div>
+    </div>
   </div>
-</div>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    try {
-      Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
-      var viewer = new Cesium.Viewer("map3d", { terrain: Cesium.Terrain.fromWorldTerrain(), baseLayerPicker: false, geocoder: false, animation: false, timeline: false, navigationHelpButton: false });
-      window.loaded3DLayers = {};
-      window.toggleKmlLayer = function(checkbox) {
-        var kmlUrl = checkbox.value; 
-        if (checkbox.checked) {
-          viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, { camera: viewer.scene.camera, canvas: viewer.scene.canvas, clampToGround: true })).then(function(dataSource){
-            window.loaded3DLayers[kmlUrl] = dataSource; 
-            viewer.flyTo(dataSource); 
-          }).catch(function(error) {
-            alert("图层加载失败: " + kmlUrl);
-            checkbox.checked = false; 
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      try {
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
+        var viewer = new Cesium.Viewer("map3d", { terrain: Cesium.Terrain.fromWorldTerrain(), baseLayerPicker: false, geocoder: false, animation: false, timeline: false, navigationHelpButton: false });
+        window.loaded3DLayers = {};
+        
+        var checkboxes = document.querySelectorAll('.lyr-cb');
+        checkboxes.forEach(function(cb) {
+          cb.addEventListener('change', function() {
+            var kmlUrl = this.value; 
+            if (this.checked) {
+              viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, { camera: viewer.scene.camera, canvas: viewer.scene.canvas, clampToGround: true })).then(function(dataSource){
+                window.loaded3DLayers[kmlUrl] = dataSource; 
+                viewer.flyTo(dataSource); 
+              }).catch(function(error) {
+                alert("图层加载失败: " + kmlUrl);
+                cb.checked = false; 
+              });
+            } else {
+              var activeLayer = window.loaded3DLayers[kmlUrl];
+              if (activeLayer) {
+                viewer.dataSources.remove(activeLayer);
+                delete window.loaded3DLayers[kmlUrl]; 
+              }
+            }
           });
-        } else {
-          var activeLayer = window.loaded3DLayers[kmlUrl];
-          if (activeLayer) {
-            viewer.dataSources.remove(activeLayer);
-            delete window.loaded3DLayers[kmlUrl]; 
-          }
-        }
-      };
-    } catch (error) {
-      document.getElementById("map3d").innerHTML = "<div style='padding: 20px; color: red;'>3D地球初始化失败：" + error.message + "</div>";
-    }
-  });
-</script>
+        });
+      } catch (error) {
+        document.getElementById("map3d").innerHTML = "<div style='padding: 20px; color: red;'>3D地球初始化失败：" + error.message + "</div>";
+      }
+    });
+  </script>
+</div>
