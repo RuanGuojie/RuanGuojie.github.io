@@ -288,6 +288,11 @@
   font-family: 'DM Sans', sans-serif;
 }
 
+.globe-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
 .globe-wrapper #map3d {
   display: block;
   width: 100%;
@@ -303,7 +308,7 @@
 
 .layer-control {
   position: relative;
-  z-index: 99999;
+  z-index: 2;
   margin-top: 16px;
   padding: 20px 24px;
   border-radius: 14px;
@@ -393,7 +398,7 @@
   position: absolute;
   bottom: 36px;
   right: 16px;
-  z-index: 100;
+  z-index: 2;
   width: 40px;
   height: 40px;
   border-radius: 10px;
@@ -425,6 +430,11 @@
 }
 
 /* Fullscreen */
+.globe-wrapper:-webkit-full-screen,
+.globe-wrapper:fullscreen {
+  z-index: 999999;
+}
+
 .globe-wrapper:-webkit-full-screen #map3d,
 .globe-wrapper:fullscreen #map3d {
   height: 100vh !important;
@@ -439,39 +449,45 @@
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  background: rgba(15, 15, 15, 0.75);
-  border: 1px solid rgba(255,255,255,0.12);
+  z-index: 999999;
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
   color: #fff;
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn,
 .globe-wrapper:fullscreen .layer-control .lyr-btn {
-  color: #fff;
-  border-color: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.7);
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.06);
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn:hover,
 .globe-wrapper:fullscreen .layer-control .lyr-btn:hover {
-  border-color: rgba(255,255,255,0.3);
+  color: #fff;
+  border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.12);
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-btn.active,
 .globe-wrapper:fullscreen .layer-control .lyr-btn.active {
-  color: #60a5fa;
-  border-color: rgba(59,130,246,0.5);
-  background: rgba(59,130,246,0.15);
+  color: #93c5fd;
+  border-color: rgba(147,197,253,0.4);
+  background: rgba(59,130,246,0.18);
+  box-shadow: 0 0 20px rgba(59,130,246,0.15);
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .lyr-dot,
 .globe-wrapper:fullscreen .layer-control .lyr-dot {
-  border-color: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.3);
 }
 
 .globe-wrapper:-webkit-full-screen .layer-control .layer-control-title,
 .globe-wrapper:fullscreen .layer-control .layer-control-title {
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.5);
   opacity: 1;
 }
 </style>
