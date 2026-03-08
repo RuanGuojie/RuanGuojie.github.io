@@ -306,10 +306,10 @@
   z-index: 99999;
   margin-top: 16px;
   padding: 20px 24px;
-  background: linear-gradient(135deg, #0f1923 0%, #1a2332 100%);
+  background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
   border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8);
 }
 
 .layer-control-title {
@@ -319,7 +319,7 @@
   margin-bottom: 16px;
   font-size: 13px;
   font-weight: 500;
-  color: rgba(255,255,255,0.4);
+  color: rgba(0,0,0,0.4);
   text-transform: uppercase;
   letter-spacing: 1.5px;
 }
@@ -331,7 +331,7 @@
   height: 6px;
   border-radius: 50%;
   background: #3b82f6;
-  box-shadow: 0 0 8px rgba(59,130,246,0.6);
+  box-shadow: 0 0 8px rgba(59,130,246,0.4);
 }
 
 .layer-grid {
@@ -345,14 +345,14 @@
   align-items: center;
   gap: 10px;
   padding: 10px 18px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(0,0,0,0.1);
   border-radius: 10px;
   cursor: pointer;
-  background: rgba(255,255,255,0.03);
+  background: rgba(255,255,255,0.6);
   font-size: 14px;
   font-weight: 500;
   font-family: 'DM Sans', sans-serif;
-  color: rgba(255,255,255,0.55);
+  color: rgba(0,0,0,0.5);
   -webkit-appearance: none;
   appearance: none;
   touch-action: manipulation;
@@ -362,21 +362,21 @@
 }
 
 .lyr-btn:hover {
-  border-color: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.8);
-  background: rgba(255,255,255,0.06);
+  border-color: rgba(0,0,0,0.18);
+  color: rgba(0,0,0,0.75);
+  background: rgba(255,255,255,0.85);
 }
 
 .lyr-btn.active {
   border-color: rgba(59,130,246,0.4);
-  color: #fff;
-  background: rgba(59,130,246,0.12);
-  box-shadow: 0 0 20px rgba(59,130,246,0.1), inset 0 1px 0 rgba(59,130,246,0.15);
+  color: #1d4ed8;
+  background: rgba(59,130,246,0.08);
+  box-shadow: 0 0 16px rgba(59,130,246,0.08);
 }
 
 .lyr-btn.active .lyr-dot {
   background: #3b82f6;
-  box-shadow: 0 0 10px rgba(59,130,246,0.6);
+  box-shadow: 0 0 8px rgba(59,130,246,0.5);
   border-color: transparent;
 }
 
@@ -384,7 +384,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 1.5px solid rgba(255,255,255,0.2);
+  border: 1.5px solid rgba(0,0,0,0.2);
   background: transparent;
   flex-shrink: 0;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -392,7 +392,7 @@
 
 .fs-btn {
   position: absolute;
-  top: 16px;
+  bottom: 16px;
   right: 16px;
   z-index: 100;
   width: 40px;
@@ -441,7 +441,7 @@
   margin: 0;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  background: rgba(15, 25, 35, 0.85);
+  background: rgba(240, 240, 240, 0.85);
 }
 </style>
 
