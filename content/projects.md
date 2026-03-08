@@ -281,12 +281,11 @@
 
 
 ## 3D Globe Agriculture
-## 3D Globe Agriculture
 
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
 
-<div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; z-index: 1; background-color: #f0f0f0;"></div>
+<div id="map3d" style="display: block; width: 100%; height: 600px; margin-top: 20px; border-radius: 4px; z-index: 1; background-color: #1c1c1c;"></div>
 
 <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
   <strong style="margin-right: 15px;">3D 图层控制:</strong>
@@ -297,12 +296,12 @@
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     try {
-      // 1. 务必确认这里是否有合法的 Token
+      // 1. 填入你的 Cesium ion Token
       Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
 
-      // 2. 初始化 3D 地球
+      // 2. 初始化 3D 地球 (已更新为适配 1.114 的新版地形 API)
       var viewer = new Cesium.Viewer("map3d", {
-        terrainProvider: Cesium.createWorldTerrain(),
+        terrain: Cesium.Terrain.fromWorldTerrain(), // 👈 就是这里修改了新语法
         baseLayerPicker: false,
         geocoder: false,
         animation: false,
@@ -310,25 +309,26 @@
         navigationHelpButton: false
       });
 
+      // 3. 加载 KML 图层的功能
       window.loadKmlLayer = function(kmlUrl) {
         viewer.dataSources.add(Cesium.KmlDataSource.load(kmlUrl, {
           camera: viewer.scene.camera,
           canvas: viewer.scene.canvas,
-          clampToGround: true
+          clampToGround: true // 尝试贴合地形
         })).then(function(dataSource){
           viewer.flyTo(dataSource);
         }).catch(function(error) {
-          alert("图层加载失败: " + kmlUrl + "\n请按 F12 查看 Console 报错。");
+          alert("图层加载失败: " + kmlUrl + "\n请确认文件路径正确。");
         });
       };
 
+      // 4. 清除图层的功能
       window.clear3DLayers = function() {
         viewer.dataSources.removeAll();
       };
 
     } catch (error) {
-      // 如果 Cesium 崩溃，把报错信息直接写在原来的空白处
-      document.getElementById("map3d").innerHTML = "<div style='padding: 20px; color: red;'><strong>3D地球初始化失败：</strong><br>" + error.message + "<br>请检查是否替换了 Cesium Token，或按 F12 查看控制台。</div>";
+      document.getElementById("map3d").innerHTML = "<div style='padding: 20px; color: red;'><strong>3D地球初始化失败：</strong><br>" + error.message + "</div>";
       console.error("Cesium 初始化详细错误:", error);
     }
   });
