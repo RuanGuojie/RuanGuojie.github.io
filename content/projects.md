@@ -884,10 +884,10 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="crop-layer-control">
   <div class="crop-layer-control-title">3D Crop Layers</div>
   <div class="crop-layer-grid">
-    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/maize.kmz" data-crop-type="corn"><span class="crop-color-dot" style="background:#FF9800;"></span><span>🌽 Corn</span></button>
-    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/rice.kmz" data-crop-type="rice"><span class="crop-color-dot" style="background:#8BC34A;"></span><span>🌾 Rice</span></button>
-    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/soybean.kmz" data-crop-type="soybean"><span class="crop-color-dot" style="background:#795548;"></span><span>🫘 Soybean</span></button>
-    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/winter_wheat.kmz" data-crop-type="wheat"><span class="crop-color-dot" style="background:#FFC107;"></span><span>🌾 Wheat</span></button>
+    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/maize.kmz" data-crop-type="corn"><span class="crop-color-dot" style="background:#FF9800;"></span><span>Corn</span></button>
+    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/rice.kmz" data-crop-type="rice"><span class="crop-color-dot" style="background:#8BC34A;"></span><span>Rice</span></button>
+    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/soybean.kmz" data-crop-type="soybean"><span class="crop-color-dot" style="background:#795548;"></span><span>Soybean</span></button>
+    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/winter_wheat.kmz" data-crop-type="wheat"><span class="crop-color-dot" style="background:#FFC107;"></span><span>Wheat</span></button>
   </div>
 </div>
 </div>
