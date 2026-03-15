@@ -1002,10 +1002,12 @@ document.addEventListener("DOMContentLoaded", function() {
     var parts=[], cmap={};
     // 0: Stalk
     var stk=new THREE.CylinderGeometry(0.06,0.09,2.8,8);stk.translate(0,1.4,0);parts.push(stk);cmap[0]=C.stalk;
-    // 1-7: Large arching leaves
+    // 1-7: Large arching pointed leaves (elongated flattened sphere = natural taper)
     for(var i=0;i<7;i++){
-      var lf=new THREE.BoxGeometry(1.2,0.03,0.16,6,1,1);var a=lf.attributes.position.array;
-      for(var j=0;j<a.length;j+=3){a[j+1]+=a[j]*a[j]*0.2;a[j+2]+=Math.abs(a[j])*0.05;}
+      var lf=new THREE.SphereGeometry(0.5,8,4);lf.scale(1.2,0.04,0.14);
+      // Curve: bend downward
+      var a=lf.attributes.position.array;
+      for(var j=0;j<a.length;j+=3){a[j+1]+=a[j]*a[j]*0.3;}
       lf.rotateY(i*Math.PI/3.5+(i%2)*0.4);lf.translate(0,0.4+i*0.32,0);
       parts.push(lf);cmap[parts.length-1]=(i%2===0)?C.leaf:C.leafLt;
     }
@@ -1033,10 +1035,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // 1: Panicle stem (curves upward then droops)
     var pstk=new THREE.CylinderGeometry(0.02,0.03,1.2,5);pstk.translate(0,1.2,0);pstk.rotateZ(0.15);
     parts.push(pstk);cmap[parts.length-1]=C.stalk;
-    // 2-4: Wide curving leaves
+    // 2-4: Wide curving pointed leaves
     for(var i=0;i<3;i++){
-      var lf=new THREE.BoxGeometry(0.8,0.03,0.14,5,1,1);var a=lf.attributes.position.array;
-      for(var j=0;j<a.length;j+=3){a[j+1]-=a[j]*a[j]*0.4;} // curve DOWN strongly
+      var lf=new THREE.SphereGeometry(0.4,8,4);lf.scale(1.0,0.04,0.13);
+      var a=lf.attributes.position.array;
+      for(var j=0;j<a.length;j+=3){a[j+1]-=a[j]*a[j]*0.5;} // curve DOWN strongly
       lf.rotateY(i*2.1+0.3);lf.translate(0,0.5+i*0.15,0);
       parts.push(lf);cmap[parts.length-1]=(i===0)?C.leaf:C.leafLt;
     }
@@ -1084,10 +1087,11 @@ document.addEventListener("DOMContentLoaded", function() {
     var parts=[], cmap={};
     // 0: Stem
     var stk=new THREE.CylinderGeometry(0.03,0.05,1.0,6);stk.translate(0,0.5,0);parts.push(stk);cmap[0]=C.stem;
-    // 1-3: Wide curving leaves (arch downward like in the image)
+    // 1-3: Wide curving pointed leaves (arch downward)
     for(var i=0;i<3;i++){
-      var lf=new THREE.BoxGeometry(0.7,0.03,0.12,5,1,1);var a=lf.attributes.position.array;
-      for(var j=0;j<a.length;j+=3){a[j+1]-=a[j]*a[j]*0.5;} // strong downward curve
+      var lf=new THREE.SphereGeometry(0.35,8,4);lf.scale(1.0,0.04,0.1);
+      var a=lf.attributes.position.array;
+      for(var j=0;j<a.length;j+=3){a[j+1]-=a[j]*a[j]*0.6;} // strong downward curve
       lf.rotateY(i*2.1);lf.translate(0,0.4+i*0.1,0);
       parts.push(lf);cmap[parts.length-1]=C.stem;
     }
