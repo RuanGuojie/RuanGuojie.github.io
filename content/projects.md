@@ -1068,10 +1068,10 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   var CROP_TYPES={
-    corn:    {geo:coloredGeos[0], sc:0.012, label:'Corn'},
-    rice:    {geo:coloredGeos[1], sc:0.012, label:'Rice'},
-    soybean: {geo:coloredGeos[2], sc:0.012, label:'Soybean'},
-    wheat:   {geo:coloredGeos[3], sc:0.012, label:'Wheat'},
+    corn:    {geo:coloredGeos[0], sc:0.025, label:'Corn'},
+    rice:    {geo:coloredGeos[1], sc:0.025, label:'Rice'},
+    soybean: {geo:coloredGeos[2], sc:0.025, label:'Soybean'},
+    wheat:   {geo:coloredGeos[3], sc:0.025, label:'Wheat'},
   };
 
   /* ═══════════════════════════════════════════
