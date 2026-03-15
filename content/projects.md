@@ -871,6 +871,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <div class="crop-globe-wrapper">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <div class="crop-canvas-wrap" id="cropCanvasWrap">
   <div class="crop-loading" id="cropLoading">Loading vegetation data…</div>
@@ -882,15 +883,13 @@ document.addEventListener("DOMContentLoaded", function() {
 <div class="crop-layer-control">
   <div class="crop-layer-control-title">3D Crop Layers</div>
   <div class="crop-layer-grid">
-    <button type="button" class="crop-lyr-btn active" data-crop-type="all"><span class="crop-lyr-dot"></span><span>All</span></button>
-    <button type="button" class="crop-lyr-btn" data-crop-type="tropical"><span class="crop-color-dot" style="background:#228B22;"></span><span>Tropical</span></button>
-    <button type="button" class="crop-lyr-btn" data-crop-type="forest"><span class="crop-color-dot" style="background:#43a047;"></span><span>Forest</span></button>
-    <button type="button" class="crop-lyr-btn" data-crop-type="crop"><span class="crop-color-dot" style="background:#8bc34a;"></span><span>Cropland</span></button>
-    <button type="button" class="crop-lyr-btn" data-crop-type="grass"><span class="crop-color-dot" style="background:#a5d6a7;"></span><span>Grassland</span></button>
+    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/maize.kmz" data-crop-type="corn"><span class="crop-color-dot" style="background:#FF9800;"></span><span>🌽 Corn</span></button>
+    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/rice.kmz" data-crop-type="rice"><span class="crop-color-dot" style="background:#8BC34A;"></span><span>🌾 Rice</span></button>
+    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/soybean.kmz" data-crop-type="soybean"><span class="crop-color-dot" style="background:#795548;"></span><span>🫘 Soybean</span></button>
   </div>
   <div class="crop-stats" id="cropStats">
     <span>🌱 <strong id="cropCount">—</strong> plants</span>
-    <span>📊 MODIS NDVI + NASA Blue Marble</span>
+    <span>📊 Source: KMZ GroundOverlay</span>
   </div>
 </div>
 </div>
@@ -898,7 +897,11 @@ document.addEventListener("DOMContentLoaded", function() {
 <script>
 (function() {
   'use strict';
-  var TYPES = ['tropical','forest','crop','grass'];
+  var CROP_TYPES = {
+    corn:    { geos: null, sc: 0.010, label: 'Corn' },
+    rice:    { geos: null, sc: 0.008, label: 'Rice' },
+    soybean: { geos: null, sc: 0.009, label: 'Soybean' },
+  };
 
   var container = document.getElementById('cropCanvasWrap');
   var W = container.clientWidth, H = container.clientHeight;
@@ -1344,96 +1347,233 @@ document.addEventListener("DOMContentLoaded", function() {
     return merged;
   });
 
-  // [corn, rice, wheat, tropTree, pine, palm, bush, flower]
-  var CFG = {
-    tropical: { geos: [coloredGeos[3], coloredGeos[5], coloredGeos[3]], sc: 0.014 },
-    forest:   { geos: [coloredGeos[4], coloredGeos[3], coloredGeos[4]], sc: 0.012 },
-    crop:     { geos: [coloredGeos[0], coloredGeos[2], coloredGeos[1]], sc: 0.009 },
-    grass:    { geos: [coloredGeos[6], coloredGeos[7], coloredGeos[6]], sc: 0.008 },
-  };
+  // corn=0, rice=1, wheat=2, tropTree=3, pine=4, palm=5, bush=6, flower=7
+  // Assign crop-specific models
+  CROP_TYPES.corn.geos    = [coloredGeos[0], coloredGeos[0], coloredGeos[0]]; // corn models
+  CROP_TYPES.rice.geos    = [coloredGeos[1], coloredGeos[1], coloredGeos[1]]; // rice models
+  CROP_TYPES.soybean.geos = [coloredGeos[6], coloredGeos[7], coloredGeos[6]]; // bush + flower (soybean-like)
 
-  var meshGroups = {};
+  var meshGroups = {};  // cropType -> [InstancedMesh, ...]
+  var cropPointsCache = {};  // cropType -> points array
 
-  function buildVeg(pts, filter) {
-    Object.keys(meshGroups).forEach(function(k) {
-      meshGroups[k].forEach(function(m) { globeGroup.remove(m); });
-    });
-    meshGroups = {};
+  /* ═══════════════════════════════════════════
+     KMZ → Canvas sampling → 3D points
+     ═══════════════════════════════════════════ */
+  function extractImageFromKMZ(kmzUrl) {
+    return fetch(kmzUrl)
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); })
+      .then(function(buf) { return JSZip.loadAsync(buf); })
+      .then(function(zip) {
+        // Find the largest image file
+        var bestFile = null, bestSize = 0;
+        zip.forEach(function(path, file) {
+          if (/\.(png|jpg|jpeg|tif|tiff)$/i.test(path) && file._data && file._data.uncompressedSize > bestSize) {
+            bestFile = file; bestSize = file._data.uncompressedSize;
+          }
+        });
+        // Fallback: just find any image
+        if (!bestFile) {
+          zip.forEach(function(path, file) {
+            if (/\.(png|jpg|jpeg|tif|tiff)$/i.test(path) && !bestFile) bestFile = file;
+          });
+        }
+        if (!bestFile) throw new Error('No image found in KMZ');
+        return bestFile.async('blob');
+      })
+      .then(function(blob) {
+        return new Promise(function(resolve, reject) {
+          var img = new Image();
+          img.onload = function() { resolve(img); };
+          img.onerror = reject;
+          img.src = URL.createObjectURL(blob);
+        });
+      });
+  }
 
-    var grouped = {};
-    for (var i = 0; i < pts.length; i++) {
-      var p = pts[i], pt = TYPES[p[2]] || 'grass';
-      if (filter !== 'all' && pt !== filter) continue;
-      if (!grouped[pt]) grouped[pt] = [];
-      grouped[pt].push(p);
+  function sampleImageToPoints(img, stepDeg, threshold) {
+    stepDeg = stepDeg || 1.0;
+    threshold = threshold || 15;
+
+    // Draw to canvas
+    var maxDim = Math.min(img.width, 2048); // Limit for performance
+    var ratio = maxDim / img.width;
+    var w = Math.floor(img.width * ratio);
+    var h = Math.floor(img.height * ratio);
+    var cv = document.createElement('canvas');
+    cv.width = w; cv.height = h;
+    var ctx = cv.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    var imgData = ctx.getImageData(0, 0, w, h).data;
+
+    var points = [];
+    // Sample grid
+    for (var lat = 85; lat > -70; lat -= stepDeg) {
+      for (var lon = -180; lon < 180; lon += stepDeg) {
+        var px = Math.floor(((lon + 180) / 360) * w) % w;
+        var py = Math.floor(((90 - lat) / 180) * h);
+        py = Math.max(0, Math.min(h - 1, py));
+        var idx = (py * w + px) * 4;
+        var r = imgData[idx], g = imgData[idx+1], b = imgData[idx+2], a = imgData[idx+3];
+
+        if (a < 128) continue; // transparent = no data
+
+        // Greenness score
+        var greenness = g - (r + b) / 2;
+        var normalized = Math.max(0, Math.min(100, (greenness / 50) * 100));
+
+        if (normalized >= threshold) {
+          var density = normalized / 100;
+          var numPts = Math.max(1, Math.floor(density * 3));
+          for (var d = 0; d < numPts; d++) {
+            var jLat = lat + (Math.sin(d * 13.7 + lon) * 0.5 - 0.25) * stepDeg * 0.8;
+            var jLon = lon + (Math.cos(d * 7.3 + lat) * 0.5 - 0.25) * stepDeg * 0.8;
+            points.push([
+              Math.round(jLat * 100) / 100,
+              Math.round(jLon * 100) / 100,
+              Math.round(normalized),
+              Math.round(density * 100)
+            ]);
+          }
+        }
+      }
+    }
+    return points;
+  }
+
+  /* ═══════════════════════════════════════════
+     Render a single crop layer
+     ═══════════════════════════════════════════ */
+  function renderCropLayer(cropType, points) {
+    // Remove existing layer
+    removeCropLayer(cropType);
+
+    var cfg = CROP_TYPES[cropType];
+    if (!cfg || !points || points.length === 0) return 0;
+
+    meshGroups[cropType] = [];
+    var dummy = new THREE.Object3D();
+    var count = 0;
+
+    // Split across geo variants
+    var geoGroups = {};
+    for (var i = 0; i < points.length; i++) {
+      var gIdx = i % cfg.geos.length;
+      if (!geoGroups[gIdx]) geoGroups[gIdx] = [];
+      geoGroups[gIdx].push(points[i]);
     }
 
-    var total = 0;
-    var dummy = new THREE.Object3D();
+    Object.keys(geoGroups).forEach(function(gIdx) {
+      var sub = geoGroups[gIdx], n = sub.length;
+      var geo = cfg.geos[gIdx];
 
-    Object.keys(grouped).forEach(function(type) {
-      var arr = grouped[type], cfg = CFG[type];
-      meshGroups[type] = [];
+      var material = new THREE.MeshPhongMaterial({
+        vertexColors: true, shininess: 20, flatShading: false
+      });
 
-      var geoGroups = {};
-      for (var i = 0; i < arr.length; i++) {
-        var gIdx = i % cfg.geos.length;
-        if (!geoGroups[gIdx]) geoGroups[gIdx] = [];
-        geoGroups[gIdx].push(arr[i]);
+      var mesh = new THREE.InstancedMesh(geo, material, n);
+
+      for (var i = 0; i < n; i++) {
+        var p = sub[i];
+        var lat = p[0], lon = p[1], sc = p[3] / 100;
+        var s = cfg.sc * (0.5 + sc * 1.0) * (0.7 + ((i * 7) % 100) / 100 * 0.6);
+
+        var pos = ll2v(lat, lon, 1.003);
+        var norm = pos.clone().normalize();
+
+        dummy.position.copy(pos);
+        dummy.position.addScaledVector(norm, s * 0.1);
+        dummy.up.copy(norm);
+        var tangent = new THREE.Vector3(-norm.z, 0, norm.x).normalize();
+        if (tangent.length() < 0.01) tangent.set(1, 0, 0);
+        dummy.lookAt(pos.clone().add(tangent));
+        dummy.rotateOnAxis(new THREE.Vector3(0, 1, 0), ((i * 37) % 628) / 100);
+        dummy.scale.set(s, s * (0.8 + sc * 0.4), s);
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
       }
 
-      Object.keys(geoGroups).forEach(function(gIdx) {
-        var sub = geoGroups[gIdx], n = sub.length;
-        var geo = cfg.geos[gIdx];
-
-        var material = new THREE.MeshPhongMaterial({
-          vertexColors: true,
-          shininess: 20,
-          flatShading: false
-        });
-
-        var mesh = new THREE.InstancedMesh(geo, material, n);
-
-        for (var i = 0; i < n; i++) {
-          var p = sub[i], lat = p[0], lon = p[1], sc = p[4] / 100;
-          var s = cfg.sc * (0.5 + sc * 1.0) * (0.7 + ((i * 7) % 100) / 100 * 0.6);
-
-          var pos = ll2v(lat, lon, 1.003);
-          var norm = pos.clone().normalize();
-
-          // Use Object3D for reliable transform
-          dummy.position.copy(pos);
-          dummy.position.addScaledVector(norm, s * 0.1); // lift slightly
-          // Look outward along normal, then correct so Y is up
-          dummy.up.copy(norm);
-          // Point in arbitrary tangent direction
-          var tangent = new THREE.Vector3(-norm.z, 0, norm.x).normalize();
-          if (tangent.length() < 0.01) tangent.set(1, 0, 0);
-          dummy.lookAt(pos.clone().add(tangent));
-          // Random spin
-          dummy.rotateOnAxis(new THREE.Vector3(0, 1, 0), ((i * 37) % 628) / 100);
-
-          dummy.scale.set(s, s * (0.8 + sc * 0.4), s);
-          dummy.updateMatrix();
-          mesh.setMatrixAt(i, dummy.matrix);
-        }
-
-        mesh.instanceMatrix.needsUpdate = true;
-        globeGroup.add(mesh);
-        meshGroups[type].push(mesh);
-        total += n;
-      });
+      mesh.instanceMatrix.needsUpdate = true;
+      globeGroup.add(mesh);
+      meshGroups[cropType].push(mesh);
+      count += n;
     });
 
+    return count;
+  }
+
+  function removeCropLayer(cropType) {
+    if (meshGroups[cropType]) {
+      meshGroups[cropType].forEach(function(m) { globeGroup.remove(m); });
+      delete meshGroups[cropType];
+    }
+  }
+
+  function updateStats() {
+    var total = 0;
+    Object.keys(meshGroups).forEach(function(k) {
+      meshGroups[k].forEach(function(m) { total += m.count; });
+    });
     document.getElementById('cropCount').textContent = total.toLocaleString();
     document.getElementById('cropStats').classList.add('visible');
   }
 
-  var allPts=null, activeFilter='all';
-  fetch('/data/crops.json')
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(function(d){allPts=d;document.getElementById('cropLoading').style.display='none';buildVeg(d,'all');})
-    .catch(function(e){document.getElementById('cropLoading').textContent='Failed: '+e.message;});
+  /* ═══════════════════════════════════════════
+     Toggle buttons: each crop loads/unloads independently
+     ═══════════════════════════════════════════ */
+  document.getElementById('cropLoading').style.display = 'none';
+
+  var btns = document.querySelectorAll('.crop-lyr-btn');
+  btns.forEach(function(btn) {
+    var touched = false;
+    btn.addEventListener('touchend', function(e) { e.preventDefault(); touched = true; toggleCrop(btn); }, { passive: false });
+    btn.addEventListener('click', function() { if (touched) { touched = false; return; } toggleCrop(btn); });
+  });
+
+  function toggleCrop(btn) {
+    var cropType = btn.getAttribute('data-crop-type');
+    var kmzUrl = btn.getAttribute('data-crop-kmz');
+    var isActive = btn.classList.contains('active');
+
+    if (isActive) {
+      // Turn off
+      btn.classList.remove('active');
+      removeCropLayer(cropType);
+      updateStats();
+    } else {
+      // Turn on
+      btn.classList.add('active');
+      btn.style.opacity = '0.6';
+
+      if (cropPointsCache[cropType]) {
+        // Already loaded, just render
+        renderCropLayer(cropType, cropPointsCache[cropType]);
+        btn.style.opacity = '';
+        updateStats();
+      } else {
+        // Load from KMZ
+        document.getElementById('cropLoading').style.display = '';
+        document.getElementById('cropLoading').textContent = 'Loading ' + CROP_TYPES[cropType].label + '…';
+
+        extractImageFromKMZ(kmzUrl)
+          .then(function(img) {
+            var points = sampleImageToPoints(img, 1.0, 15);
+            cropPointsCache[cropType] = points;
+            console.log('[3D Crops] ' + cropType + ': ' + points.length + ' points from KMZ');
+            renderCropLayer(cropType, points);
+            btn.style.opacity = '';
+            document.getElementById('cropLoading').style.display = 'none';
+            updateStats();
+          })
+          .catch(function(e) {
+            console.error('[3D Crops] Failed to load ' + cropType + ':', e);
+            btn.classList.remove('active');
+            btn.style.opacity = '';
+            document.getElementById('cropLoading').textContent = 'Failed: ' + e.message;
+            setTimeout(function() { document.getElementById('cropLoading').style.display = 'none'; }, 3000);
+          });
+      }
+    }
+  }
 
   // Interaction
   var isDrag=false,prev={x:0,y:0},vel={x:0,y:0};
@@ -1469,9 +1609,5 @@ document.addEventListener("DOMContentLoaded", function() {
     setTimeout(onResize,100);
   });document.addEventListener('fullscreenchange',function(){setTimeout(onResize,100);});document.addEventListener('webkitfullscreenchange',function(){setTimeout(onResize,100);});}
 
-  // Filter buttons
-  var btns=document.querySelectorAll('.crop-lyr-btn');
-  btns.forEach(function(btn){var t=false;btn.addEventListener('touchend',function(e){e.preventDefault();t=true;doF(btn);},{passive:false});btn.addEventListener('click',function(){if(t){t=false;return;}doF(btn);});});
-  function doF(btn){if(!allPts)return;btns.forEach(function(b){b.classList.remove('active');});btn.classList.add('active');activeFilter=btn.getAttribute('data-crop-type');buildVeg(allPts,activeFilter);}
 })();
 </script>
