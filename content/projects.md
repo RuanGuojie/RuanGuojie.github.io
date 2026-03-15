@@ -934,7 +934,7 @@ document.addEventListener("DOMContentLoaded", function() {
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     tex.needsUpdate = true; earthMat.map = tex; earthMat.needsUpdate = true;
   };
-  earthImg.src = '/images/earth.jpg';
+  earthImg.src = '/images/earth2.jpg';
   // Atmosphere
   globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.015,48,36), new THREE.MeshPhongMaterial({color:0x6699cc,transparent:true,opacity:0.06})));
   globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.06,32,24), new THREE.MeshBasicMaterial({color:0x3366aa,transparent:true,opacity:0.045,side:THREE.BackSide})));
