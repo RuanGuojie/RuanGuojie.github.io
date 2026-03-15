@@ -832,7 +832,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
-
 ## 3D Crop Globe
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&display=swap');
@@ -927,7 +926,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var texLoader = new THREE.TextureLoader();
   texLoader.crossOrigin = 'anonymous';
-  texLoader.load('/images/Earth.jpg', function(tex) {
+  texLoader.load('https://eoimages.gsfc.nasa.gov/images/imagerecords/74000/74393/world.topo.200412.3x5400x2700.jpg', function(tex) {
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     earthMat.map = tex; earthMat.needsUpdate = true;
   });
@@ -945,24 +944,144 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function ll2v(lat,lon,r){var p=(90-lat)*Math.PI/180,t=(lon+180)*Math.PI/180;return new THREE.Vector3(-r*Math.sin(p)*Math.cos(t),r*Math.cos(p),r*Math.sin(p)*Math.sin(t));}
 
-  // Plant geometries
-  var treeGeo = new THREE.ConeGeometry(1, 2.2, 6, 1); treeGeo.translate(0, 1.8, 0);
-  var trunkGeo = new THREE.CylinderGeometry(0.08, 0.12, 0.7, 4); trunkGeo.translate(0, 0.35, 0);
-  var bushGeo = new THREE.IcosahedronGeometry(1, 1); bushGeo.scale(1, 0.65, 1); bushGeo.translate(0, 0.4, 0);
-  var wheatGeo = new THREE.ConeGeometry(0.3, 1.6, 4, 1); wheatGeo.translate(0, 1.2, 0);
+  // ── Merge helper ──
+  function mergeGeos(geos) {
+    var totalVerts = 0, totalIdx = 0;
+    geos.forEach(function(g) { totalVerts += g.attributes.position.count; if (g.index) totalIdx += g.index.count; });
+    var pos = new Float32Array(totalVerts * 3), norm = new Float32Array(totalVerts * 3), idx = [];
+    var vOff = 0, iOff = 0;
+    geos.forEach(function(g) {
+      var p = g.attributes.position.array, n = g.attributes.normal.array, vc = g.attributes.position.count;
+      pos.set(p, vOff * 3); norm.set(n, vOff * 3);
+      if (g.index) { for (var i = 0; i < g.index.count; i++) idx.push(g.index.array[i] + vOff); }
+      else { for (var i = 0; i < vc; i++) idx.push(vOff + i); }
+      vOff += vc;
+    });
+    var mg = new THREE.BufferGeometry();
+    mg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    mg.setAttribute('normal', new THREE.BufferAttribute(norm, 3));
+    mg.setIndex(idx);
+    return mg;
+  }
+
+  // ── Tropical tree: 3 layered canopy spheres + tapered trunk ──
+  function makeTropicalTree() {
+    var parts = [];
+    // Trunk - tapered cylinder
+    var trunk = new THREE.CylinderGeometry(0.06, 0.13, 1.0, 5, 1); trunk.translate(0, 0.5, 0); parts.push(trunk);
+    // 3 canopy layers - overlapping spheres, bottom big, top small
+    var s1 = new THREE.SphereGeometry(1.0, 7, 5); s1.scale(1, 0.7, 1); s1.translate(0, 1.4, 0); parts.push(s1);
+    var s2 = new THREE.SphereGeometry(0.8, 7, 5); s2.scale(1, 0.75, 1); s2.translate(0.15, 1.9, 0.1); parts.push(s2);
+    var s3 = new THREE.SphereGeometry(0.55, 6, 4); s3.scale(1, 0.8, 1); s3.translate(-0.1, 2.35, -0.05); parts.push(s3);
+    // Displace canopy vertices for organic look
+    for (var p = 1; p < parts.length; p++) {
+      var arr = parts[p].attributes.position.array;
+      for (var i = 0; i < arr.length; i += 3) {
+        arr[i] += (Math.sin(i * 13.7) * 0.12);
+        arr[i+1] += (Math.cos(i * 7.3) * 0.08);
+        arr[i+2] += (Math.sin(i * 11.1) * 0.12);
+      }
+    }
+    return mergeGeos(parts);
+  }
+
+  // ── Forest tree: pine-like, 4 tiered cones + trunk ──
+  function makeForestTree() {
+    var parts = [];
+    var trunk = new THREE.CylinderGeometry(0.05, 0.1, 0.8, 5, 1); trunk.translate(0, 0.4, 0); parts.push(trunk);
+    var tiers = [[0.9, 0.8, 0.9], [0.75, 0.7, 1.4], [0.55, 0.6, 1.85], [0.3, 0.5, 2.2]];
+    for (var t = 0; t < tiers.length; t++) {
+      var c = new THREE.ConeGeometry(tiers[t][0], tiers[t][1], 7, 1);
+      c.translate(0, tiers[t][2], 0);
+      // Jitter vertices
+      var arr = c.attributes.position.array;
+      for (var i = 0; i < arr.length; i += 3) {
+        arr[i] += Math.sin(i * 9.3 + t) * 0.06;
+        arr[i+2] += Math.cos(i * 7.1 + t) * 0.06;
+      }
+      parts.push(c);
+    }
+    return mergeGeos(parts);
+  }
+
+  // ── Crop (wheat/rice): stalk + grain head + leaves ──
+  function makeCropPlant() {
+    var parts = [];
+    // Main stalk
+    var stalk = new THREE.CylinderGeometry(0.03, 0.05, 1.6, 4, 1); stalk.translate(0, 0.8, 0); parts.push(stalk);
+    // Grain head - elongated ellipsoid
+    var head = new THREE.SphereGeometry(0.18, 5, 5); head.scale(1, 2.2, 1); head.translate(0, 1.8, 0); parts.push(head);
+    // Two small leaves at base
+    var leaf1 = new THREE.PlaneGeometry(0.4, 0.12, 2, 1);
+    var la = leaf1.attributes.position.array;
+    for (var i = 0; i < la.length; i += 3) { la[i+1] += 0.5; la[i+2] += la[i] * 0.3; }
+    leaf1.rotateY(0.3); parts.push(leaf1);
+    var leaf2 = new THREE.PlaneGeometry(0.35, 0.1, 2, 1);
+    var lb = leaf2.attributes.position.array;
+    for (var i = 0; i < lb.length; i += 3) { lb[i+1] += 0.7; lb[i+2] -= lb[i] * 0.25; }
+    leaf2.rotateY(-0.5 + Math.PI); parts.push(leaf2);
+    return mergeGeos(parts);
+  }
+
+  // ── Grass/bush: cluster of displaced spheres ──
+  function makeBush() {
+    var parts = [];
+    var offsets = [[0,0.3,0,0.5],[0.3,0.35,0.2,0.4],[-0.25,0.3,-0.15,0.38],[0.1,0.5,0.15,0.32],[-0.1,0.45,-0.2,0.35],[0.2,0.2,-0.25,0.3]];
+    for (var o = 0; o < offsets.length; o++) {
+      var s = new THREE.DodecahedronGeometry(offsets[o][3], 1);
+      s.translate(offsets[o][0], offsets[o][1], offsets[o][2]);
+      // Organic displacement
+      var arr = s.attributes.position.array;
+      for (var i = 0; i < arr.length; i += 3) {
+        var d = Math.sin(i * 5.7 + o * 3) * 0.08;
+        arr[i] += d; arr[i+1] += Math.cos(i * 3.3 + o) * 0.05; arr[i+2] += Math.sin(i * 8.1 + o * 2) * 0.08;
+      }
+      parts.push(s);
+    }
+    return mergeGeos(parts);
+  }
+
+  // ── Flower: stem + 5 petals + center ──
+  function makeFlower() {
+    var parts = [];
+    // Stem
+    var stem = new THREE.CylinderGeometry(0.025, 0.04, 1.1, 4, 1); stem.translate(0, 0.55, 0); parts.push(stem);
+    // 5 petals
+    for (var p = 0; p < 5; p++) {
+      var petal = new THREE.SphereGeometry(0.22, 5, 4);
+      petal.scale(1, 0.35, 0.7);
+      var angle = (p / 5) * Math.PI * 2;
+      petal.translate(Math.cos(angle) * 0.25, 1.25, Math.sin(angle) * 0.25);
+      parts.push(petal);
+    }
+    // Center
+    var center = new THREE.SphereGeometry(0.12, 5, 4); center.translate(0, 1.28, 0); parts.push(center);
+    // Leaf
+    var leaf = new THREE.PlaneGeometry(0.3, 0.1, 2, 1);
+    var la = leaf.attributes.position.array;
+    for (var i = 0; i < la.length; i += 3) { la[i+1] += 0.4; la[i+2] += la[i] * 0.2; }
+    parts.push(leaf);
+    return mergeGeos(parts);
+  }
+
+  // Build all geometries
+  var tropicalTreeGeo = makeTropicalTree();
+  var forestTreeGeo = makeForestTree();
+  var cropGeo = makeCropPlant();
+  var bushGeo = makeBush();
+  var flowerGeo = makeFlower();
 
   var CFG = {
-    tropical: { geo: treeGeo, tGeo: trunkGeo, cols: [0x1a5c1a,0x1e6e1e,0x228B22,0x0d5e0d,0x2d8a2d], tCol: 0x5D4037, sc: 0.018 },
-    forest:   { geo: treeGeo, tGeo: trunkGeo, cols: [0x2e7d32,0x388e3c,0x43a047,0x1b5e20,0x4caf50], tCol: 0x6D4C41, sc: 0.014 },
-    crop:     { geo: wheatGeo, tGeo: null,     cols: [0x8bc34a,0x9ccc65,0xaed581,0x7cb342,0xc0ca33], tCol: null,     sc: 0.010 },
-    grass:    { geo: bushGeo,  tGeo: null,     cols: [0xa5d6a7,0x81c784,0xc5e1a5,0xaed581,0xdce775], tCol: null,     sc: 0.008 }
+    tropical: { geo: tropicalTreeGeo, tGeo: null, cols: [0x145214,0x1a6e1a,0x1f8522,0x0d5e0d,0x2d8a2d,0x176b17,0x0f4f10], tCol: null, sc: 0.016 },
+    forest:   { geo: forestTreeGeo,   tGeo: null, cols: [0x2e7d32,0x388e3c,0x43a047,0x1b5e20,0x4caf50,0x256d28,0x358538], tCol: null, sc: 0.013 },
+    crop:     { geo: cropGeo,         tGeo: null, cols: [0x8bc34a,0x9ccc65,0xaed581,0x7cb342,0xc0ca33,0xa0d468,0xb5cc5a], tCol: null, sc: 0.009 },
+    grass:    { geo: bushGeo,         tGeo: null, cols: [0x66bb6a,0x81c784,0xa5d6a7,0x73c778,0x4caf50,0x98cb9c,0xb8dfb9], tCol: null, sc: 0.007 }
   };
 
   var meshGroups = {};
   function buildVeg(pts, filter) {
     Object.keys(meshGroups).forEach(function(k){
       if(meshGroups[k].c) globeGroup.remove(meshGroups[k].c);
-      if(meshGroups[k].t) globeGroup.remove(meshGroups[k].t);
     });
     meshGroups = {};
     var grouped = {};
@@ -971,11 +1090,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     Object.keys(grouped).forEach(function(type){
       var arr=grouped[type], cfg=CFG[type], n=arr.length; total+=n;
-      var cMat=new THREE.MeshPhongMaterial({shininess:8,flatShading:true});
+      var cMat=new THREE.MeshPhongMaterial({shininess:12,flatShading:true});
       var cMesh=new THREE.InstancedMesh(cfg.geo,cMat,n);
       var cCol=new Float32Array(n*3);
-      var tMesh=null, tCol=null;
-      if(cfg.tGeo){tMesh=new THREE.InstancedMesh(cfg.tGeo,new THREE.MeshPhongMaterial({shininess:5,flatShading:true}),n);tCol=new Float32Array(n*3);}
 
       for(var i=0;i<n;i++){
         var p=arr[i],lat=p[0],lon=p[1],sc=(p[4]/100);
@@ -989,13 +1106,11 @@ document.addEventListener("DOMContentLoaded", function() {
         dummy.updateMatrix();
         cMesh.setMatrixAt(i, dummy.matrix);
         var col=new THREE.Color(cfg.cols[i%cfg.cols.length]);
-        col.r*=(0.85+((i*3)%30)/100); col.g*=(0.85+((i*7)%30)/100); col.b*=(0.85+((i*11)%30)/100);
+        col.r*=(0.82+((i*3)%35)/100); col.g*=(0.82+((i*7)%35)/100); col.b*=(0.82+((i*11)%35)/100);
         cCol[i*3]=col.r; cCol[i*3+1]=col.g; cCol[i*3+2]=col.b;
-        if(tMesh){tMesh.setMatrixAt(i,dummy.matrix);var tc=new THREE.Color(cfg.tCol);tc.r*=(0.9+((i*5)%20)/100);tc.g*=(0.9+((i*5)%20)/100);tc.b*=(0.9+((i*5)%20)/100);tCol[i*3]=tc.r;tCol[i*3+1]=tc.g;tCol[i*3+2]=tc.b;}
       }
       cMesh.instanceColor=new THREE.InstancedBufferAttribute(cCol,3); globeGroup.add(cMesh);
-      if(tMesh){tMesh.instanceColor=new THREE.InstancedBufferAttribute(tCol,3);globeGroup.add(tMesh);}
-      meshGroups[type]={c:cMesh,t:tMesh};
+      meshGroups[type]={c:cMesh};
     });
     document.getElementById('cropCount').textContent=total.toLocaleString();
     document.getElementById('cropStats').classList.add('visible');
