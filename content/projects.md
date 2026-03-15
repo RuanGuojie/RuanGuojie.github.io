@@ -887,10 +887,6 @@ document.addEventListener("DOMContentLoaded", function() {
     <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/rice.kmz" data-crop-type="rice"><span class="crop-color-dot" style="background:#8BC34A;"></span><span>🌾 Rice</span></button>
     <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/soybean.kmz" data-crop-type="soybean"><span class="crop-color-dot" style="background:#795548;"></span><span>🫘 Soybean</span></button>
   </div>
-  <div class="crop-stats" id="cropStats">
-    <span>🌱 <strong id="cropCount">—</strong> plants</span>
-    <span>📊 Source: KMZ GroundOverlay</span>
-  </div>
 </div>
 </div>
 
@@ -998,202 +994,7 @@ document.addEventListener("DOMContentLoaded", function() {
     return mg;
   }
 
-  // ── Corn plant: stalk + leaves + cobs + tassel ──
-  function makeCorn() {
-    var parts = [];
-    // Stalk
-    var stalk = new THREE.CylinderGeometry(0.06, 0.09, 2.4, 8); stalk.translate(0, 1.2, 0); parts.push(stalk);
-    // Soil base
-    var base = new THREE.SphereGeometry(0.3, 8, 6); base.scale(1, 0.35, 1); base.translate(0, 0.05, 0); parts.push(base);
-    // Leaves (curved planes)
-    for (var i = 0; i < 6; i++) {
-      var leaf = new THREE.BoxGeometry(0.8, 0.04, 0.15, 4, 1, 1);
-      var la = leaf.attributes.position.array;
-      for (var j = 0; j < la.length; j += 3) {
-        la[j + 1] += la[j] * la[j] * 0.3; // Curve downward
-        la[j + 2] += la[j] * 0.1;
-      }
-      leaf.rotateY(i * Math.PI / 3);
-      leaf.translate(0, 0.6 + i * 0.28, 0);
-      parts.push(leaf);
-    }
-    // Cobs (2)
-    var cob1 = new THREE.SphereGeometry(0.12, 8, 6); cob1.scale(1, 1.8, 1); cob1.translate(0.15, 1.5, 0); parts.push(cob1);
-    var cob2 = new THREE.SphereGeometry(0.1, 8, 6); cob2.scale(1, 1.6, 1); cob2.translate(-0.12, 1.9, 0.08); parts.push(cob2);
-    // Cob husks
-    var husk1 = new THREE.SphereGeometry(0.14, 6, 4); husk1.scale(0.6, 1.2, 0.4); husk1.translate(0.22, 1.5, 0); parts.push(husk1);
-    var husk2 = new THREE.SphereGeometry(0.12, 6, 4); husk2.scale(0.6, 1.1, 0.4); husk2.translate(-0.18, 1.9, 0.08); parts.push(husk2);
-    // Tassel on top
-    for (var t = 0; t < 4; t++) {
-      var tas = new THREE.CylinderGeometry(0.01, 0.015, 0.3, 4);
-      tas.translate(Math.sin(t*1.5)*0.04, 2.55, Math.cos(t*1.5)*0.04);
-      tas.rotateZ((t - 1.5) * 0.15);
-      parts.push(tas);
-    }
-    return mergeGeos(parts);
-  }
-
-  // ── Rice paddy: thin stalks + drooping grain heads ──
-  function makeRice() {
-    var parts = [];
-    var base = new THREE.SphereGeometry(0.25, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.03, 0); parts.push(base);
-    var stalks = [[-0.08,0],[0.06,0.04],[0,-0.06],[0.1,-0.02],[-0.04,0.07]];
-    for (var s = 0; s < stalks.length; s++) {
-      var stalk = new THREE.CylinderGeometry(0.015, 0.025, 1.4 + s*0.1, 5);
-      stalk.translate(stalks[s][0], 0.75 + s*0.05, stalks[s][1]);
-      parts.push(stalk);
-      // Drooping grain head
-      var head = new THREE.SphereGeometry(0.04, 6, 5);
-      head.scale(1, 2.5, 1);
-      head.rotateZ(0.4 + s * 0.15);
-      head.translate(stalks[s][0] + 0.08, 1.45 + s*0.08, stalks[s][1]);
-      parts.push(head);
-      // Small leaf
-      var leaf = new THREE.BoxGeometry(0.35, 0.02, 0.06, 3, 1, 1);
-      var la = leaf.attributes.position.array;
-      for (var j = 0; j < la.length; j += 3) la[j+1] += la[j]*la[j]*0.2;
-      leaf.rotateY(s * 1.2);
-      leaf.translate(stalks[s][0], 0.4 + s*0.15, stalks[s][1]);
-      parts.push(leaf);
-    }
-    return mergeGeos(parts);
-  }
-
-  // ── Wheat: golden stalks + plump grain heads ──
-  function makeWheat() {
-    var parts = [];
-    var base = new THREE.SphereGeometry(0.22, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.03, 0); parts.push(base);
-    var stalks = [[-0.06,0],[0.05,0.04],[0,-0.05],[0.08,-0.03],[-0.03,0.06]];
-    for (var s = 0; s < stalks.length; s++) {
-      var stalk = new THREE.CylinderGeometry(0.018, 0.028, 1.6 + s*0.08, 5);
-      stalk.translate(stalks[s][0], 0.85 + s*0.04, stalks[s][1]);
-      parts.push(stalk);
-      // Plump wheat head
-      var head = new THREE.SphereGeometry(0.055, 6, 5);
-      head.scale(0.7, 2.0, 0.7);
-      head.translate(stalks[s][0], 1.7 + s*0.06, stalks[s][1]);
-      parts.push(head);
-      // Awns (whiskers)
-      for (var a = 0; a < 3; a++) {
-        var awn = new THREE.CylinderGeometry(0.005, 0.002, 0.15, 3);
-        awn.rotateZ(0.4 * (a - 1));
-        awn.translate(stalks[s][0], 1.82 + s*0.06 + a*0.04, stalks[s][1]);
-        parts.push(awn);
-      }
-    }
-    return mergeGeos(parts);
-  }
-
-  // ── Tropical tree: thick trunk + branches + lush canopy ──
-  function makeTropicalTree() {
-    var parts = [];
-    // Trunk with slight taper
-    var trunk = new THREE.CylinderGeometry(0.06, 0.13, 1.4, 8); trunk.translate(0, 0.7, 0); parts.push(trunk);
-    // Base mound
-    var base = new THREE.SphereGeometry(0.25, 10, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); parts.push(base);
-    // Two branches
-    var b1 = new THREE.CylinderGeometry(0.03, 0.05, 0.5, 5); b1.rotateZ(0.6); b1.translate(0.2, 1.2, 0); parts.push(b1);
-    var b2 = new THREE.CylinderGeometry(0.025, 0.04, 0.4, 5); b2.rotateZ(-0.5); b2.translate(-0.15, 1.3, 0.05); parts.push(b2);
-    // Canopy - many overlapping spheres for lush look
-    var blobs = [
-      [0,1.7,0,0.5],[0.25,1.85,0.1,0.38],[-0.2,1.9,-0.12,0.35],
-      [0.1,2.1,0.08,0.32],[-0.1,2.05,-0.05,0.3],[0,1.55,0.2,0.28],
-      [0.3,1.65,-0.1,0.25],[-0.25,1.7,0.15,0.27],[0.15,2.2,0,0.22],
-      [0,1.5,-0.18,0.26]
-    ];
-    for (var b = 0; b < blobs.length; b++) {
-      var s = new THREE.SphereGeometry(blobs[b][3], 10, 8);
-      s.translate(blobs[b][0], blobs[b][1], blobs[b][2]);
-      parts.push(s);
-    }
-    return mergeGeos(parts);
-  }
-
-  // ── Pine/Forest tree: layered cones ──
-  function makePine() {
-    var parts = [];
-    var trunk = new THREE.CylinderGeometry(0.05, 0.1, 0.9, 7); trunk.translate(0, 0.45, 0); parts.push(trunk);
-    var base = new THREE.SphereGeometry(0.2, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); parts.push(base);
-    var tiers = [[0.6,0.7,0.7],[0.48,0.6,1.2],[0.35,0.55,1.6],[0.2,0.4,2.0]];
-    for (var t = 0; t < tiers.length; t++) {
-      var cone = new THREE.ConeGeometry(tiers[t][0], tiers[t][1], 8);
-      cone.translate(0, tiers[t][2], 0);
-      parts.push(cone);
-    }
-    return mergeGeos(parts);
-  }
-
-  // ── Bush: dense rounded cluster with variation ──
-  function makeBush() {
-    var parts = [];
-    var base = new THREE.SphereGeometry(0.22, 10, 6); base.scale(1, 0.22, 1); base.translate(0, 0.02, 0); parts.push(base);
-    var blobs = [
-      [0,0.3,0,0.28],[0.16,0.28,0.1,0.22],[-0.14,0.26,-0.08,0.2],
-      [0.08,0.42,0.05,0.2],[-0.06,0.4,-0.06,0.18],[0,0.22,0.14,0.17],
-      [0.12,0.18,-0.12,0.16],[-0.1,0.35,0.1,0.15],[0,0.48,0,0.14]
-    ];
-    for (var b = 0; b < blobs.length; b++) {
-      var s = new THREE.SphereGeometry(blobs[b][3], 8, 6);
-      s.translate(blobs[b][0], blobs[b][1], blobs[b][2]);
-      parts.push(s);
-    }
-    return mergeGeos(parts);
-  }
-
-  // ── Flower bush: lush green body + colorful blooms ──
-  function makeFlowerBush() {
-    var parts = [];
-    var base = new THREE.SphereGeometry(0.2, 10, 6); base.scale(1, 0.22, 1); base.translate(0, 0.02, 0); parts.push(base);
-    // Green body - multiple overlapping spheres
-    var greens = [[0,0.25,0,0.24],[0.12,0.22,0.08,0.18],[-0.1,0.2,-0.06,0.17],[0,0.35,0,0.16]];
-    for (var g = 0; g < greens.length; g++) {
-      var s = new THREE.SphereGeometry(greens[g][3], 8, 6);
-      s.translate(greens[g][0], greens[g][1], greens[g][2]);
-      parts.push(s);
-    }
-    // Flower blooms scattered on top
-    var blooms = [
-      [0,0.48,0,0.07],[0.14,0.42,0.08,0.06],[-0.1,0.44,-0.06,0.065],
-      [0.06,0.5,0.04,0.055],[-0.04,0.4,0.11,0.06],[0.1,0.38,-0.08,0.055],
-      [-0.12,0.46,0.04,0.05],[0.02,0.52,-0.05,0.05],[0.08,0.46,0.1,0.045]
-    ];
-    for (var b = 0; b < blooms.length; b++) {
-      var fl = new THREE.SphereGeometry(blooms[b][3], 6, 5);
-      fl.translate(blooms[b][0], blooms[b][1], blooms[b][2]);
-      parts.push(fl);
-    }
-    return mergeGeos(parts);
-  }
-
-  // ── Palm tree: curved trunk + frond cluster ──
-  function makePalm() {
-    var parts = [];
-    // Curved trunk using stacked cylinders
-    for (var i = 0; i < 8; i++) {
-      var seg = new THREE.CylinderGeometry(0.04 - i*0.003, 0.05 - i*0.003, 0.25, 6);
-      var sway = Math.sin(i * 0.3) * 0.03;
-      seg.translate(sway, 0.25 + i * 0.23, 0);
-      parts.push(seg);
-    }
-    var base = new THREE.SphereGeometry(0.2, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); parts.push(base);
-    // Fronds - elongated ellipsoids
-    for (var f = 0; f < 7; f++) {
-      var frond = new THREE.SphereGeometry(0.12, 6, 4);
-      frond.scale(3, 0.2, 0.8);
-      var angle = (f / 7) * Math.PI * 2;
-      var fx = Math.cos(angle) * 0.3, fz = Math.sin(angle) * 0.3;
-      frond.rotateY(angle);
-      frond.rotateZ(0.5);
-      frond.translate(fx, 2.1, fz);
-      parts.push(frond);
-    }
-    // Coconuts
-    var nut1 = new THREE.SphereGeometry(0.05, 6, 5); nut1.translate(0.06, 2.0, 0.04); parts.push(nut1);
-    var nut2 = new THREE.SphereGeometry(0.04, 6, 5); nut2.translate(-0.04, 1.98, -0.03); parts.push(nut2);
-    return mergeGeos(parts);
-  }
-
-  // (Geometries are built inline above via cornParts, riceParts, etc.)
+  // Geometries built via xxxParts functions below
 
   // ── Bake vertex colors into geometry ──
   // Parts before canopy/leaves get brown, rest gets green
@@ -1231,112 +1032,164 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   // Rebuild model functions to return arrays of parts (not merged)
+  // ═══════════════════════════════════════════
+  // Biologically accurate crop models
+  // ═══════════════════════════════════════════
+
+  // ── CORN (Zea mays): 2-3m tall, thick single stalk, long arching
+  //    leaves, 1-2 ears with husk, tassel on top ──
   function cornParts() {
     var p = [];
-    var stalk = new THREE.CylinderGeometry(0.06, 0.09, 2.4, 8); stalk.translate(0, 1.2, 0); p.push(stalk);
-    var base = new THREE.SphereGeometry(0.3, 8, 6); base.scale(1, 0.35, 1); base.translate(0, 0.05, 0); p.push(base);
-    // ^ brown parts = 2
-    for (var i = 0; i < 6; i++) {
-      var leaf = new THREE.BoxGeometry(0.8, 0.04, 0.15, 4, 1, 1);
+    // Soil mound (brown)
+    var base = new THREE.SphereGeometry(0.25, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); p.push(base);
+    // Thick stalk (brown/green transition)
+    var stalk = new THREE.CylinderGeometry(0.05, 0.08, 2.6, 8); stalk.translate(0, 1.3, 0); p.push(stalk);
+    // ── brown parts above = 2 ──
+
+    // Long arching leaves (6 leaves, alternating sides)
+    for (var i = 0; i < 7; i++) {
+      var leaf = new THREE.BoxGeometry(1.0, 0.025, 0.12, 5, 1, 1);
       var la = leaf.attributes.position.array;
-      for (var j = 0; j < la.length; j += 3) { la[j+1] += la[j]*la[j]*0.3; la[j+2] += la[j]*0.1; }
-      leaf.rotateY(i * Math.PI / 3); leaf.translate(0, 0.6 + i*0.28, 0); p.push(leaf);
+      for (var j = 0; j < la.length; j += 3) {
+        la[j + 1] += la[j] * la[j] * 0.25;  // Arch downward
+        la[j + 2] += la[j] * 0.06;            // Slight twist
+      }
+      leaf.rotateY(i * Math.PI / 3.5 + (i % 2) * 0.3);
+      leaf.translate(0, 0.5 + i * 0.3, 0);
+      p.push(leaf);
     }
-    var cob1 = new THREE.SphereGeometry(0.12, 8, 6); cob1.scale(1, 1.8, 1); cob1.translate(0.15, 1.5, 0); p.push(cob1);
-    var cob2 = new THREE.SphereGeometry(0.1, 8, 6); cob2.scale(1, 1.6, 1); cob2.translate(-0.12, 1.9, 0.08); p.push(cob2);
+
+    // Ear of corn (cob) with husk - golden yellow
+    var cob1 = new THREE.SphereGeometry(0.1, 8, 6); cob1.scale(1, 2.2, 1);
+    cob1.translate(0.12, 1.6, 0); p.push(cob1);
+    // Husk leaves wrapping the cob
+    var husk1a = new THREE.SphereGeometry(0.08, 6, 4); husk1a.scale(0.5, 1.5, 0.3);
+    husk1a.translate(0.18, 1.6, 0.04); p.push(husk1a);
+    var husk1b = new THREE.SphereGeometry(0.07, 6, 4); husk1b.scale(0.4, 1.3, 0.3);
+    husk1b.translate(0.06, 1.6, -0.03); p.push(husk1b);
+
+    // Second smaller ear
+    var cob2 = new THREE.SphereGeometry(0.08, 8, 6); cob2.scale(1, 1.8, 1);
+    cob2.translate(-0.1, 1.95, 0.05); p.push(cob2);
+
+    // Tassel on top (golden/cream strands)
+    for (var t = 0; t < 6; t++) {
+      var tas = new THREE.CylinderGeometry(0.008, 0.003, 0.35, 3);
+      tas.rotateZ((t - 2.5) * 0.2);
+      tas.rotateY(t * 1.05);
+      tas.translate(0, 2.7, 0);
+      p.push(tas);
+    }
     return p;
   }
 
+  // ── RICE (Oryza sativa): 0.8-1.2m, thin tillers from base,
+  //    narrow leaves, drooping panicle grain heads ──
   function riceParts() {
     var p = [];
-    var base = new THREE.SphereGeometry(0.25, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.03, 0); p.push(base);
-    // ^ brown = 1
-    var stalks = [[-0.08,0],[0.06,0.04],[0,-0.06],[0.1,-0.02],[-0.04,0.07]];
-    for (var s = 0; s < stalks.length; s++) {
-      var stk = new THREE.CylinderGeometry(0.015, 0.025, 1.4+s*0.1, 5); stk.translate(stalks[s][0], 0.75+s*0.05, stalks[s][1]); p.push(stk);
-      var head = new THREE.SphereGeometry(0.04, 6, 5); head.scale(1, 2.5, 1); head.rotateZ(0.4+s*0.15); head.translate(stalks[s][0]+0.08, 1.45+s*0.08, stalks[s][1]); p.push(head);
-      var leaf = new THREE.BoxGeometry(0.35, 0.02, 0.06, 3, 1, 1);
-      var la = leaf.attributes.position.array; for (var j = 0; j < la.length; j += 3) la[j+1] += la[j]*la[j]*0.2;
-      leaf.rotateY(s*1.2); leaf.translate(stalks[s][0], 0.4+s*0.15, stalks[s][1]); p.push(leaf);
+    // Waterlogged soil base (darker brown)
+    var base = new THREE.SphereGeometry(0.3, 8, 6); base.scale(1, 0.2, 1); base.translate(0, 0.02, 0); p.push(base);
+    // ── brown parts = 1 ──
+
+    // Multiple tillers (rice grows in clumps)
+    var tillers = [
+      [-0.06, 0, 0],    [0.05, 0, 0.04],  [0, 0, -0.05],
+      [0.08, 0, -0.02], [-0.03, 0, 0.06], [-0.08, 0, -0.03],
+      [0.03, 0, -0.07]
+    ];
+    for (var s = 0; s < tillers.length; s++) {
+      var tx = tillers[s][0], tz = tillers[s][2];
+      var h = 1.2 + (s % 3) * 0.15;
+      // Thin stalk
+      var stk = new THREE.CylinderGeometry(0.012, 0.02, h, 5);
+      stk.translate(tx, h / 2, tz); p.push(stk);
+
+      // Narrow leaf (longer, thinner than corn)
+      var leaf = new THREE.BoxGeometry(0.5, 0.015, 0.035, 4, 1, 1);
+      var la = leaf.attributes.position.array;
+      for (var j = 0; j < la.length; j += 3) la[j + 1] += la[j] * la[j] * 0.3;
+      leaf.rotateY(s * 0.9 + 0.5);
+      leaf.translate(tx, 0.3 + s * 0.1, tz); p.push(leaf);
+
+      // Drooping panicle (grain head that bends over)
+      var panicle = new THREE.SphereGeometry(0.025, 6, 4);
+      panicle.scale(0.8, 3.0, 0.8);
+      panicle.rotateZ(0.5 + s * 0.1);  // Droop to one side
+      panicle.rotateY(s * 0.9);
+      panicle.translate(tx + 0.06, h + 0.05, tz);
+      p.push(panicle);
     }
     return p;
   }
 
-  function wheatParts() {
+  // ── SOYBEAN (Glycine max): 0.5-1m, branching erect stem,
+  //    trifoliate leaves (3 leaflets), small pods along stem ──
+  function soybeanParts() {
     var p = [];
-    var base = new THREE.SphereGeometry(0.22, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.03, 0); p.push(base);
-    // ^ brown = 1
-    var stalks = [[-0.06,0],[0.05,0.04],[0,-0.05],[0.08,-0.03],[-0.03,0.06]];
-    for (var s = 0; s < stalks.length; s++) {
-      var stk = new THREE.CylinderGeometry(0.018, 0.028, 1.6+s*0.08, 5); stk.translate(stalks[s][0], 0.85+s*0.04, stalks[s][1]); p.push(stk);
-      var head = new THREE.SphereGeometry(0.055, 6, 5); head.scale(0.7, 2.0, 0.7); head.translate(stalks[s][0], 1.7+s*0.06, stalks[s][1]); p.push(head);
+    // Soil base
+    var base = new THREE.SphereGeometry(0.22, 8, 6); base.scale(1, 0.25, 1); base.translate(0, 0.03, 0); p.push(base);
+    // Main stem (shorter, woodier)
+    var stem = new THREE.CylinderGeometry(0.03, 0.05, 1.0, 6); stem.translate(0, 0.5, 0); p.push(stem);
+    // ── brown parts = 2 ──
+
+    // Branches (soybean branches from main stem)
+    var branches = [
+      [0.4, 0.5, 0.15, 0.3], [-0.35, 0.4, -0.1, 0.25],
+      [0.3, 0.7, -0.12, 0.2], [-0.25, 0.65, 0.15, 0.18]
+    ];
+    for (var b = 0; b < branches.length; b++) {
+      var br = new THREE.CylinderGeometry(0.012, 0.02, branches[b][3], 4);
+      br.rotateZ(branches[b][0] > 0 ? 0.8 : -0.8);
+      br.translate(branches[b][0] * 0.5, branches[b][1], branches[b][2]);
+      p.push(br);
+    }
+
+    // Trifoliate leaves (groups of 3 small ellipses)
+    var leafPositions = [
+      [0.12, 0.75, 0.05], [-0.1, 0.65, -0.04], [0.08, 0.9, -0.06],
+      [-0.06, 0.85, 0.08], [0.15, 0.55, -0.03], [-0.12, 0.5, 0.06],
+      [0, 1.0, 0], [0.05, 0.45, 0.08]
+    ];
+    for (var l = 0; l < leafPositions.length; l++) {
+      var lp = leafPositions[l];
+      // 3 leaflets per leaf
+      for (var t = 0; t < 3; t++) {
+        var leaflet = new THREE.SphereGeometry(0.06, 6, 4);
+        leaflet.scale(1.3, 0.15, 0.8);
+        var angle = (t / 3) * Math.PI * 2 + l * 0.7;
+        leaflet.translate(
+          lp[0] + Math.cos(angle) * 0.04,
+          lp[1],
+          lp[2] + Math.sin(angle) * 0.04
+        );
+        p.push(leaflet);
+      }
+    }
+
+    // Pods (small elongated shapes along stems) - these are a distinct brownish-green
+    var podPositions = [
+      [0.06, 0.4, 0.02], [-0.04, 0.5, -0.03], [0.08, 0.6, 0.01],
+      [-0.06, 0.7, 0.04], [0.03, 0.8, -0.02], [-0.05, 0.35, 0.05],
+      [0.1, 0.55, -0.04], [-0.08, 0.45, 0.03]
+    ];
+    for (var pd = 0; pd < podPositions.length; pd++) {
+      var pod = new THREE.SphereGeometry(0.02, 5, 4);
+      pod.scale(0.6, 2.5, 0.6);
+      pod.rotateZ(0.3 * (pd % 2 === 0 ? 1 : -1));
+      pod.translate(podPositions[pd][0], podPositions[pd][1], podPositions[pd][2]);
+      p.push(pod);
     }
     return p;
   }
 
-  function tropTreeParts() {
-    var p = [];
-    var trunk = new THREE.CylinderGeometry(0.06, 0.13, 1.4, 8); trunk.translate(0, 0.7, 0); p.push(trunk);
-    var base = new THREE.SphereGeometry(0.25, 10, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); p.push(base);
-    var b1 = new THREE.CylinderGeometry(0.03, 0.05, 0.5, 5); b1.rotateZ(0.6); b1.translate(0.2, 1.2, 0); p.push(b1);
-    var b2 = new THREE.CylinderGeometry(0.025, 0.04, 0.4, 5); b2.rotateZ(-0.5); b2.translate(-0.15, 1.3, 0.05); p.push(b2);
-    // ^ brown = 4
-    var blobs = [[0,1.7,0,0.5],[0.25,1.85,0.1,0.38],[-0.2,1.9,-0.12,0.35],[0.1,2.1,0.08,0.32],[-0.1,2.05,-0.05,0.3],[0,1.55,0.2,0.28],[0.3,1.65,-0.1,0.25],[-0.25,1.7,0.15,0.27]];
-    for (var b = 0; b < blobs.length; b++) { var s = new THREE.SphereGeometry(blobs[b][3], 10, 8); s.translate(blobs[b][0], blobs[b][1], blobs[b][2]); p.push(s); }
-    return p;
-  }
-
-  function pineParts() {
-    var p = [];
-    var trunk = new THREE.CylinderGeometry(0.05, 0.1, 0.9, 7); trunk.translate(0, 0.45, 0); p.push(trunk);
-    var base = new THREE.SphereGeometry(0.2, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); p.push(base);
-    // ^ brown = 2
-    var tiers = [[0.6,0.7,0.7],[0.48,0.6,1.2],[0.35,0.55,1.6],[0.2,0.4,2.0]];
-    for (var t = 0; t < tiers.length; t++) { var c = new THREE.ConeGeometry(tiers[t][0], tiers[t][1], 8); c.translate(0, tiers[t][2], 0); p.push(c); }
-    return p;
-  }
-
-  function palmParts() {
-    var p = [];
-    for (var i = 0; i < 8; i++) { var seg = new THREE.CylinderGeometry(0.04-i*0.003, 0.05-i*0.003, 0.25, 6); seg.translate(Math.sin(i*0.3)*0.03, 0.25+i*0.23, 0); p.push(seg); }
-    var base = new THREE.SphereGeometry(0.2, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); p.push(base);
-    // ^ brown = 9
-    for (var f = 0; f < 7; f++) { var frond = new THREE.SphereGeometry(0.12, 6, 4); frond.scale(3, 0.2, 0.8); var a = (f/7)*Math.PI*2; frond.rotateY(a); frond.rotateZ(0.5); frond.translate(Math.cos(a)*0.3, 2.1, Math.sin(a)*0.3); p.push(frond); }
-    var n1 = new THREE.SphereGeometry(0.05, 6, 5); n1.translate(0.06, 2.0, 0.04); p.push(n1);
-    return p;
-  }
-
-  function bushParts() {
-    var p = [];
-    var base = new THREE.SphereGeometry(0.22, 10, 6); base.scale(1, 0.22, 1); base.translate(0, 0.02, 0); p.push(base);
-    // ^ brown = 1
-    var blobs = [[0,0.3,0,0.28],[0.16,0.28,0.1,0.22],[-0.14,0.26,-0.08,0.2],[0.08,0.42,0.05,0.2],[-0.06,0.4,-0.06,0.18],[0,0.22,0.14,0.17],[0.12,0.18,-0.12,0.16],[-0.1,0.35,0.1,0.15],[0,0.48,0,0.14]];
-    for (var b = 0; b < blobs.length; b++) { var s = new THREE.SphereGeometry(blobs[b][3], 8, 6); s.translate(blobs[b][0], blobs[b][1], blobs[b][2]); p.push(s); }
-    return p;
-  }
-
-  function flowerParts() {
-    var p = [];
-    var base = new THREE.SphereGeometry(0.2, 10, 6); base.scale(1, 0.22, 1); base.translate(0, 0.02, 0); p.push(base);
-    // ^ brown = 1
-    var greens = [[0,0.25,0,0.24],[0.12,0.22,0.08,0.18],[-0.1,0.2,-0.06,0.17],[0,0.35,0,0.16]];
-    for (var g = 0; g < greens.length; g++) { var s = new THREE.SphereGeometry(greens[g][3], 8, 6); s.translate(greens[g][0], greens[g][1], greens[g][2]); p.push(s); }
-    // ^ green up to here = 5
-    var blooms = [[0,0.48,0,0.07],[0.14,0.42,0.08,0.06],[-0.1,0.44,-0.06,0.065],[0.06,0.5,0.04,0.055],[-0.04,0.4,0.11,0.06]];
-    for (var b = 0; b < blooms.length; b++) { var fl = new THREE.SphereGeometry(blooms[b][3], 6, 5); fl.translate(blooms[b][0], blooms[b][1], blooms[b][2]); p.push(fl); }
-    return p;
-  }
-
-  // Build colored geometries: [partsFn, brownPartCount, greenHex, brownHex]
+  // Build colored geometries (brown base/stem, green foliage, golden accents)
   var geoConfigs = [
-    { fn: cornParts,     brown: 2, green: 0x558b2f, brownHex: 0x6D4C41 },
-    { fn: riceParts,     brown: 1, green: 0x7cb342, brownHex: 0x795548 },
-    { fn: wheatParts,    brown: 1, green: 0xc0ca33, brownHex: 0x8d6e27 },
-    { fn: tropTreeParts, brown: 4, green: 0x228b22, brownHex: 0x5D4037 },
-    { fn: pineParts,     brown: 2, green: 0x2e7d32, brownHex: 0x5D4037 },
-    { fn: palmParts,     brown: 9, green: 0x2e7d32, brownHex: 0x6D4C41 },
-    { fn: bushParts,     brown: 1, green: 0x4caf50, brownHex: 0x795548 },
-    { fn: flowerParts,   brown: 1, green: 0x66bb6a, brownHex: 0x795548 },
+    // Corn: 2 brown (base + stalk), rest green. Cobs get a golden tint via custom bake
+    { fn: cornParts, brown: 2, green: 0x4a7c23, brownHex: 0x6D4C41 },
+    // Rice: 1 brown (base), rest green
+    { fn: riceParts, brown: 1, green: 0x6aaa30, brownHex: 0x5D4037 },
+    // Soybean: 2 brown (base + stem), rest green
+    { fn: soybeanParts, brown: 2, green: 0x558b2f, brownHex: 0x6D4C41 },
   ];
 
   var coloredGeos = geoConfigs.map(function(cfg) {
@@ -1347,14 +1200,13 @@ document.addEventListener("DOMContentLoaded", function() {
     return merged;
   });
 
-  // corn=0, rice=1, wheat=2, tropTree=3, pine=4, palm=5, bush=6, flower=7
-  // Assign crop-specific models
-  CROP_TYPES.corn.geos    = [coloredGeos[0], coloredGeos[0], coloredGeos[0]]; // corn models
-  CROP_TYPES.rice.geos    = [coloredGeos[1], coloredGeos[1], coloredGeos[1]]; // rice models
-  CROP_TYPES.soybean.geos = [coloredGeos[6], coloredGeos[7], coloredGeos[6]]; // bush + flower (soybean-like)
+  // Assign to crop types: corn=0, rice=1, soybean=2
+  CROP_TYPES.corn.geos    = [coloredGeos[0]];
+  CROP_TYPES.rice.geos    = [coloredGeos[1]];
+  CROP_TYPES.soybean.geos = [coloredGeos[2]];
 
-  var meshGroups = {};  // cropType -> [InstancedMesh, ...]
-  var cropPointsCache = {};  // cropType -> points array
+  var meshGroups = {};
+  var cropPointsCache = {};
 
   /* ═══════════════════════════════════════════
      KMZ → Canvas sampling → 3D points
@@ -1508,14 +1360,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  function updateStats() {
-    var total = 0;
-    Object.keys(meshGroups).forEach(function(k) {
-      meshGroups[k].forEach(function(m) { total += m.count; });
-    });
-    document.getElementById('cropCount').textContent = total.toLocaleString();
-    document.getElementById('cropStats').classList.add('visible');
-  }
+  function updateStats() { /* stats bar removed */ }
 
   /* ═══════════════════════════════════════════
      Toggle buttons: each crop loads/unloads independently
