@@ -945,7 +945,7 @@ document.addEventListener("DOMContentLoaded", function() {
     tex.needsUpdate = true;
     earthMat.map = tex; earthMat.needsUpdate = true;
   };
-  earthImg.src = '/images/earth2.jpg';
+  earthImg.src = '/images/earth.jpg';
 
   // Atmosphere
   var ag = new THREE.SphereGeometry(1.015,48,36);
