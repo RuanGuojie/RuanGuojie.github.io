@@ -914,14 +914,9 @@ document.addEventListener("DOMContentLoaded", function() {
   appearance: none;
   touch-action: manipulation;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
 }
 
-.crop-lyr-btn:hover {
-  opacity: 0.8;
-  border-color: rgba(128,128,128,0.4);
-}
+.crop-lyr-btn:hover { opacity: 0.8; border-color: rgba(128,128,128,0.4); }
 
 .crop-lyr-btn.active {
   opacity: 1;
@@ -938,236 +933,89 @@ document.addEventListener("DOMContentLoaded", function() {
 }
 
 .crop-lyr-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  width: 8px; height: 8px; border-radius: 50%;
   border: 1.5px solid rgba(128,128,128,0.4);
-  background: transparent;
-  flex-shrink: 0;
+  background: transparent; flex-shrink: 0;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .crop-lyr-btn .crop-color-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  border: none;
-}
-
-.crop-loading-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 2px;
-  background: #22c55e;
-  border-radius: 0 0 10px 10px;
-  transition: width 0.3s ease;
-  width: 0%;
-}
-
-.crop-lyr-btn.loading .crop-loading-bar {
-  animation: cropLoadPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes cropLoadPulse {
-  0% { width: 0%; opacity: 1; }
-  50% { width: 70%; opacity: 0.7; }
-  100% { width: 100%; opacity: 0; }
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0; border: none;
 }
 
 .crop-stats {
-  display: flex;
-  gap: 16px;
-  margin-top: 12px;
-  padding-top: 12px;
+  display: flex; gap: 16px; margin-top: 12px; padding-top: 12px;
   border-top: 1px solid rgba(128,128,128,0.1);
-  font-size: 12px;
-  opacity: 0.35;
-  transition: opacity 0.3s;
+  font-size: 12px; opacity: 0.35; transition: opacity 0.3s;
 }
-
-.crop-stats.visible {
-  opacity: 0.6;
-}
-
-.crop-stats span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+.crop-stats.visible { opacity: 0.6; }
+.crop-stats span { display: flex; align-items: center; gap: 6px; }
 
 .crop-fs-btn {
-  position: absolute;
-  bottom: 36px;
-  right: 16px;
-  z-index: 2;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  position: absolute; bottom: 36px; right: 16px; z-index: 2;
+  width: 40px; height: 40px; border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255,255,255,0.6);
-  transition: all 0.2s ease;
-  touch-action: manipulation;
-  -webkit-appearance: none;
-  appearance: none;
-  padding: 0;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.6); transition: all 0.2s ease;
+  touch-action: manipulation; -webkit-appearance: none; appearance: none; padding: 0;
 }
+.crop-fs-btn:hover { background: rgba(0,0,0,0.7); color: #fff; border-color: rgba(255,255,255,0.2); }
+.crop-fs-btn svg { width: 18px; height: 18px; }
 
-.crop-fs-btn:hover {
-  background: rgba(0,0,0,0.7);
-  color: #fff;
-  border-color: rgba(255,255,255,0.2);
-}
-
-.crop-fs-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* Fullscreen styles */
+/* Fullscreen */
 .crop-globe-wrapper:-webkit-full-screen .crop-layer-control,
 .crop-globe-wrapper:fullscreen .crop-layer-control,
 .crop-globe-wrapper.crop-fake-fs .crop-layer-control {
-  position: fixed;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  z-index: 999999;
-  backdrop-filter: blur(24px) saturate(1.4);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255,255,255,0.25);
+  position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+  margin: 0; z-index: 999999;
+  backdrop-filter: blur(24px) saturate(1.4); -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.25);
   box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
-  color: #fff;
-  padding: 14px 18px;
-  max-height: 35vh;
-  display: flex;
-  flex-direction: column;
+  color: #fff; padding: 14px 18px; max-height: 35vh; display: flex; flex-direction: column;
 }
-
 .crop-globe-wrapper:-webkit-full-screen .crop-layer-control .crop-layer-control-title,
 .crop-globe-wrapper:fullscreen .crop-layer-control .crop-layer-control-title,
 .crop-globe-wrapper.crop-fake-fs .crop-layer-control .crop-layer-control-title {
-  color: rgba(255,255,255,0.5);
-  opacity: 1;
-  margin-bottom: 10px;
-  font-size: 11px;
-  flex-shrink: 0;
+  color: rgba(255,255,255,0.5); opacity: 1; margin-bottom: 10px; font-size: 11px;
 }
-
-.crop-globe-wrapper:-webkit-full-screen .crop-layer-control .crop-layer-grid,
-.crop-globe-wrapper:fullscreen .crop-layer-control .crop-layer-grid,
-.crop-globe-wrapper.crop-fake-fs .crop-layer-control .crop-layer-grid {
-  gap: 8px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  flex: 1;
-  min-height: 0;
-}
-
 .crop-globe-wrapper:-webkit-full-screen .crop-layer-control .crop-lyr-btn,
 .crop-globe-wrapper:fullscreen .crop-layer-control .crop-lyr-btn,
 .crop-globe-wrapper.crop-fake-fs .crop-layer-control .crop-lyr-btn {
-  color: rgba(255,255,255,0.7);
-  border-color: rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.06);
-  padding: 8px 14px;
-  font-size: 13px;
-  flex-shrink: 0;
+  color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.06); padding: 8px 14px; font-size: 13px;
 }
-
-.crop-globe-wrapper:-webkit-full-screen .crop-layer-control .crop-lyr-btn:hover,
-.crop-globe-wrapper:fullscreen .crop-layer-control .crop-lyr-btn:hover,
-.crop-globe-wrapper.crop-fake-fs .crop-layer-control .crop-lyr-btn:hover {
-  color: #fff;
-  border-color: rgba(255,255,255,0.35);
-  background: rgba(255,255,255,0.12);
-}
-
 .crop-globe-wrapper:-webkit-full-screen .crop-layer-control .crop-lyr-btn.active,
 .crop-globe-wrapper:fullscreen .crop-layer-control .crop-lyr-btn.active,
 .crop-globe-wrapper.crop-fake-fs .crop-layer-control .crop-lyr-btn.active {
-  color: #86efac;
-  border-color: rgba(134,239,172,0.4);
-  background: rgba(34,197,94,0.18);
-  box-shadow: 0 0 20px rgba(34,197,94,0.15);
+  color: #86efac; border-color: rgba(134,239,172,0.4);
+  background: rgba(34,197,94,0.18); box-shadow: 0 0 20px rgba(34,197,94,0.15);
 }
-
-.crop-globe-wrapper:-webkit-full-screen .crop-layer-control .crop-lyr-dot,
-.crop-globe-wrapper:fullscreen .crop-layer-control .crop-lyr-dot,
-.crop-globe-wrapper.crop-fake-fs .crop-layer-control .crop-lyr-dot {
-  border-color: rgba(255,255,255,0.3);
-}
-
-.crop-globe-wrapper:-webkit-full-screen .crop-layer-control .crop-stats,
-.crop-globe-wrapper:fullscreen .crop-layer-control .crop-stats,
-.crop-globe-wrapper.crop-fake-fs .crop-layer-control .crop-stats {
-  border-top-color: rgba(255,255,255,0.1);
-}
-
 .crop-globe-wrapper:-webkit-full-screen #cropMap3d,
 .crop-globe-wrapper:fullscreen #cropMap3d {
-  height: 100vh !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
+  height: 100vh !important; border-radius: 0 !important; margin: 0 !important;
 }
-
 .crop-globe-wrapper.crop-fake-fs {
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 999998 !important;
-  background: #000;
-  overflow: hidden;
+  position: fixed !important; top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 999998 !important; background: #000; overflow: hidden;
 }
-
 .crop-globe-wrapper.crop-fake-fs #cropMap3d {
-  height: 100vh !important;
-  border-radius: 0 !important;
-  margin: 0 !important;
-  box-shadow: none;
+  height: 100vh !important; border-radius: 0 !important; margin: 0 !important;
 }
-
-.crop-globe-wrapper.crop-fake-fs .crop-fs-btn {
-  z-index: 999999;
-}
+.crop-globe-wrapper.crop-fake-fs .crop-fs-btn { z-index: 999999; }
 
 @media (max-width: 600px) {
   .crop-globe-wrapper:-webkit-full-screen .crop-layer-control,
   .crop-globe-wrapper:fullscreen .crop-layer-control,
   .crop-globe-wrapper.crop-fake-fs .crop-layer-control {
-    bottom: 8px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    max-width: 95vw;
-    max-height: 30vh;
+    bottom: 8px; padding: 10px 12px; border-radius: 10px; max-width: 95vw; max-height: 30vh;
   }
-
-  .crop-globe-wrapper:-webkit-full-screen .crop-layer-control .crop-layer-control-title,
-  .crop-globe-wrapper:fullscreen .crop-layer-control .crop-layer-control-title,
-  .crop-globe-wrapper.crop-fake-fs .crop-layer-control .crop-layer-control-title {
-    margin-bottom: 8px;
-    font-size: 10px;
-  }
-
   .crop-globe-wrapper:-webkit-full-screen .crop-layer-control .crop-lyr-btn,
   .crop-globe-wrapper:fullscreen .crop-layer-control .crop-lyr-btn,
   .crop-globe-wrapper.crop-fake-fs .crop-layer-control .crop-lyr-btn {
-    padding: 6px 10px;
-    font-size: 12px;
-    gap: 6px;
-    border-radius: 8px;
+    padding: 6px 10px; font-size: 12px; gap: 6px;
   }
 }
 </style>
@@ -1189,12 +1037,11 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
 <div class="crop-layer-control">
-  <div class="crop-layer-control-title">Crop Layers</div>
+  <div class="crop-layer-control-title">3D Crop Layers</div>
   <div class="crop-layer-grid">
     <button type="button" class="crop-lyr-btn active" data-crop-type="all">
       <span class="crop-lyr-dot"></span>
-      <span>All Vegetation</span>
-      <div class="crop-loading-bar"></div>
+      <span>All</span>
     </button>
     <button type="button" class="crop-lyr-btn" data-crop-type="tropical">
       <span class="crop-color-dot" style="background:#228B22;"></span>
@@ -1214,8 +1061,9 @@ document.addEventListener("DOMContentLoaded", function() {
     </button>
   </div>
   <div class="crop-stats" id="cropStats">
-    <span>🌱 <strong id="cropCount">—</strong> points</span>
-    <span>📊 Source: MODIS NDVI</span>
+    <span>🌱 <strong id="cropCount">—</strong> rendered</span>
+    <span>📏 LOD: <strong id="cropLod">—</strong></span>
+    <span>📊 MODIS NDVI</span>
   </div>
 </div>
 </div>
@@ -1224,293 +1072,209 @@ document.addEventListener("DOMContentLoaded", function() {
 (function() {
   'use strict';
 
-  /* ══════════════════════════════════════════
-     Billboard Texture Generators
-     ══════════════════════════════════════════ */
   var TYPES = ['tropical','forest','crop','grass'];
 
   var STYLES = {
     tropical: {
-      colors: ['#1a5c1a','#1e6e1e','#228B22','#2d8a2d','#0d5e0d'],
-      hMin: 600, hMax: 2000, size: 28, shape: 'tree'
+      colors: ['#1a5c1a','#1e6e1e','#228B22','#0d5e0d','#2d8a2d'],
+      trunk: '#5D4037', baseR: 400, baseH: 1200, shape: 'tree'
     },
     forest: {
       colors: ['#2e7d32','#388e3c','#43a047','#1b5e20','#4caf50'],
-      hMin: 400, hMax: 1500, size: 24, shape: 'tree'
+      trunk: '#6D4C41', baseR: 350, baseH: 900, shape: 'tree'
     },
     crop: {
       colors: ['#8bc34a','#9ccc65','#aed581','#7cb342','#c0ca33'],
-      hMin: 200, hMax: 800, size: 20, shape: 'wheat'
+      trunk: '#8d6e27', baseR: 200, baseH: 500, shape: 'wheat'
     },
     grass: {
       colors: ['#a5d6a7','#81c784','#c5e1a5','#aed581','#dce775'],
-      hMin: 50, hMax: 300, size: 16, shape: 'bush'
+      trunk: null, baseR: 250, baseH: 200, shape: 'bush'
     }
   };
 
-  function makeTree(sz, col) {
-    var c = document.createElement('canvas');
-    c.width = sz; c.height = sz * 1.5;
-    var x = c.getContext('2d'), cx = sz / 2;
-    // trunk
-    x.fillStyle = '#5D4037';
-    x.fillRect(cx - sz*0.06, c.height - sz*0.4, sz*0.12, sz*0.4);
-    // canopy layers
-    x.fillStyle = col;
-    var layers = [[0.15,0.7,0.45],[0.3,0.55,0.4],[0.0,0.4,0.38]];
-    for (var i = 0; i < layers.length; i++) {
-      var l = layers[i];
-      x.beginPath();
-      x.moveTo(cx, c.height * l[0]);
-      x.lineTo(cx - c.width * l[1]/2, c.height * (l[0]+l[2]));
-      x.lineTo(cx + c.width * l[1]/2, c.height * (l[0]+l[2]));
-      x.closePath(); x.fill();
-    }
-    // highlight
-    x.globalAlpha = 0.12; x.fillStyle = '#fff';
-    x.beginPath();
-    x.moveTo(cx, c.height*0.05);
-    x.lineTo(cx*0.7, c.height*0.4);
-    x.lineTo(cx, c.height*0.3);
-    x.closePath(); x.fill();
-    return c;
+  /* LOD levels: camera height → sample rate + size multiplier */
+  var LODS = [
+    { max: 50000,    rate: 1,  mul: 1.0,  lbl: 'Ultra'  },
+    { max: 200000,   rate: 2,  mul: 1.5,  lbl: 'High'   },
+    { max: 800000,   rate: 4,  mul: 2.5,  lbl: 'Medium' },
+    { max: 3000000,  rate: 8,  mul: 4.0,  lbl: 'Low'    },
+    { max: Infinity, rate: 16, mul: 6.0,  lbl: 'Min'    }
+  ];
+
+  function getLod(h) {
+    for (var i = 0; i < LODS.length; i++) { if (h < LODS[i].max) return LODS[i]; }
+    return LODS[LODS.length - 1];
   }
 
-  function makeBush(sz, col) {
-    var c = document.createElement('canvas');
-    c.width = sz; c.height = sz;
-    var x = c.getContext('2d');
-    var blobs = [[0.3,0.6,0.28],[0.7,0.6,0.25],[0.5,0.4,0.32],[0.35,0.45,0.22],[0.65,0.45,0.24]];
-    x.fillStyle = col;
-    for (var i = 0; i < blobs.length; i++) {
-      var b = blobs[i];
-      x.beginPath();
-      x.arc(sz*b[0], sz*b[1], sz*b[2], 0, Math.PI*2);
-      x.fill();
-    }
-    x.fillStyle = 'rgba(0,0,0,0.12)';
-    x.beginPath();
-    x.ellipse(sz/2, sz*0.85, sz*0.35, sz*0.07, 0, 0, Math.PI*2);
-    x.fill();
-    return c;
+  var viewer = null, allPts = null, activeFilter = 'all';
+  var entities = [], curLod = '', lodTimer = null;
+
+  function clear() {
+    for (var i = 0; i < entities.length; i++) viewer.entities.remove(entities[i]);
+    entities = [];
   }
 
-  function makeWheat(sz, col) {
-    var c = document.createElement('canvas');
-    c.width = sz; c.height = sz * 1.8;
-    var x = c.getContext('2d'), cx = sz / 2;
-    var stalks = [-0.2, -0.06, 0.08, 0.2];
-    for (var s = 0; s < stalks.length; s++) {
-      var sx = cx + sz * stalks[s];
-      var sw = Math.sin(s*1.5) * sz * 0.05;
-      x.strokeStyle = '#8d6e27'; x.lineWidth = 1.5;
-      x.beginPath();
-      x.moveTo(sx, c.height);
-      x.quadraticCurveTo(sx+sw, c.height*0.5, sx+sw*0.5, c.height*0.2);
-      x.stroke();
-      x.fillStyle = col;
-      x.beginPath();
-      x.ellipse(sx+sw*0.5, c.height*0.2, sz*0.06, sz*0.16, 0.1*s, 0, Math.PI*2);
-      x.fill();
-      x.strokeStyle = col; x.lineWidth = 0.8;
-      for (var a = 0; a < 4; a++) {
-        var ay = c.height*0.2 - sz*0.1 + a*sz*0.06;
-        x.beginPath(); x.moveTo(sx+sw*0.5, ay);
-        x.lineTo(sx+sw*0.5 + sz*0.09, ay - sz*0.05); x.stroke();
-        x.beginPath(); x.moveTo(sx+sw*0.5, ay);
-        x.lineTo(sx+sw*0.5 - sz*0.09, ay - sz*0.05); x.stroke();
-      }
-    }
-    return c;
-  }
+  function render(pts, filter, lod) {
+    clear();
+    var ch = viewer.camera.positionCartographic.height;
+    lod = lod || getLod(ch);
+    var count = 0;
 
-  var makers = { tree: makeTree, bush: makeBush, wheat: makeWheat };
-
-  // Pre-build texture cache
-  var texCache = {};
-  for (var t = 0; t < TYPES.length; t++) {
-    var type = TYPES[t];
-    var st = STYLES[type];
-    var maker = makers[st.shape] || makers.tree;
-    texCache[type] = [];
-    for (var ci = 0; ci < st.colors.length; ci++) {
-      texCache[type].push(maker(st.size, st.colors[ci]));
-    }
-  }
-
-  /* ══════════════════════════════════════════
-     Data & Rendering
-     ══════════════════════════════════════════ */
-  var cropViewer = null;
-  var allPoints = null;
-  var collections = {};     // type -> BillboardCollection
-  var activeFilter = 'all'; // current filter
-
-  function renderPoints(points, filterType) {
-    // Clear existing
-    Object.keys(collections).forEach(function(k) {
-      cropViewer.scene.primitives.remove(collections[k]);
-    });
-    collections = {};
-
-    // Group by type
-    var groups = {};
-    for (var i = 0; i < points.length; i++) {
-      var p = points[i];
+    for (var i = 0; i < pts.length; i++) {
+      if (i % lod.rate !== 0) continue;
+      var p = pts[i];
       var ptype = TYPES[p[2]] || 'grass';
-      if (filterType !== 'all' && ptype !== filterType) continue;
-      if (!groups[ptype]) groups[ptype] = [];
-      groups[ptype].push(p);
+      if (filter !== 'all' && ptype !== filter) continue;
+
+      var st = STYLES[ptype];
+      var lat = p[0], lon = p[1], scale = p[4] / 100;
+      var col = Cesium.Color.fromCssColorString(st.colors[i % st.colors.length]);
+      var R = st.baseR * (0.5 + scale * 0.8) * lod.mul * (0.7 + Math.random() * 0.6);
+      var H = st.baseH * (0.4 + scale * 0.8) * lod.mul * (0.7 + Math.random() * 0.6);
+
+      if (st.shape === 'tree') {
+        var tH = H * 0.35, tR = R * 0.12;
+        entities.push(viewer.entities.add({
+          position: Cesium.Cartesian3.fromDegrees(lon, lat, tH / 2),
+          cylinder: {
+            length: tH, topRadius: tR * 0.7, bottomRadius: tR,
+            material: Cesium.Color.fromCssColorString(st.trunk),
+            heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
+          }
+        }));
+        entities.push(viewer.entities.add({
+          position: Cesium.Cartesian3.fromDegrees(lon, lat, tH + H * 0.65 / 2),
+          cylinder: {
+            length: H * 0.65, topRadius: 0, bottomRadius: R,
+            material: col.withAlpha(0.92),
+            heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
+          }
+        }));
+        count++;
+      } else if (st.shape === 'wheat') {
+        var sH = H * 0.7, sR = R * 0.06;
+        entities.push(viewer.entities.add({
+          position: Cesium.Cartesian3.fromDegrees(lon, lat, sH / 2),
+          cylinder: {
+            length: sH, topRadius: sR * 0.5, bottomRadius: sR,
+            material: Cesium.Color.fromCssColorString(st.trunk),
+            heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
+          }
+        }));
+        entities.push(viewer.entities.add({
+          position: Cesium.Cartesian3.fromDegrees(lon, lat, sH + H * 0.2),
+          ellipsoid: {
+            radii: new Cesium.Cartesian3(R * 0.35, R * 0.35, H * 0.22),
+            material: col.withAlpha(0.9),
+            heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
+          }
+        }));
+        count++;
+      } else {
+        entities.push(viewer.entities.add({
+          position: Cesium.Cartesian3.fromDegrees(lon, lat, H * 0.4),
+          ellipsoid: {
+            radii: new Cesium.Cartesian3(R, R, H * 0.5),
+            material: col.withAlpha(0.88),
+            heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
+          }
+        }));
+        count++;
+      }
     }
 
-    var totalRendered = 0;
-
-    Object.keys(groups).forEach(function(type) {
-      var pts = groups[type];
-      var st = STYLES[type] || STYLES.grass;
-      var texes = texCache[type] || texCache.grass;
-
-      var coll = new Cesium.BillboardCollection({ scene: cropViewer.scene });
-
-      for (var i = 0; i < pts.length; i++) {
-        var p = pts[i];
-        var lat = p[0], lon = p[1];
-        var ndvi = p[3];
-        var scale = p[4] / 100;
-
-        var tex = texes[Math.floor(Math.random() * texes.length)];
-        var height = st.hMin + (st.hMax - st.hMin) * scale;
-        var pxSize = st.size * 0.8 + st.size * 0.6 * scale;
-
-        coll.add({
-          position: Cesium.Cartesian3.fromDegrees(lon, lat, height * 0.5),
-          image: tex,
-          width: pxSize,
-          height: pxSize * (tex.height / tex.width),
-          verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-          heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
-          distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 5000000),
-          scaleByDistance: new Cesium.NearFarScalar(1000, 1.5, 5000000, 0.1),
-          translucencyByDistance: new Cesium.NearFarScalar(500, 1.0, 5000000, 0.6),
-        });
-      }
-
-      collections[type] = coll;
-      cropViewer.scene.primitives.add(coll);
-      totalRendered += pts.length;
-    });
-
-    document.getElementById('cropCount').textContent = totalRendered.toLocaleString();
+    document.getElementById('cropCount').textContent = count.toLocaleString();
+    document.getElementById('cropLod').textContent = lod.lbl + ' (' + Math.round(ch / 1000) + 'km)';
     document.getElementById('cropStats').classList.add('visible');
+    curLod = lod.lbl;
   }
 
-  /* ══════════════════════════════════════════
-     Init
-     ══════════════════════════════════════════ */
+  function startLod() {
+    viewer.camera.changed.addEventListener(function() {
+      if (!allPts) return;
+      var ch = viewer.camera.positionCartographic.height;
+      var nl = getLod(ch);
+      if (nl.lbl !== curLod) {
+        if (lodTimer) clearTimeout(lodTimer);
+        lodTimer = setTimeout(function() { render(allPts, activeFilter, nl); }, 400);
+      }
+      document.getElementById('cropLod').textContent = nl.lbl + ' (' + Math.round(ch / 1000) + 'km)';
+    });
+    viewer.camera.percentageChanged = 0.1;
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
     try {
       Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiNGU2MzgwZS1jNmM0LTQ4MDItOTc1ZS0wMTEyODNmOGNlMTYiLCJpZCI6NDAwMDcwLCJpYXQiOjE3NzI5Mzg2MDJ9.JTTgTyuiRGuJKpLArTT6KoAkzkC4TaB_M_FiOtWPwcU';
 
-      cropViewer = new Cesium.Viewer("cropMap3d", {
+      viewer = new Cesium.Viewer("cropMap3d", {
         terrain: Cesium.Terrain.fromWorldTerrain(),
-        baseLayerPicker: false,
-        geocoder: false,
-        animation: false,
-        timeline: false,
-        navigationHelpButton: false,
-        fullscreenButton: false
+        baseLayerPicker: false, geocoder: false,
+        animation: false, timeline: false,
+        navigationHelpButton: false, fullscreenButton: false
       });
 
-      /* ── Fullscreen ── */
+      // Fullscreen
       var fsBtn = document.getElementById('crop-fullscreen-btn');
-      var wrapper = document.querySelector('.crop-globe-wrapper');
-      var isFakeFs = false, savedScrollY = 0;
+      var wrap = document.querySelector('.crop-globe-wrapper');
+      var fakeFs = false, saveY = 0;
 
-      if (fsBtn && wrapper) {
+      if (fsBtn && wrap) {
         fsBtn.addEventListener('click', function() {
-          if (/iPad|iPhone|iPod/.test(navigator.userAgent) || (!wrapper.requestFullscreen && !wrapper.webkitRequestFullscreen)) {
-            if (!isFakeFs) {
-              savedScrollY = window.scrollY;
-              document.body.style.overflow = 'hidden';
-              wrapper.classList.add('crop-fake-fs');
-              isFakeFs = true;
+          if (/iPad|iPhone|iPod/.test(navigator.userAgent) || (!wrap.requestFullscreen && !wrap.webkitRequestFullscreen)) {
+            if (!fakeFs) {
+              saveY = window.scrollY; document.body.style.overflow = 'hidden';
+              wrap.classList.add('crop-fake-fs'); fakeFs = true;
             } else {
-              wrapper.classList.remove('crop-fake-fs');
-              document.body.style.overflow = '';
-              isFakeFs = false;
-              window.scrollTo(0, savedScrollY);
+              wrap.classList.remove('crop-fake-fs'); document.body.style.overflow = '';
+              fakeFs = false; window.scrollTo(0, saveY);
             }
-            cropViewer.resize();
+            viewer.resize();
           } else {
-            if (!(document.fullscreenElement || document.webkitFullscreenElement)) {
-              (wrapper.requestFullscreen || wrapper.webkitRequestFullscreen).call(wrapper);
-            } else {
-              (document.exitFullscreen || document.webkitExitFullscreen).call(document);
-            }
+            if (!(document.fullscreenElement || document.webkitFullscreenElement))
+              (wrap.requestFullscreen || wrap.webkitRequestFullscreen).call(wrap);
+            else (document.exitFullscreen || document.webkitExitFullscreen).call(document);
           }
         });
-
-        document.addEventListener('fullscreenchange', function() {
-          if (!document.fullscreenElement) cropViewer.resize();
-        });
-        document.addEventListener('webkitfullscreenchange', function() {
-          if (!document.webkitFullscreenElement) cropViewer.resize();
-        });
+        document.addEventListener('fullscreenchange', function() { if (!document.fullscreenElement) viewer.resize(); });
+        document.addEventListener('webkitfullscreenchange', function() { if (!document.webkitFullscreenElement) viewer.resize(); });
       }
 
-      /* ── Load crop data ── */
-      // ★ 改成你的 crops.json 实际路径
+      // Load data  ★ 改成你的 crops.json 路径
       fetch('/data/crops.json')
-        .then(function(r) {
-          if (!r.ok) throw new Error('HTTP ' + r.status);
-          return r.json();
-        })
+        .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function(data) {
-          allPoints = data;
+          allPts = data;
           console.log('[3D Crops] Loaded ' + data.length + ' points');
-          renderPoints(data, 'all');
-
-          // Auto-activate the "All" button
-          var allBtn = document.querySelector('.crop-lyr-btn[data-crop-type="all"]');
-          if (allBtn) allBtn.classList.add('active');
+          render(data, 'all');
+          startLod();
         })
-        .catch(function(err) {
-          console.error('[3D Crops] Load failed:', err);
-          document.getElementById('cropCount').textContent = 'Load failed';
+        .catch(function(e) {
+          console.error('[3D Crops]', e);
+          document.getElementById('cropCount').textContent = 'Error';
         });
 
-      /* ── Layer filter buttons ── */
-      var cropBtns = document.querySelectorAll('.crop-lyr-btn');
-      cropBtns.forEach(function(btn) {
-        var touched = false;
-
+      // Filter buttons
+      var btns = document.querySelectorAll('.crop-lyr-btn');
+      btns.forEach(function(btn) {
+        var t = false;
         btn.addEventListener('touchend', function(e) {
-          e.preventDefault();
-          touched = true;
-          handleFilter(btn);
+          e.preventDefault(); t = true; doFilter(btn);
         }, {passive: false});
-
-        btn.addEventListener('click', function() {
-          if (touched) { touched = false; return; }
-          handleFilter(btn);
-        });
+        btn.addEventListener('click', function() { if (t) { t = false; return; } doFilter(btn); });
       });
-
-      function handleFilter(btn) {
-        var type = btn.getAttribute('data-crop-type');
-        if (!allPoints) return;
-
-        // Toggle active state
-        cropBtns.forEach(function(b) { b.classList.remove('active'); });
+      function doFilter(btn) {
+        if (!allPts) return;
+        btns.forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-
-        activeFilter = type;
-        renderPoints(allPoints, type);
+        activeFilter = btn.getAttribute('data-crop-type');
+        render(allPts, activeFilter);
       }
 
-    } catch (error) {
+    } catch (e) {
       document.getElementById("cropMap3d").innerHTML =
-        "<div style='padding:20px;color:red;'>3D Crop Globe init failed: " + error.message + "</div>";
+        "<div style='padding:20px;color:red;'>Init failed: " + e.message + "</div>";
     }
   });
 })();
