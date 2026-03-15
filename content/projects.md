@@ -1137,8 +1137,36 @@ document.addEventListener("DOMContentLoaded", function() {
     grass:    { sc: 0.016, aspect: 0.8 }
   };
 
-  // PlaneGeometry shared by all sprites (1x1, will be scaled per instance)
-  var planeGeo = new THREE.PlaneGeometry(1, 1);
+  // Cross-billboard geometry: two perpendicular planes forming an X
+  // Visible from all camera angles, no need for per-frame billboard updates
+  function makeCrossGeo() {
+    var p1 = new THREE.PlaneGeometry(1, 1);
+    var p2 = new THREE.PlaneGeometry(1, 1);
+    p2.rotateY(Math.PI / 2);
+    // Merge into single geometry
+    var pos1 = p1.attributes.position.array, pos2 = p2.attributes.position.array;
+    var nrm1 = p1.attributes.normal.array, nrm2 = p2.attributes.normal.array;
+    var uv1 = p1.attributes.uv.array, uv2 = p2.attributes.uv.array;
+    var idx1 = p1.index.array, idx2 = p2.index.array;
+    var pos = new Float32Array(pos1.length + pos2.length);
+    var nrm = new Float32Array(nrm1.length + nrm2.length);
+    var uv = new Float32Array(uv1.length + uv2.length);
+    pos.set(pos1, 0); pos.set(pos2, pos1.length);
+    nrm.set(nrm1, 0); nrm.set(nrm2, nrm1.length);
+    uv.set(uv1, 0); uv.set(uv2, uv1.length);
+    var idx = [];
+    for (var i = 0; i < idx1.length; i++) idx.push(idx1[i]);
+    var off = pos1.length / 3;
+    for (var i = 0; i < idx2.length; i++) idx.push(idx2[i] + off);
+    var g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
+    g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+    g.setIndex(idx);
+    return g;
+  }
+
+  var crossGeo = makeCrossGeo();
 
   var meshGroups = {};
 
@@ -1159,6 +1187,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     var total = 0, dummy = new THREE.Object3D();
+    var up = new THREE.Vector3(0, 1, 0);
+    var quat = new THREE.Quaternion();
+    var mat4 = new THREE.Matrix4();
 
     Object.keys(grouped).forEach(function(type) {
       var arr = grouped[type], cfg = CFG[type], texArr = textures[type];
@@ -1177,26 +1208,31 @@ document.addEventListener("DOMContentLoaded", function() {
         var tex = texArr[tIdx];
 
         var mat = new THREE.MeshBasicMaterial({
-          map: tex, transparent: true, alphaTest: 0.1,
+          map: tex, transparent: true, alphaTest: 0.05,
           side: THREE.DoubleSide, depthWrite: false
         });
 
-        var mesh = new THREE.InstancedMesh(planeGeo, mat, n);
+        var mesh = new THREE.InstancedMesh(crossGeo, mat, n);
 
         for (var i = 0; i < n; i++) {
           var p = sub[i], lat = p[0], lon = p[1], sc = p[4] / 100;
           var s = cfg.sc * (0.5 + sc * 1.0) * (0.7 + ((i * 7) % 100) / 100 * 0.6);
 
-          var pos = ll2v(lat, lon, 1.005);
+          var pos = ll2v(lat, lon, 1.003);
           var norm = pos.clone().normalize();
 
-          dummy.position.copy(pos);
-          // Face outward from globe surface, then stand upright
-          dummy.lookAt(norm.clone().multiplyScalar(2).add(pos));
-          // Scale: width = s, height = s * aspect ratio
-          dummy.scale.set(s, s * cfg.aspect, 1);
-          dummy.updateMatrix();
-          mesh.setMatrixAt(i, dummy.matrix);
+          // Build matrix: position on sphere surface, Y-axis = surface normal
+          quat.setFromUnitVectors(up, norm);
+          mat4.makeRotationFromQuaternion(quat);
+          // Offset up by half the height so bottom touches surface
+          var halfH = s * cfg.aspect * 0.5;
+          var finalPos = pos.clone().add(norm.clone().multiplyScalar(halfH));
+          mat4.setPosition(finalPos);
+          // Apply scale
+          var scaleMat = new THREE.Matrix4().makeScale(s, s * cfg.aspect, s);
+          mat4.multiply(scaleMat);
+
+          mesh.setMatrixAt(i, mat4);
         }
 
         mesh.instanceMatrix.needsUpdate = true;
