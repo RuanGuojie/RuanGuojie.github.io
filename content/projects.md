@@ -832,6 +832,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+
 ## 3D Crop Globe
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&display=swap');
@@ -944,7 +945,7 @@ document.addEventListener("DOMContentLoaded", function() {
     tex.needsUpdate = true;
     earthMat.map = tex; earthMat.needsUpdate = true;
   };
-  earthImg.src = '/images/earth2.jpg';
+  earthImg.src = '/images/earth.jpg';
 
   // Atmosphere
   var ag = new THREE.SphereGeometry(1.015,48,36);
@@ -960,228 +961,239 @@ document.addEventListener("DOMContentLoaded", function() {
   function ll2v(lat,lon,r){var p=(90-lat)*Math.PI/180,t=(lon+180)*Math.PI/180;return new THREE.Vector3(-r*Math.sin(p)*Math.cos(t),r*Math.cos(p),r*Math.sin(p)*Math.sin(t));}
 
   /* ═══════════════════════════════════════════
-     Canvas plant texture generators (transparent PNG-style)
-     ★ To use real images later, replace the textures[] arrays
-       with: new THREE.TextureLoader().load('/images/tree1.png')
+     3D Clay-style Crop Models (程序化生成)
+     Smooth rounded shapes, soft shading
+     ★ To upgrade later, replace geo with GLTFLoader:
+       loader.load('/models/corn.glb', function(gltf) { ... })
      ═══════════════════════════════════════════ */
-  function drawBroadleafTree(sz, trunkCol, leafCol1, leafCol2) {
-    var c = document.createElement('canvas'); c.width = sz; c.height = sz * 1.4;
-    var x = c.getContext('2d');
-    // Trunk
-    x.fillStyle = trunkCol;
-    x.beginPath(); x.moveTo(sz*0.42, c.height); x.lineTo(sz*0.46, c.height*0.5);
-    x.lineTo(sz*0.54, c.height*0.5); x.lineTo(sz*0.58, c.height); x.fill();
-    // Branches
-    x.strokeStyle = trunkCol; x.lineWidth = 2;
-    x.beginPath(); x.moveTo(sz*0.48, c.height*0.55); x.quadraticCurveTo(sz*0.3, c.height*0.45, sz*0.22, c.height*0.35); x.stroke();
-    x.beginPath(); x.moveTo(sz*0.52, c.height*0.5); x.quadraticCurveTo(sz*0.7, c.height*0.4, sz*0.78, c.height*0.3); x.stroke();
-    // Leaf clusters (multiple overlapping circles with variation)
-    var clusters = [[0.5,0.32,0.32],[0.3,0.35,0.24],[0.7,0.3,0.22],[0.4,0.2,0.2],[0.6,0.18,0.18],[0.35,0.48,0.18],[0.65,0.45,0.16],[0.5,0.12,0.15],[0.25,0.22,0.16],[0.75,0.2,0.14]];
-    for (var i = 0; i < clusters.length; i++) {
-      var cl = clusters[i];
-      x.fillStyle = i % 2 === 0 ? leafCol1 : leafCol2;
-      x.globalAlpha = 0.75 + Math.random() * 0.25;
-      x.beginPath(); x.arc(sz * cl[0], c.height * cl[1], sz * cl[2], 0, Math.PI * 2); x.fill();
-    }
-    // Highlights
-    x.globalAlpha = 0.15; x.fillStyle = '#fff';
-    x.beginPath(); x.arc(sz * 0.4, c.height * 0.22, sz * 0.12, 0, Math.PI * 2); x.fill();
-    x.globalAlpha = 1;
-    return new THREE.CanvasTexture(c);
+
+  // Helper: merge multiple BufferGeometries into one
+  function mergeGeos(geos) {
+    var totalV = 0, totalI = 0;
+    geos.forEach(function(g) {
+      g.computeVertexNormals();
+      totalV += g.attributes.position.count;
+      totalI += g.index ? g.index.count : g.attributes.position.count;
+    });
+    var pos = new Float32Array(totalV * 3);
+    var nrm = new Float32Array(totalV * 3);
+    var idx = [], vOff = 0;
+    geos.forEach(function(g) {
+      var p = g.attributes.position.array;
+      var n = g.attributes.normal.array;
+      var vc = g.attributes.position.count;
+      pos.set(p, vOff * 3);
+      nrm.set(n, vOff * 3);
+      if (g.index) { for (var i = 0; i < g.index.count; i++) idx.push(g.index.array[i] + vOff); }
+      else { for (var i = 0; i < vc; i++) idx.push(vOff + i); }
+      vOff += vc;
+    });
+    var mg = new THREE.BufferGeometry();
+    mg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    mg.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
+    mg.setIndex(idx);
+    return mg;
   }
 
-  function drawPineTree(sz, trunkCol, leafCol1, leafCol2) {
-    var c = document.createElement('canvas'); c.width = sz; c.height = sz * 1.6;
-    var x = c.getContext('2d');
-    x.fillStyle = trunkCol;
-    x.fillRect(sz * 0.45, c.height * 0.7, sz * 0.1, c.height * 0.3);
-    // Tiered triangle layers
-    var tiers = [[0.65,0.25,0.7],[0.55,0.15,0.55],[0.45,0.05,0.42],[0.3,0.0,0.28]];
-    for (var t = 0; t < tiers.length; t++) {
-      x.fillStyle = t % 2 === 0 ? leafCol1 : leafCol2;
-      x.globalAlpha = 0.85 + t * 0.04;
-      var w = tiers[t][0], top = tiers[t][1], h = tiers[t][2];
-      x.beginPath();
-      x.moveTo(sz * 0.5, c.height * top);
-      x.lineTo(sz * (0.5 - w/2), c.height * (top + h));
-      x.lineTo(sz * (0.5 + w/2), c.height * (top + h));
-      x.closePath(); x.fill();
+  // ── Corn plant: stalk + leaves + cobs + tassel ──
+  function makeCorn() {
+    var parts = [];
+    // Stalk
+    var stalk = new THREE.CylinderGeometry(0.06, 0.09, 2.4, 8); stalk.translate(0, 1.2, 0); parts.push(stalk);
+    // Soil base
+    var base = new THREE.SphereGeometry(0.3, 8, 6); base.scale(1, 0.35, 1); base.translate(0, 0.05, 0); parts.push(base);
+    // Leaves (curved planes)
+    for (var i = 0; i < 6; i++) {
+      var leaf = new THREE.BoxGeometry(0.8, 0.04, 0.15, 4, 1, 1);
+      var la = leaf.attributes.position.array;
+      for (var j = 0; j < la.length; j += 3) {
+        la[j + 1] += la[j] * la[j] * 0.3; // Curve downward
+        la[j + 2] += la[j] * 0.1;
+      }
+      leaf.rotateY(i * Math.PI / 3);
+      leaf.translate(0, 0.6 + i * 0.28, 0);
+      parts.push(leaf);
     }
-    x.globalAlpha = 0.1; x.fillStyle = '#fff';
-    x.beginPath(); x.moveTo(sz*0.5,c.height*0.02); x.lineTo(sz*0.35,c.height*0.4); x.lineTo(sz*0.5,c.height*0.3); x.fill();
-    x.globalAlpha = 1;
-    return new THREE.CanvasTexture(c);
+    // Cobs (2)
+    var cob1 = new THREE.SphereGeometry(0.12, 8, 6); cob1.scale(1, 1.8, 1); cob1.translate(0.15, 1.5, 0); parts.push(cob1);
+    var cob2 = new THREE.SphereGeometry(0.1, 8, 6); cob2.scale(1, 1.6, 1); cob2.translate(-0.12, 1.9, 0.08); parts.push(cob2);
+    // Cob husks
+    var husk1 = new THREE.SphereGeometry(0.14, 6, 4); husk1.scale(0.6, 1.2, 0.4); husk1.translate(0.22, 1.5, 0); parts.push(husk1);
+    var husk2 = new THREE.SphereGeometry(0.12, 6, 4); husk2.scale(0.6, 1.1, 0.4); husk2.translate(-0.18, 1.9, 0.08); parts.push(husk2);
+    // Tassel on top
+    for (var t = 0; t < 4; t++) {
+      var tas = new THREE.CylinderGeometry(0.01, 0.015, 0.3, 4);
+      tas.translate(Math.sin(t*1.5)*0.04, 2.55, Math.cos(t*1.5)*0.04);
+      tas.rotateZ((t - 1.5) * 0.15);
+      parts.push(tas);
+    }
+    return mergeGeos(parts);
   }
 
-  function drawFlower(sz, stemCol, petalCol, centerCol) {
-    var c = document.createElement('canvas'); c.width = sz; c.height = sz * 1.3;
-    var x = c.getContext('2d');
-    // Stem
-    x.strokeStyle = stemCol; x.lineWidth = sz * 0.03;
-    x.beginPath(); x.moveTo(sz*0.5, c.height); x.quadraticCurveTo(sz*0.48, c.height*0.5, sz*0.5, c.height*0.35); x.stroke();
-    // Leaves on stem
-    x.fillStyle = stemCol; x.globalAlpha = 0.8;
-    x.beginPath(); x.ellipse(sz*0.38, c.height*0.65, sz*0.1, sz*0.04, -0.4, 0, Math.PI*2); x.fill();
-    x.beginPath(); x.ellipse(sz*0.6, c.height*0.55, sz*0.08, sz*0.035, 0.3, 0, Math.PI*2); x.fill();
-    // Petals
-    x.globalAlpha = 0.9;
-    var cx = sz*0.5, cy = c.height*0.28, pr = sz*0.14;
-    for (var p = 0; p < 6; p++) {
-      var a = (p/6)*Math.PI*2 - Math.PI/2;
-      x.fillStyle = petalCol;
-      x.beginPath(); x.ellipse(cx + Math.cos(a)*pr, cy + Math.sin(a)*pr, pr*0.8, pr*0.5, a, 0, Math.PI*2); x.fill();
-    }
-    // Center
-    x.globalAlpha = 1; x.fillStyle = centerCol;
-    x.beginPath(); x.arc(cx, cy, sz*0.06, 0, Math.PI*2); x.fill();
-    return new THREE.CanvasTexture(c);
-  }
-
-  function drawBush(sz, col1, col2, col3) {
-    var c = document.createElement('canvas'); c.width = sz; c.height = sz * 0.8;
-    var x = c.getContext('2d');
-    var blobs = [[0.25,0.55,0.22],[0.5,0.4,0.3],[0.75,0.55,0.2],[0.35,0.35,0.18],[0.65,0.35,0.16],[0.5,0.25,0.2],[0.4,0.6,0.15],[0.6,0.6,0.15]];
-    var cols = [col1, col2, col3];
-    for (var i = 0; i < blobs.length; i++) {
-      x.fillStyle = cols[i % 3]; x.globalAlpha = 0.7 + Math.random() * 0.3;
-      x.beginPath(); x.arc(sz * blobs[i][0], c.height * blobs[i][1], sz * blobs[i][2], 0, Math.PI * 2); x.fill();
-    }
-    x.globalAlpha = 0.12; x.fillStyle = '#000';
-    x.beginPath(); x.ellipse(sz*0.5, c.height*0.85, sz*0.35, c.height*0.08, 0, 0, Math.PI*2); x.fill();
-    x.globalAlpha = 1;
-    return new THREE.CanvasTexture(c);
-  }
-
-  function drawWheat(sz, stalkCol, headCol) {
-    var c = document.createElement('canvas'); c.width = sz; c.height = sz * 1.8;
-    var x = c.getContext('2d');
-    // Multiple stalks
-    var stalks = [0.3, 0.45, 0.6, 0.75];
+  // ── Rice paddy: thin stalks + drooping grain heads ──
+  function makeRice() {
+    var parts = [];
+    var base = new THREE.SphereGeometry(0.25, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.03, 0); parts.push(base);
+    var stalks = [[-0.08,0],[0.06,0.04],[0,-0.06],[0.1,-0.02],[-0.04,0.07]];
     for (var s = 0; s < stalks.length; s++) {
-      var sx = sz * stalks[s], sway = Math.sin(s * 2.1) * sz * 0.04;
-      x.strokeStyle = stalkCol; x.lineWidth = 1.5;
-      x.beginPath(); x.moveTo(sx, c.height);
-      x.quadraticCurveTo(sx + sway, c.height * 0.5, sx + sway * 0.6, c.height * 0.18); x.stroke();
-      // Head
-      x.fillStyle = headCol; x.globalAlpha = 0.85;
-      x.beginPath(); x.ellipse(sx + sway * 0.6, c.height * 0.14, sz * 0.04, sz * 0.11, 0.15 * s, 0, Math.PI * 2); x.fill();
-      // Awns
-      x.strokeStyle = headCol; x.lineWidth = 0.7; x.globalAlpha = 0.6;
+      var stalk = new THREE.CylinderGeometry(0.015, 0.025, 1.4 + s*0.1, 5);
+      stalk.translate(stalks[s][0], 0.75 + s*0.05, stalks[s][1]);
+      parts.push(stalk);
+      // Drooping grain head
+      var head = new THREE.SphereGeometry(0.04, 6, 5);
+      head.scale(1, 2.5, 1);
+      head.rotateZ(0.4 + s * 0.15);
+      head.translate(stalks[s][0] + 0.08, 1.45 + s*0.08, stalks[s][1]);
+      parts.push(head);
+      // Small leaf
+      var leaf = new THREE.BoxGeometry(0.35, 0.02, 0.06, 3, 1, 1);
+      var la = leaf.attributes.position.array;
+      for (var j = 0; j < la.length; j += 3) la[j+1] += la[j]*la[j]*0.2;
+      leaf.rotateY(s * 1.2);
+      leaf.translate(stalks[s][0], 0.4 + s*0.15, stalks[s][1]);
+      parts.push(leaf);
+    }
+    return mergeGeos(parts);
+  }
+
+  // ── Wheat: golden stalks + plump grain heads ──
+  function makeWheat() {
+    var parts = [];
+    var base = new THREE.SphereGeometry(0.22, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.03, 0); parts.push(base);
+    var stalks = [[-0.06,0],[0.05,0.04],[0,-0.05],[0.08,-0.03],[-0.03,0.06]];
+    for (var s = 0; s < stalks.length; s++) {
+      var stalk = new THREE.CylinderGeometry(0.018, 0.028, 1.6 + s*0.08, 5);
+      stalk.translate(stalks[s][0], 0.85 + s*0.04, stalks[s][1]);
+      parts.push(stalk);
+      // Plump wheat head
+      var head = new THREE.SphereGeometry(0.055, 6, 5);
+      head.scale(0.7, 2.0, 0.7);
+      head.translate(stalks[s][0], 1.7 + s*0.06, stalks[s][1]);
+      parts.push(head);
+      // Awns (whiskers)
       for (var a = 0; a < 3; a++) {
-        var ay = c.height * 0.1 + a * sz * 0.04;
-        x.beginPath(); x.moveTo(sx + sway*0.6, ay); x.lineTo(sx + sway*0.6 + sz*0.06, ay - sz*0.03); x.stroke();
-        x.beginPath(); x.moveTo(sx + sway*0.6, ay); x.lineTo(sx + sway*0.6 - sz*0.06, ay - sz*0.03); x.stroke();
+        var awn = new THREE.CylinderGeometry(0.005, 0.002, 0.15, 3);
+        awn.rotateZ(0.4 * (a - 1));
+        awn.translate(stalks[s][0], 1.82 + s*0.06 + a*0.04, stalks[s][1]);
+        parts.push(awn);
       }
     }
-    x.globalAlpha = 1;
-    return new THREE.CanvasTexture(c);
+    return mergeGeos(parts);
   }
 
-  function drawPalm(sz, trunkCol, leafCol) {
-    var c = document.createElement('canvas'); c.width = sz; c.height = sz * 1.5;
-    var x = c.getContext('2d');
-    // Curved trunk
-    x.strokeStyle = trunkCol; x.lineWidth = sz * 0.05;
-    x.beginPath(); x.moveTo(sz*0.5, c.height);
-    x.quadraticCurveTo(sz*0.55, c.height*0.5, sz*0.48, c.height*0.3); x.stroke();
-    // Fronds
-    x.strokeStyle = leafCol; x.lineWidth = 2;
-    x.fillStyle = leafCol;
-    var fronds = [[-0.7,0.1],[-0.4,-0.15],[0.0,-0.2],[0.4,-0.1],[0.7,0.15],[-0.5,0.2],[0.5,0.25]];
-    for (var f = 0; f < fronds.length; f++) {
-      var fx = sz*0.48 + sz*fronds[f][0]*0.45, fy = c.height*0.3 + c.height*fronds[f][1];
-      x.globalAlpha = 0.7 + Math.random()*0.3;
-      x.beginPath(); x.moveTo(sz*0.48, c.height*0.3);
-      x.quadraticCurveTo((sz*0.48+fx)/2, fy - sz*0.1, fx, fy); x.stroke();
-      // Leaf shape
-      x.beginPath(); x.ellipse((sz*0.48+fx)/2, (c.height*0.3+fy)/2 - sz*0.02, sz*0.15, sz*0.04, Math.atan2(fy-c.height*0.3, fx-sz*0.48), 0, Math.PI*2); x.fill();
+  // ── Tropical tree: thick trunk + large round canopy clusters ──
+  function makeTropicalTree() {
+    var parts = [];
+    // Trunk
+    var trunk = new THREE.CylinderGeometry(0.08, 0.14, 1.2, 8); trunk.translate(0, 0.6, 0); parts.push(trunk);
+    // Base
+    var base = new THREE.SphereGeometry(0.25, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); parts.push(base);
+    // Canopy - large overlapping spheres
+    var blobs = [[0,1.6,0,0.55],[0.2,1.9,0.1,0.4],[-0.15,2.0,-0.1,0.38],[0.1,2.2,0,0.3],[-0.1,1.5,0.15,0.35]];
+    for (var b = 0; b < blobs.length; b++) {
+      var s = new THREE.SphereGeometry(blobs[b][3], 10, 8);
+      s.translate(blobs[b][0], blobs[b][1], blobs[b][2]);
+      parts.push(s);
     }
-    x.globalAlpha = 1;
-    return new THREE.CanvasTexture(c);
+    return mergeGeos(parts);
   }
 
-  // Generate texture variations for each type
-  // ★ REPLACE THESE WITH real PNGs later:
-  //   textures.tropical = [new THREE.TextureLoader().load('/images/tree1.png'), ...]
-  var SZ = 128;
-  var textures = {
-    tropical: [
-      drawBroadleafTree(SZ, '#5D4037', '#1a6e1a', '#228B22'),
-      drawBroadleafTree(SZ, '#4E342E', '#0d5e0d', '#1b8a1b'),
-      drawBroadleafTree(SZ, '#6D4C41', '#176b17', '#2d8a2d'),
-      drawPalm(SZ, '#795548', '#1e7a1e'),
-      drawBroadleafTree(SZ, '#5D4037', '#145a14', '#1f8522'),
-    ],
-    forest: [
-      drawPineTree(SZ, '#6D4C41', '#2e7d32', '#1b5e20'),
-      drawPineTree(SZ, '#5D4037', '#388e3c', '#256d28'),
-      drawPineTree(SZ, '#4E342E', '#43a047', '#2e7d32'),
-      drawBroadleafTree(SZ, '#5D4037', '#388e3c', '#4caf50'),
-      drawPineTree(SZ, '#6D4C41', '#1b5e20', '#358538'),
-    ],
-    crop: [
-      drawWheat(SZ, '#8d6e27', '#c0ca33'),
-      drawWheat(SZ, '#9e7e30', '#aed581'),
-      drawWheat(SZ, '#7a6020', '#8bc34a'),
-      drawFlower(SZ, '#558b2f', '#ffeb3b', '#ff9800'),
-      drawWheat(SZ, '#8d6e27', '#9ccc65'),
-    ],
-    grass: [
-      drawBush(SZ, '#66bb6a', '#81c784', '#a5d6a7'),
-      drawBush(SZ, '#4caf50', '#73c778', '#98cb9c'),
-      drawFlower(SZ, '#4a7c23', '#ff6b8a', '#ffeb3b'),
-      drawFlower(SZ, '#558b2f', '#ce93d8', '#fff59d'),
-      drawBush(SZ, '#81c784', '#a5d6a7', '#c5e1a5'),
-      drawFlower(SZ, '#4a7c23', '#ff4081', '#ffeb3b'),
-      drawFlower(SZ, '#558b2f', '#448aff', '#fff9c4'),
-    ]
+  // ── Pine/Forest tree: layered cones ──
+  function makePine() {
+    var parts = [];
+    var trunk = new THREE.CylinderGeometry(0.05, 0.1, 0.9, 7); trunk.translate(0, 0.45, 0); parts.push(trunk);
+    var base = new THREE.SphereGeometry(0.2, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); parts.push(base);
+    var tiers = [[0.6,0.7,0.7],[0.48,0.6,1.2],[0.35,0.55,1.6],[0.2,0.4,2.0]];
+    for (var t = 0; t < tiers.length; t++) {
+      var cone = new THREE.ConeGeometry(tiers[t][0], tiers[t][1], 8);
+      cone.translate(0, tiers[t][2], 0);
+      parts.push(cone);
+    }
+    return mergeGeos(parts);
+  }
+
+  // ── Bush: rounded cluster ──
+  function makeBush() {
+    var parts = [];
+    var base = new THREE.SphereGeometry(0.2, 8, 6); base.scale(1, 0.25, 1); base.translate(0, 0.03, 0); parts.push(base);
+    var blobs = [[0,0.35,0,0.3],[0.18,0.3,0.1,0.22],[-0.15,0.3,-0.08,0.2],[0,0.5,0,0.2],[0.1,0.25,-0.15,0.18]];
+    for (var b = 0; b < blobs.length; b++) {
+      var s = new THREE.SphereGeometry(blobs[b][3], 8, 6);
+      s.translate(blobs[b][0], blobs[b][1], blobs[b][2]);
+      parts.push(s);
+    }
+    return mergeGeos(parts);
+  }
+
+  // ── Flower bush: bush + colorful sphere blooms ──
+  function makeFlowerBush() {
+    var parts = [];
+    var base = new THREE.SphereGeometry(0.18, 8, 6); base.scale(1, 0.25, 1); base.translate(0, 0.03, 0); parts.push(base);
+    // Green body
+    var body = new THREE.SphereGeometry(0.28, 8, 6); body.scale(1, 0.7, 1); body.translate(0, 0.3, 0); parts.push(body);
+    // Flower blooms on top
+    var blooms = [[0,0.55,0,0.08],[0.15,0.5,0.1,0.07],[-0.12,0.52,-0.08,0.06],[0.08,0.58,0.05,0.065],[-0.05,0.48,0.12,0.07],[0.1,0.45,-0.1,0.06]];
+    for (var b = 0; b < blooms.length; b++) {
+      var fl = new THREE.SphereGeometry(blooms[b][3], 6, 5);
+      fl.translate(blooms[b][0], blooms[b][1], blooms[b][2]);
+      parts.push(fl);
+    }
+    return mergeGeos(parts);
+  }
+
+  // ── Palm tree: curved trunk + frond cluster ──
+  function makePalm() {
+    var parts = [];
+    // Curved trunk using stacked cylinders
+    for (var i = 0; i < 8; i++) {
+      var seg = new THREE.CylinderGeometry(0.04 - i*0.003, 0.05 - i*0.003, 0.25, 6);
+      var sway = Math.sin(i * 0.3) * 0.03;
+      seg.translate(sway, 0.25 + i * 0.23, 0);
+      parts.push(seg);
+    }
+    var base = new THREE.SphereGeometry(0.2, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); parts.push(base);
+    // Fronds - elongated ellipsoids
+    for (var f = 0; f < 7; f++) {
+      var frond = new THREE.SphereGeometry(0.12, 6, 4);
+      frond.scale(3, 0.2, 0.8);
+      var angle = (f / 7) * Math.PI * 2;
+      var fx = Math.cos(angle) * 0.3, fz = Math.sin(angle) * 0.3;
+      frond.rotateY(angle);
+      frond.rotateZ(0.5);
+      frond.translate(fx, 2.1, fz);
+      parts.push(frond);
+    }
+    // Coconuts
+    var nut1 = new THREE.SphereGeometry(0.05, 6, 5); nut1.translate(0.06, 2.0, 0.04); parts.push(nut1);
+    var nut2 = new THREE.SphereGeometry(0.04, 6, 5); nut2.translate(-0.04, 1.98, -0.03); parts.push(nut2);
+    return mergeGeos(parts);
+  }
+
+  // Build all geometries
+  var cornGeo = makeCorn();
+  var riceGeo = makeRice();
+  var wheatGeo = makeWheat();
+  var tropTreeGeo = makeTropicalTree();
+  var pineGeo = makePine();
+  var bushGeo = makeBush();
+  var flowerGeo = makeFlowerBush();
+  var palmGeo = makePalm();
+
+  // ── Color palettes (clay render style) ──
+  var COLORS = {
+    tropical: [0x2d7a2d, 0x1e6e1e, 0x228b22, 0x1a5e1a, 0x2d8a2d],
+    forest:   [0x2e7d32, 0x388e3c, 0x1b5e20, 0x43a047, 0x2a6e2e],
+    crop:     [0x689f38, 0x7cb342, 0x8bc34a, 0x9ccc65, 0x558b2f],
+    grass:    [0x66bb6a, 0x4caf50, 0x81c784, 0xa5d6a7, 0x73c778],
   };
 
-  // Set texture filtering
-  Object.keys(textures).forEach(function(k) {
-    textures[k].forEach(function(t) {
-      t.minFilter = THREE.LinearFilter;
-      t.magFilter = THREE.LinearFilter;
-    });
-  });
-
+  // ── Type → geometry mapping, each type gets several geo variants ──
   var CFG = {
-    tropical: { sc: 0.035, aspect: 1.4 },
-    forest:   { sc: 0.030, aspect: 1.6 },
-    crop:     { sc: 0.020, aspect: 1.8 },
-    grass:    { sc: 0.016, aspect: 0.8 }
+    tropical: { geos: [tropTreeGeo, palmGeo, tropTreeGeo], sc: 0.014, colors: COLORS.tropical },
+    forest:   { geos: [pineGeo, tropTreeGeo, pineGeo], sc: 0.012, colors: COLORS.forest },
+    crop:     { geos: [cornGeo, wheatGeo, riceGeo], sc: 0.009, colors: COLORS.crop },
+    grass:    { geos: [bushGeo, flowerGeo, bushGeo], sc: 0.008, colors: COLORS.grass },
   };
-
-  // Cross-billboard geometry: two perpendicular planes forming an X
-  // Visible from all camera angles, no need for per-frame billboard updates
-  function makeCrossGeo() {
-    var p1 = new THREE.PlaneGeometry(1, 1);
-    var p2 = new THREE.PlaneGeometry(1, 1);
-    p2.rotateY(Math.PI / 2);
-    // Merge into single geometry
-    var pos1 = p1.attributes.position.array, pos2 = p2.attributes.position.array;
-    var nrm1 = p1.attributes.normal.array, nrm2 = p2.attributes.normal.array;
-    var uv1 = p1.attributes.uv.array, uv2 = p2.attributes.uv.array;
-    var idx1 = p1.index.array, idx2 = p2.index.array;
-    var pos = new Float32Array(pos1.length + pos2.length);
-    var nrm = new Float32Array(nrm1.length + nrm2.length);
-    var uv = new Float32Array(uv1.length + uv2.length);
-    pos.set(pos1, 0); pos.set(pos2, pos1.length);
-    nrm.set(nrm1, 0); nrm.set(nrm2, nrm1.length);
-    uv.set(uv1, 0); uv.set(uv2, uv1.length);
-    var idx = [];
-    for (var i = 0; i < idx1.length; i++) idx.push(idx1[i]);
-    var off = pos1.length / 3;
-    for (var i = 0; i < idx2.length; i++) idx.push(idx2[i] + off);
-    var g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    g.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
-    g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
-    g.setIndex(idx);
-    return g;
-  }
-
-  var crossGeo = makeCrossGeo();
 
   var meshGroups = {};
 
@@ -1201,33 +1213,35 @@ document.addEventListener("DOMContentLoaded", function() {
       grouped[pt].push(p);
     }
 
-    var total = 0, dummy = new THREE.Object3D();
+    var total = 0;
     var up = new THREE.Vector3(0, 1, 0);
     var quat = new THREE.Quaternion();
     var mat4 = new THREE.Matrix4();
+    var scaleMat = new THREE.Matrix4();
 
     Object.keys(grouped).forEach(function(type) {
-      var arr = grouped[type], cfg = CFG[type], texArr = textures[type];
+      var arr = grouped[type], cfg = CFG[type];
       meshGroups[type] = [];
 
-      // Split into sub-groups by texture variant
-      var subGroups = {};
+      // Split points across geometry variants
+      var geoGroups = {};
       for (var i = 0; i < arr.length; i++) {
-        var tIdx = i % texArr.length;
-        if (!subGroups[tIdx]) subGroups[tIdx] = [];
-        subGroups[tIdx].push(arr[i]);
+        var gIdx = i % cfg.geos.length;
+        if (!geoGroups[gIdx]) geoGroups[gIdx] = [];
+        geoGroups[gIdx].push(arr[i]);
       }
 
-      Object.keys(subGroups).forEach(function(tIdx) {
-        var sub = subGroups[tIdx], n = sub.length;
-        var tex = texArr[tIdx];
+      Object.keys(geoGroups).forEach(function(gIdx) {
+        var sub = geoGroups[gIdx], n = sub.length;
+        var geo = cfg.geos[gIdx];
 
-        var mat = new THREE.MeshBasicMaterial({
-          map: tex, transparent: true, alphaTest: 0.05,
-          side: THREE.DoubleSide, depthWrite: false
+        var material = new THREE.MeshPhongMaterial({
+          shininess: 20,
+          flatShading: false // Smooth shading for clay look
         });
 
-        var mesh = new THREE.InstancedMesh(crossGeo, mat, n);
+        var mesh = new THREE.InstancedMesh(geo, material, n);
+        var colArr = new Float32Array(n * 3);
 
         for (var i = 0; i < n; i++) {
           var p = sub[i], lat = p[0], lon = p[1], sc = p[4] / 100;
@@ -1236,20 +1250,33 @@ document.addEventListener("DOMContentLoaded", function() {
           var pos = ll2v(lat, lon, 1.003);
           var norm = pos.clone().normalize();
 
-          // Build matrix: position on sphere surface, Y-axis = surface normal
+          // Orient: Y-axis aligned to surface normal
           quat.setFromUnitVectors(up, norm);
           mat4.makeRotationFromQuaternion(quat);
-          // Offset up by half the height so bottom touches surface
-          var halfH = s * cfg.aspect * 0.5;
-          var finalPos = pos.clone().add(norm.clone().multiplyScalar(halfH));
+          // Random Y rotation for variety
+          var rotMat = new THREE.Matrix4().makeRotationAxis(norm, ((i * 37) % 628) / 100);
+          mat4.multiply(rotMat);
+          // Position: offset so base touches surface
+          var halfH = s * 1.2;
+          var finalPos = pos.clone().add(norm.clone().multiplyScalar(halfH * 0.1));
           mat4.setPosition(finalPos);
-          // Apply scale
-          var scaleMat = new THREE.Matrix4().makeScale(s, s * cfg.aspect, s);
+          // Scale
+          scaleMat.makeScale(s, s * (0.8 + sc * 0.4), s);
           mat4.multiply(scaleMat);
 
           mesh.setMatrixAt(i, mat4);
+
+          // Color with variation
+          var col = new THREE.Color(cfg.colors[i % cfg.colors.length]);
+          col.r *= (0.85 + ((i * 3) % 30) / 100);
+          col.g *= (0.85 + ((i * 7) % 30) / 100);
+          col.b *= (0.85 + ((i * 11) % 30) / 100);
+          colArr[i * 3] = col.r;
+          colArr[i * 3 + 1] = col.g;
+          colArr[i * 3 + 2] = col.b;
         }
 
+        mesh.instanceColor = new THREE.InstancedBufferAttribute(colArr, 3);
         mesh.instanceMatrix.needsUpdate = true;
         globeGroup.add(mesh);
         meshGroups[type].push(mesh);
@@ -1268,7 +1295,7 @@ document.addEventListener("DOMContentLoaded", function() {
     .catch(function(e){document.getElementById('cropLoading').textContent='Failed: '+e.message;});
 
   // Interaction
-  var isDrag=false,prev={x:0,y:0},vel={x:0,y:0.003};
+  var isDrag=false,prev={x:0,y:0},vel={x:0,y:0};
   var el=renderer.domElement;
   el.addEventListener('pointerdown',function(e){isDrag=true;prev={x:e.clientX,y:e.clientY};});
   el.addEventListener('pointermove',function(e){if(!isDrag)return;vel.y=(e.clientX-prev.x)*0.004;vel.x=(e.clientY-prev.y)*0.004;prev={x:e.clientX,y:e.clientY};});
@@ -1282,7 +1309,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function animate(){
     requestAnimationFrame(animate);
-    if(!isDrag){vel.y+=(0.0015-vel.y)*0.02;vel.x*=0.95;}
+    if(!isDrag){vel.y*=0.95;vel.x*=0.95;}
     globeGroup.rotation.y+=vel.y; globeGroup.rotation.x+=vel.x;
     globeGroup.rotation.x=Math.max(-1.2,Math.min(1.2,globeGroup.rotation.x));
     vel.x*=0.96;vel.y*=0.98;
