@@ -855,9 +855,6 @@ document.addEventListener("DOMContentLoaded", function() {
 .crop-lyr-btn.active .crop-lyr-dot { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.5); border-color: transparent; }
 .crop-lyr-dot { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid rgba(128,128,128,0.4); background: transparent; flex-shrink: 0; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
 .crop-lyr-btn .crop-color-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; border: none; }
-.crop-stats { display: flex; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(128,128,128,0.1); font-size: 12px; opacity: 0.35; transition: opacity 0.3s; flex-wrap: wrap; }
-.crop-stats.visible { opacity: 0.6; }
-.crop-stats span { display: flex; align-items: center; gap: 6px; }
 .crop-fs-btn { position: absolute; bottom: 16px; right: 16px; z-index: 2; width: 40px; height: 40px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); cursor: pointer; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.6); transition: all 0.2s ease; touch-action: manipulation; -webkit-appearance: none; appearance: none; padding: 0; }
 .crop-fs-btn:hover { background: rgba(0,0,0,0.7); color: #fff; border-color: rgba(255,255,255,0.2); }
 .crop-fs-btn svg { width: 18px; height: 18px; }
@@ -878,7 +875,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <div class="crop-canvas-wrap" id="cropCanvasWrap">
-  <div class="crop-loading" id="cropLoading">Loading vegetation data…</div>
+  <div class="crop-loading" id="cropLoading" style="display:none;"></div>
   <button type="button" class="crop-fs-btn" id="crop-fullscreen-btn" title="full screen">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
   </button>
@@ -890,6 +887,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/maize.kmz" data-crop-type="corn"><span class="crop-color-dot" style="background:#FF9800;"></span><span>🌽 Corn</span></button>
     <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/rice.kmz" data-crop-type="rice"><span class="crop-color-dot" style="background:#8BC34A;"></span><span>🌾 Rice</span></button>
     <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/soybean.kmz" data-crop-type="soybean"><span class="crop-color-dot" style="background:#795548;"></span><span>🫘 Soybean</span></button>
+    <button type="button" class="crop-lyr-btn" data-crop-kmz="/data/winter_wheat.kmz" data-crop-type="wheat"><span class="crop-color-dot" style="background:#FFC107;"></span><span>🌾 Wheat</span></button>
   </div>
 </div>
 </div>
@@ -897,12 +895,10 @@ document.addEventListener("DOMContentLoaded", function() {
 <script>
 (function() {
   'use strict';
-  var CROP_TYPES = {
-    corn:    { geos: null, sc: 0.010, label: 'Corn' },
-    rice:    { geos: null, sc: 0.008, label: 'Rice' },
-    soybean: { geos: null, sc: 0.009, label: 'Soybean' },
-  };
 
+  /* ═══════════════════════════════════════════
+     Three.js Scene
+     ═══════════════════════════════════════════ */
   var container = document.getElementById('cropCanvasWrap');
   var W = container.clientWidth, H = container.clientHeight;
   var scene = new THREE.Scene();
@@ -915,47 +911,33 @@ document.addEventListener("DOMContentLoaded", function() {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
   container.appendChild(renderer.domElement);
-
   scene.add(new THREE.AmbientLight(0x556677, 0.5));
   var sun = new THREE.DirectionalLight(0xffeedd, 1.4); sun.position.set(5,3,5); scene.add(sun);
-  var fill = new THREE.DirectionalLight(0x667788, 0.3); fill.position.set(-4,-1,-3); scene.add(fill);
-
+  scene.add(new THREE.DirectionalLight(0x667788, 0.3)).position.set(-4,-1,-3);
   var globeGroup = new THREE.Group();
   scene.add(globeGroup);
 
   // Earth
-  var earthGeo = new THREE.SphereGeometry(1, 72, 54);
   var earthMat = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 15, specular: 0x111122 });
-  globeGroup.add(new THREE.Mesh(earthGeo, earthMat));
-
-  // Load earth texture with auto-downsize for mobile (iOS max = 4096)
-  var earthImg = new Image();
-  earthImg.crossOrigin = 'anonymous';
+  globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1, 72, 54), earthMat));
+  // Auto-downsize texture for mobile
+  var earthImg = new Image(); earthImg.crossOrigin = 'anonymous';
   earthImg.onload = function() {
-    var maxSize = Math.min(renderer.capabilities.maxTextureSize, 4096);
+    var maxSz = Math.min(renderer.capabilities.maxTextureSize, 4096);
     var w = earthImg.width, h = earthImg.height;
-    if (w > maxSize || h > maxSize) {
-      var ratio = Math.min(maxSize / w, maxSize / h);
-      var nw = Math.floor(w * ratio), nh = Math.floor(h * ratio);
-      var cv = document.createElement('canvas'); cv.width = nw; cv.height = nh;
-      cv.getContext('2d').drawImage(earthImg, 0, 0, nw, nh);
+    if (w > maxSz || h > maxSz) {
+      var r = Math.min(maxSz/w, maxSz/h), nw = Math.floor(w*r), nh = Math.floor(h*r);
+      var cv = document.createElement('canvas'); cv.width=nw; cv.height=nh;
+      cv.getContext('2d').drawImage(earthImg,0,0,nw,nh);
       var tex = new THREE.CanvasTexture(cv);
-      console.log('[Earth] Resized ' + w + 'x' + h + ' → ' + nw + 'x' + nh);
-    } else {
-      var tex = new THREE.Texture(earthImg);
-    }
+    } else { var tex = new THREE.Texture(earthImg); }
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    tex.needsUpdate = true;
-    earthMat.map = tex; earthMat.needsUpdate = true;
+    tex.needsUpdate = true; earthMat.map = tex; earthMat.needsUpdate = true;
   };
   earthImg.src = '/images/earth.jpg';
-
   // Atmosphere
-  var ag = new THREE.SphereGeometry(1.015,48,36);
-  globeGroup.add(new THREE.Mesh(ag, new THREE.MeshPhongMaterial({ color:0x6699cc, transparent:true, opacity:0.06 })));
-  var gg = new THREE.SphereGeometry(1.06,32,24);
-  globeGroup.add(new THREE.Mesh(gg, new THREE.MeshBasicMaterial({ color:0x3366aa, transparent:true, opacity:0.045, side:THREE.BackSide })));
-
+  globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.015,48,36), new THREE.MeshPhongMaterial({color:0x6699cc,transparent:true,opacity:0.06})));
+  globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.06,32,24), new THREE.MeshBasicMaterial({color:0x3366aa,transparent:true,opacity:0.045,side:THREE.BackSide})));
   // Stars
   var sp=[]; for(var i=0;i<2000;i++){var r=20+Math.random()*50,th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);sp.push(r*Math.sin(ph)*Math.cos(th),r*Math.sin(ph)*Math.sin(th),r*Math.cos(ph));}
   var sg=new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));
@@ -964,332 +946,189 @@ document.addEventListener("DOMContentLoaded", function() {
   function ll2v(lat,lon,r){var p=(90-lat)*Math.PI/180,t=(lon+180)*Math.PI/180;return new THREE.Vector3(-r*Math.sin(p)*Math.cos(t),r*Math.cos(p),r*Math.sin(p)*Math.sin(t));}
 
   /* ═══════════════════════════════════════════
-     3D Clay-style Crop Models (程序化生成)
-     Smooth rounded shapes, soft shading
-     ★ To upgrade later, replace geo with GLTFLoader:
-       loader.load('/models/corn.glb', function(gltf) { ... })
+     Geometry helpers
      ═══════════════════════════════════════════ */
-
-  // Helper: merge multiple BufferGeometries into one
   function mergeGeos(geos) {
-    var totalV = 0, totalI = 0;
-    geos.forEach(function(g) {
-      g.computeVertexNormals();
-      totalV += g.attributes.position.count;
-      totalI += g.index ? g.index.count : g.attributes.position.count;
+    var totalV=0; geos.forEach(function(g){g.computeVertexNormals();totalV+=g.attributes.position.count;});
+    var pos=new Float32Array(totalV*3),nrm=new Float32Array(totalV*3),idx=[],vOff=0;
+    geos.forEach(function(g){
+      pos.set(g.attributes.position.array,vOff*3); nrm.set(g.attributes.normal.array,vOff*3);
+      if(g.index){for(var i=0;i<g.index.count;i++)idx.push(g.index.array[i]+vOff);}
+      else{for(var i=0;i<g.attributes.position.count;i++)idx.push(vOff+i);}
+      vOff+=g.attributes.position.count;
     });
-    var pos = new Float32Array(totalV * 3);
-    var nrm = new Float32Array(totalV * 3);
-    var idx = [], vOff = 0;
-    geos.forEach(function(g) {
-      var p = g.attributes.position.array;
-      var n = g.attributes.normal.array;
-      var vc = g.attributes.position.count;
-      pos.set(p, vOff * 3);
-      nrm.set(n, vOff * 3);
-      if (g.index) { for (var i = 0; i < g.index.count; i++) idx.push(g.index.array[i] + vOff); }
-      else { for (var i = 0; i < vc; i++) idx.push(vOff + i); }
-      vOff += vc;
-    });
-    var mg = new THREE.BufferGeometry();
-    mg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    mg.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
-    mg.setIndex(idx);
-    return mg;
+    var mg=new THREE.BufferGeometry();
+    mg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    mg.setAttribute('normal',new THREE.BufferAttribute(nrm,3));
+    mg.setIndex(idx); return mg;
   }
 
-  // Geometries built via xxxParts functions below
-
-  // ── Bake vertex colors into geometry ──
-  // Parts before canopy/leaves get brown, rest gets green
-  function bakeColors(geos, brownCount, greenHex, brownHex) {
-    brownHex = brownHex || 0x6D4C41;
-    var brown = new THREE.Color(brownHex);
-    var green = new THREE.Color(greenHex || 0x2e7d32);
-    var totalV = 0;
-    geos.forEach(function(g) { totalV += g.attributes.position.count; });
-    var colors = new Float32Array(totalV * 3);
-    var offset = 0;
-    for (var gi = 0; gi < geos.length; gi++) {
-      var vc = geos[gi].attributes.position.count;
-      var col = gi < brownCount ? brown : green;
-      for (var v = 0; v < vc; v++) {
-        // Slight random variation per vertex
-        var rv = 0.9 + Math.sin(v * 7.3 + gi) * 0.1;
-        colors[(offset + v) * 3] = col.r * rv;
-        colors[(offset + v) * 3 + 1] = col.g * rv;
-        colors[(offset + v) * 3 + 2] = col.b * rv;
-      }
-      offset += vc;
-    }
-    return colors;
+  function bakeColors(parts, brownCount, greenHex, brownHex) {
+    var brown=new THREE.Color(brownHex||0x6D4C41), green=new THREE.Color(greenHex||0x2e7d32);
+    var totalV=0; parts.forEach(function(g){totalV+=g.attributes.position.count;});
+    var colors=new Float32Array(totalV*3), off=0;
+    for(var gi=0;gi<parts.length;gi++){
+      var vc=parts[gi].attributes.position.count, col=gi<brownCount?brown:green;
+      for(var v=0;v<vc;v++){var rv=0.9+Math.sin(v*7.3+gi)*0.1;
+        colors[(off+v)*3]=col.r*rv;colors[(off+v)*3+1]=col.g*rv;colors[(off+v)*3+2]=col.b*rv;}
+      off+=vc;
+    } return colors;
   }
 
-  // Rebuild geometries with baked vertex colors
-  function makeColoredGeo(buildFn, brownParts, greenHex, brownHex) {
-    // We need to rebuild with color attribute
-    var parts = buildFn();
-    var merged = mergeGeos(parts);
-    var colors = bakeColors(parts, brownParts, greenHex, brownHex);
-    merged.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    return merged;
-  }
-
-  // Rebuild model functions to return arrays of parts (not merged)
-  // ═══════════════════════════════════════════
-  // Biologically accurate crop models
-  // ═══════════════════════════════════════════
-
-  // ── CORN (Zea mays): 2-3m tall, thick single stalk, long arching
-  //    leaves, 1-2 ears with husk, tassel on top ──
+  /* ═══════════════════════════════════════════
+     Crop model builders
+     ═══════════════════════════════════════════ */
+  // CORN: thick stalk, wide arching leaves, 1-2 cobs, tassel
   function cornParts() {
-    var p = [];
-    // Soil mound (brown)
-    var base = new THREE.SphereGeometry(0.25, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); p.push(base);
-    // Thick stalk (brown/green transition)
-    var stalk = new THREE.CylinderGeometry(0.05, 0.08, 2.6, 8); stalk.translate(0, 1.3, 0); p.push(stalk);
-    // ── brown parts above = 2 ──
-
-    // Long arching leaves (6 leaves, alternating sides)
-    for (var i = 0; i < 7; i++) {
-      var leaf = new THREE.BoxGeometry(1.0, 0.025, 0.12, 5, 1, 1);
-      var la = leaf.attributes.position.array;
-      for (var j = 0; j < la.length; j += 3) {
-        la[j + 1] += la[j] * la[j] * 0.25;  // Arch downward
-        la[j + 2] += la[j] * 0.06;            // Slight twist
-      }
-      leaf.rotateY(i * Math.PI / 3.5 + (i % 2) * 0.3);
-      leaf.translate(0, 0.5 + i * 0.3, 0);
-      p.push(leaf);
-    }
-
-    // Ear of corn (cob) with husk - golden yellow
-    var cob1 = new THREE.SphereGeometry(0.1, 8, 6); cob1.scale(1, 2.2, 1);
-    cob1.translate(0.12, 1.6, 0); p.push(cob1);
-    // Husk leaves wrapping the cob
-    var husk1a = new THREE.SphereGeometry(0.08, 6, 4); husk1a.scale(0.5, 1.5, 0.3);
-    husk1a.translate(0.18, 1.6, 0.04); p.push(husk1a);
-    var husk1b = new THREE.SphereGeometry(0.07, 6, 4); husk1b.scale(0.4, 1.3, 0.3);
-    husk1b.translate(0.06, 1.6, -0.03); p.push(husk1b);
-
-    // Second smaller ear
-    var cob2 = new THREE.SphereGeometry(0.08, 8, 6); cob2.scale(1, 1.8, 1);
-    cob2.translate(-0.1, 1.95, 0.05); p.push(cob2);
-
-    // Tassel on top (golden/cream strands)
-    for (var t = 0; t < 6; t++) {
-      var tas = new THREE.CylinderGeometry(0.008, 0.003, 0.35, 3);
-      tas.rotateZ((t - 2.5) * 0.2);
-      tas.rotateY(t * 1.05);
-      tas.translate(0, 2.7, 0);
-      p.push(tas);
-    }
+    var p=[];
+    p.push((function(){var g=new THREE.SphereGeometry(0.25,8,6);g.scale(1,0.3,1);g.translate(0,0.04,0);return g;})()); // soil
+    p.push((function(){var g=new THREE.CylinderGeometry(0.05,0.08,2.6,8);g.translate(0,1.3,0);return g;})()); // stalk
+    // brown=2
+    for(var i=0;i<7;i++){var lf=new THREE.BoxGeometry(1.0,0.025,0.12,5,1,1);var a=lf.attributes.position.array;
+      for(var j=0;j<a.length;j+=3){a[j+1]+=a[j]*a[j]*0.25;a[j+2]+=a[j]*0.06;}
+      lf.rotateY(i*Math.PI/3.5+(i%2)*0.3);lf.translate(0,0.5+i*0.3,0);p.push(lf);}
+    // cobs (yellow-ish - still green parts array, but we handle in bake)
+    var c1=new THREE.SphereGeometry(0.1,8,6);c1.scale(1,2.2,1);c1.translate(0.12,1.6,0);p.push(c1);
+    var c2=new THREE.SphereGeometry(0.08,8,6);c2.scale(1,1.8,1);c2.translate(-0.1,1.95,0.05);p.push(c2);
+    // husk
+    var h1=new THREE.SphereGeometry(0.07,6,4);h1.scale(0.5,1.5,0.3);h1.translate(0.18,1.6,0.04);p.push(h1);
+    // tassel
+    for(var t=0;t<5;t++){var ts=new THREE.CylinderGeometry(0.006,0.002,0.3,3);ts.rotateZ((t-2)*0.2);ts.rotateY(t*1.2);ts.translate(0,2.7,0);p.push(ts);}
     return p;
   }
 
-  // ── RICE (Oryza sativa): 0.8-1.2m, thin tillers from base,
-  //    narrow leaves, drooping panicle grain heads ──
+  // RICE: thin tillers from base, narrow drooping leaves, drooping panicles
   function riceParts() {
-    var p = [];
-    // Waterlogged soil base (darker brown)
-    var base = new THREE.SphereGeometry(0.3, 8, 6); base.scale(1, 0.2, 1); base.translate(0, 0.02, 0); p.push(base);
-    // ── brown parts = 1 ──
-
-    // Multiple tillers (rice grows in clumps)
-    var tillers = [
-      [-0.06, 0, 0],    [0.05, 0, 0.04],  [0, 0, -0.05],
-      [0.08, 0, -0.02], [-0.03, 0, 0.06], [-0.08, 0, -0.03],
-      [0.03, 0, -0.07]
-    ];
-    for (var s = 0; s < tillers.length; s++) {
-      var tx = tillers[s][0], tz = tillers[s][2];
-      var h = 1.2 + (s % 3) * 0.15;
-      // Thin stalk
-      var stk = new THREE.CylinderGeometry(0.012, 0.02, h, 5);
-      stk.translate(tx, h / 2, tz); p.push(stk);
-
-      // Narrow leaf (longer, thinner than corn)
-      var leaf = new THREE.BoxGeometry(0.5, 0.015, 0.035, 4, 1, 1);
-      var la = leaf.attributes.position.array;
-      for (var j = 0; j < la.length; j += 3) la[j + 1] += la[j] * la[j] * 0.3;
-      leaf.rotateY(s * 0.9 + 0.5);
-      leaf.translate(tx, 0.3 + s * 0.1, tz); p.push(leaf);
-
-      // Drooping panicle (grain head that bends over)
-      var panicle = new THREE.SphereGeometry(0.025, 6, 4);
-      panicle.scale(0.8, 3.0, 0.8);
-      panicle.rotateZ(0.5 + s * 0.1);  // Droop to one side
-      panicle.rotateY(s * 0.9);
-      panicle.translate(tx + 0.06, h + 0.05, tz);
-      p.push(panicle);
+    var p=[];
+    p.push((function(){var g=new THREE.SphereGeometry(0.28,8,6);g.scale(1,0.18,1);g.translate(0,0.02,0);return g;})()); // water/soil
+    // brown=1
+    var tl=[[-0.06,0],[0.05,0.04],[0,-0.05],[0.08,-0.02],[-0.03,0.06],[-0.07,-0.04],[0.04,-0.06]];
+    for(var s=0;s<tl.length;s++){
+      var h=1.1+(s%3)*0.15;
+      var stk=new THREE.CylinderGeometry(0.01,0.018,h,4);stk.translate(tl[s][0],h/2,tl[s][1]);p.push(stk);
+      // narrow leaf
+      var lf=new THREE.BoxGeometry(0.45,0.012,0.03,4,1,1);var a=lf.attributes.position.array;
+      for(var j=0;j<a.length;j+=3)a[j+1]+=a[j]*a[j]*0.3;
+      lf.rotateY(s*0.9+0.5);lf.translate(tl[s][0],0.25+s*0.1,tl[s][1]);p.push(lf);
+      // drooping panicle
+      var pn=new THREE.SphereGeometry(0.02,5,4);pn.scale(0.8,3,0.8);pn.rotateZ(0.5+s*0.1);pn.rotateY(s*0.9);
+      pn.translate(tl[s][0]+0.06,h+0.04,tl[s][1]);p.push(pn);
     }
     return p;
   }
 
-  // ── SOYBEAN (Glycine max): 0.5-1m, branching erect stem,
-  //    trifoliate leaves (3 leaflets), small pods along stem ──
+  // SOYBEAN: short branching, trifoliate leaves, pods
   function soybeanParts() {
-    var p = [];
-    // Soil base
-    var base = new THREE.SphereGeometry(0.22, 8, 6); base.scale(1, 0.25, 1); base.translate(0, 0.03, 0); p.push(base);
-    // Main stem (shorter, woodier)
-    var stem = new THREE.CylinderGeometry(0.03, 0.05, 1.0, 6); stem.translate(0, 0.5, 0); p.push(stem);
-    // ── brown parts = 2 ──
+    var p=[];
+    p.push((function(){var g=new THREE.SphereGeometry(0.2,8,6);g.scale(1,0.25,1);g.translate(0,0.03,0);return g;})()); // soil
+    p.push((function(){var g=new THREE.CylinderGeometry(0.025,0.04,0.9,6);g.translate(0,0.45,0);return g;})()); // stem
+    // brown=2
+    // branches
+    var br=[[0.3,0.5,0.1],[−0.25,0.4,−0.08],[0.2,0.65,−0.1],[−0.2,0.6,0.12]];
+    for(var b=0;b<4;b++){var bg=new THREE.CylinderGeometry(0.01,0.018,0.25,4);
+      bg.rotateZ(b%2===0?0.8:−0.8);bg.translate((b%2===0?1:−1)*0.12,0.35+b*0.12,(b<2?0.05:−0.05));p.push(bg);}
+    // trifoliate leaves
+    var lpos=[[0.1,0.7,0.04],[−0.08,0.6,−0.03],[0.06,0.85,−0.05],[−0.05,0.8,0.07],[0.12,0.5,−0.02],[−0.1,0.45,0.05],[0,0.92,0]];
+    for(var l=0;l<lpos.length;l++){for(var t=0;t<3;t++){
+      var lf=new THREE.SphereGeometry(0.05,5,4);lf.scale(1.3,0.12,0.8);
+      var ang=(t/3)*Math.PI*2+l*0.7;
+      lf.translate(lpos[l][0]+Math.cos(ang)*0.03,lpos[l][1],lpos[l][2]+Math.sin(ang)*0.03);p.push(lf);}}
+    // pods
+    var pp=[[0.05,0.38,0.02],[−0.03,0.48,−0.02],[0.07,0.58,0.01],[−0.05,0.68,0.03],[0.02,0.78,−0.02],[−0.04,0.32,0.04]];
+    for(var pd=0;pd<pp.length;pd++){var pg=new THREE.SphereGeometry(0.015,4,3);pg.scale(0.5,2.5,0.5);
+      pg.rotateZ(0.3*(pd%2===0?1:−1));pg.translate(pp[pd][0],pp[pd][1],pp[pd][2]);p.push(pg);}
+    return p;
+  }
 
-    // Branches (soybean branches from main stem)
-    var branches = [
-      [0.4, 0.5, 0.15, 0.3], [-0.35, 0.4, -0.1, 0.25],
-      [0.3, 0.7, -0.12, 0.2], [-0.25, 0.65, 0.15, 0.18]
-    ];
-    for (var b = 0; b < branches.length; b++) {
-      var br = new THREE.CylinderGeometry(0.012, 0.02, branches[b][3], 4);
-      br.rotateZ(branches[b][0] > 0 ? 0.8 : -0.8);
-      br.translate(branches[b][0] * 0.5, branches[b][1], branches[b][2]);
-      p.push(br);
-    }
-
-    // Trifoliate leaves (groups of 3 small ellipses)
-    var leafPositions = [
-      [0.12, 0.75, 0.05], [-0.1, 0.65, -0.04], [0.08, 0.9, -0.06],
-      [-0.06, 0.85, 0.08], [0.15, 0.55, -0.03], [-0.12, 0.5, 0.06],
-      [0, 1.0, 0], [0.05, 0.45, 0.08]
-    ];
-    for (var l = 0; l < leafPositions.length; l++) {
-      var lp = leafPositions[l];
-      // 3 leaflets per leaf
-      for (var t = 0; t < 3; t++) {
-        var leaflet = new THREE.SphereGeometry(0.06, 6, 4);
-        leaflet.scale(1.3, 0.15, 0.8);
-        var angle = (t / 3) * Math.PI * 2 + l * 0.7;
-        leaflet.translate(
-          lp[0] + Math.cos(angle) * 0.04,
-          lp[1],
-          lp[2] + Math.sin(angle) * 0.04
-        );
-        p.push(leaflet);
-      }
-    }
-
-    // Pods (small elongated shapes along stems) - these are a distinct brownish-green
-    var podPositions = [
-      [0.06, 0.4, 0.02], [-0.04, 0.5, -0.03], [0.08, 0.6, 0.01],
-      [-0.06, 0.7, 0.04], [0.03, 0.8, -0.02], [-0.05, 0.35, 0.05],
-      [0.1, 0.55, -0.04], [-0.08, 0.45, 0.03]
-    ];
-    for (var pd = 0; pd < podPositions.length; pd++) {
-      var pod = new THREE.SphereGeometry(0.02, 5, 4);
-      pod.scale(0.6, 2.5, 0.6);
-      pod.rotateZ(0.3 * (pd % 2 === 0 ? 1 : -1));
-      pod.translate(podPositions[pd][0], podPositions[pd][1], podPositions[pd][2]);
-      p.push(pod);
+  // WHEAT: upright stalks, plump heads with awns
+  function wheatParts() {
+    var p=[];
+    p.push((function(){var g=new THREE.SphereGeometry(0.22,8,6);g.scale(1,0.25,1);g.translate(0,0.03,0);return g;})()); // soil
+    // brown=1
+    var st=[[-0.05,0],[0.04,0.04],[0,-0.04],[0.07,-0.02],[-0.03,0.05],[-0.06,-0.03]];
+    for(var s=0;s<st.length;s++){
+      var h=1.5+(s%3)*0.1;
+      var stk=new THREE.CylinderGeometry(0.015,0.025,h,5);stk.translate(st[s][0],h/2,st[s][1]);p.push(stk);
+      // wheat head - elongated ellipsoid
+      var hd=new THREE.SphereGeometry(0.045,6,5);hd.scale(0.7,2.2,0.7);hd.translate(st[s][0],h+0.08,st[s][1]);p.push(hd);
+      // awns (3 per head)
+      for(var a=0;a<3;a++){var aw=new THREE.CylinderGeometry(0.004,0.001,0.12,3);
+        aw.rotateZ(0.3*(a-1));aw.translate(st[s][0],h+0.15+a*0.03,st[s][1]);p.push(aw);}
     }
     return p;
   }
 
-  // Build colored geometries (brown base/stem, green foliage, golden accents)
-  var geoConfigs = [
-    // Corn: 2 brown (base + stalk), rest green. Cobs get a golden tint via custom bake
-    { fn: cornParts, brown: 2, green: 0x4a7c23, brownHex: 0x6D4C41 },
-    // Rice: 1 brown (base), rest green
-    { fn: riceParts, brown: 1, green: 0x6aaa30, brownHex: 0x5D4037 },
-    // Soybean: 2 brown (base + stem), rest green
-    { fn: soybeanParts, brown: 2, green: 0x558b2f, brownHex: 0x6D4C41 },
+  // Build colored geos
+  var geoConfigs=[
+    {fn:cornParts,    brown:2, green:0x4a7c23, brownHex:0x6D4C41},
+    {fn:riceParts,    brown:1, green:0x6aaa30, brownHex:0x5D4037},
+    {fn:soybeanParts, brown:2, green:0x558b2f, brownHex:0x6D4C41},
+    {fn:wheatParts,   brown:1, green:0xb8a520, brownHex:0x8d6e27}, // golden-green for wheat
   ];
-
-  var coloredGeos = geoConfigs.map(function(cfg) {
-    var parts = cfg.fn();
-    var merged = mergeGeos(parts);
-    var colors = bakeColors(parts, cfg.brown, cfg.green, cfg.brownHex);
-    merged.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  var coloredGeos=geoConfigs.map(function(cfg){
+    var parts=cfg.fn(),merged=mergeGeos(parts);
+    merged.setAttribute('color',new THREE.BufferAttribute(bakeColors(parts,cfg.brown,cfg.green,cfg.brownHex),3));
     return merged;
   });
 
-  // Assign to crop types: corn=0, rice=1, soybean=2
-  CROP_TYPES.corn.geos    = [coloredGeos[0]];
-  CROP_TYPES.rice.geos    = [coloredGeos[1]];
-  CROP_TYPES.soybean.geos = [coloredGeos[2]];
-
-  var meshGroups = {};
-  var cropPointsCache = {};
+  var CROP_TYPES={
+    corn:    {geo:coloredGeos[0], sc:0.010, label:'Corn'},
+    rice:    {geo:coloredGeos[1], sc:0.008, label:'Rice'},
+    soybean: {geo:coloredGeos[2], sc:0.007, label:'Soybean'},
+    wheat:   {geo:coloredGeos[3], sc:0.009, label:'Wheat'},
+  };
 
   /* ═══════════════════════════════════════════
-     KMZ → Canvas sampling → 3D points
+     KMZ → sample with color ramp density
+     Color ramp: Yellow(low) → Green(mid) → Blue/Purple(high)
+     percentage = (255-R + B) / 510 * 100
      ═══════════════════════════════════════════ */
-  function extractImageFromKMZ(kmzUrl) {
-    return fetch(kmzUrl)
-      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); })
-      .then(function(buf) { return JSZip.loadAsync(buf); })
-      .then(function(zip) {
-        // Find the largest image file
-        var bestFile = null, bestSize = 0;
-        zip.forEach(function(path, file) {
-          if (/\.(png|jpg|jpeg|tif|tiff)$/i.test(path) && file._data && file._data.uncompressedSize > bestSize) {
-            bestFile = file; bestSize = file._data.uncompressedSize;
-          }
-        });
-        // Fallback: just find any image
-        if (!bestFile) {
-          zip.forEach(function(path, file) {
-            if (/\.(png|jpg|jpeg|tif|tiff)$/i.test(path) && !bestFile) bestFile = file;
-          });
-        }
-        if (!bestFile) throw new Error('No image found in KMZ');
-        return bestFile.async('blob');
-      })
-      .then(function(blob) {
-        return new Promise(function(resolve, reject) {
-          var img = new Image();
-          img.onload = function() { resolve(img); };
-          img.onerror = reject;
-          img.src = URL.createObjectURL(blob);
-        });
-      });
+  function extractImageFromKMZ(url){
+    return fetch(url).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.arrayBuffer();})
+    .then(function(buf){return JSZip.loadAsync(buf);})
+    .then(function(zip){
+      var best=null;
+      zip.forEach(function(path,file){if(/\.(png|jpg|jpeg)$/i.test(path)){if(!best||file._data.uncompressedSize>(best._data?best._data.uncompressedSize:0))best=file;}});
+      if(!best){zip.forEach(function(path,file){if(/\.(png|jpg|jpeg)$/i.test(path))best=file;});}
+      if(!best)throw new Error('No image in KMZ');
+      return best.async('blob');
+    }).then(function(blob){return new Promise(function(res,rej){var img=new Image();img.onload=function(){res(img);};img.onerror=rej;img.src=URL.createObjectURL(blob);});});
   }
 
-  function sampleImageToPoints(img, stepDeg, threshold) {
+  function sampleKMZImage(img, stepDeg) {
     stepDeg = stepDeg || 1.0;
-    threshold = threshold || 15;
-
-    // Draw to canvas
-    var maxDim = Math.min(img.width, 2048); // Limit for performance
+    var maxDim = Math.min(img.width, 2048);
     var ratio = maxDim / img.width;
-    var w = Math.floor(img.width * ratio);
-    var h = Math.floor(img.height * ratio);
-    var cv = document.createElement('canvas');
-    cv.width = w; cv.height = h;
-    var ctx = cv.getContext('2d');
-    ctx.drawImage(img, 0, 0, w, h);
-    var imgData = ctx.getImageData(0, 0, w, h).data;
-
+    var w = Math.floor(img.width * ratio), h = Math.floor(img.height * ratio);
+    var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+    var ctx = cv.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+    var data = ctx.getImageData(0, 0, w, h).data;
     var points = [];
-    // Sample grid
+
     for (var lat = 85; lat > -70; lat -= stepDeg) {
       for (var lon = -180; lon < 180; lon += stepDeg) {
-        var px = Math.floor(((lon + 180) / 360) * w) % w;
-        var py = Math.floor(((90 - lat) / 180) * h);
-        py = Math.max(0, Math.min(h - 1, py));
-        var idx = (py * w + px) * 4;
-        var r = imgData[idx], g = imgData[idx+1], b = imgData[idx+2], a = imgData[idx+3];
+        var px = Math.floor(((lon+180)/360)*w) % w;
+        var py = Math.max(0, Math.min(h-1, Math.floor(((90-lat)/180)*h)));
+        var idx = (py*w+px)*4;
+        var r=data[idx], g=data[idx+1], b=data[idx+2], a=data[idx+3];
 
-        if (a < 128) continue; // transparent = no data
+        if (a < 128) continue; // transparent = no crop
 
-        // Greenness score
-        var greenness = g - (r + b) / 2;
-        var normalized = Math.max(0, Math.min(100, (greenness / 50) * 100));
+        // Color ramp: Yellow(R≈255,G≈255)=low, Green(G>200,R<80)=mid, Blue(B>100,R<80)=high
+        var pct = Math.min(100, Math.max(0, ((255-r)+b) / 510 * 100));
+        if (pct < 5) continue; // skip near-zero
 
-        if (normalized >= threshold) {
-          var density = normalized / 100;
-          var numPts = Math.max(1, Math.floor(density * 3));
-          for (var d = 0; d < numPts; d++) {
-            var jLat = lat + (Math.sin(d * 13.7 + lon) * 0.5 - 0.25) * stepDeg * 0.8;
-            var jLon = lon + (Math.cos(d * 7.3 + lat) * 0.5 - 0.25) * stepDeg * 0.8;
-            points.push([
-              Math.round(jLat * 100) / 100,
-              Math.round(jLon * 100) / 100,
-              Math.round(normalized),
-              Math.round(density * 100)
-            ]);
-          }
+        // Density: high% → more sub-points, low% → fewer
+        var numPts = pct > 60 ? 3 : (pct > 30 ? 2 : 1);
+
+        for (var d = 0; d < numPts; d++) {
+          var jLat = lat + (Math.sin(d*13.7+lon)*0.5-0.25) * stepDeg * 0.8;
+          var jLon = lon + (Math.cos(d*7.3+lat)*0.5-0.25) * stepDeg * 0.8;
+          points.push([
+            Math.round(jLat*100)/100,
+            Math.round(jLon*100)/100,
+            Math.round(pct) // percentage for size scaling
+          ]);
         }
       }
     }
@@ -1297,134 +1136,86 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   /* ═══════════════════════════════════════════
-     Render a single crop layer
+     Render crop layer
      ═══════════════════════════════════════════ */
-  function renderCropLayer(cropType, points) {
-    // Remove existing layer
-    removeCropLayer(cropType);
+  var meshGroups = {}, cropCache = {};
 
+  function renderCrop(cropType, points) {
+    removeCrop(cropType);
     var cfg = CROP_TYPES[cropType];
-    if (!cfg || !points || points.length === 0) return 0;
-
+    if (!cfg || !points.length) return;
     meshGroups[cropType] = [];
     var dummy = new THREE.Object3D();
-    var count = 0;
+    var n = points.length;
+    var mat = new THREE.MeshPhongMaterial({ vertexColors:true, shininess:20, flatShading:false });
+    var mesh = new THREE.InstancedMesh(cfg.geo, mat, n);
 
-    // Split across geo variants
-    var geoGroups = {};
-    for (var i = 0; i < points.length; i++) {
-      var gIdx = i % cfg.geos.length;
-      if (!geoGroups[gIdx]) geoGroups[gIdx] = [];
-      geoGroups[gIdx].push(points[i]);
+    for (var i = 0; i < n; i++) {
+      var lat = points[i][0], lon = points[i][1], pct = points[i][2];
+      // Scale based on percentage: high% = bigger, low% = smaller
+      var pctNorm = pct / 100; // 0..1
+      var s = cfg.sc * (0.3 + pctNorm * 1.2) * (0.8 + ((i*7)%100)/100*0.4);
+
+      var pos = ll2v(lat, lon, 1.003);
+      var norm = pos.clone().normalize();
+
+      dummy.position.copy(pos);
+      dummy.position.addScaledVector(norm, s * 0.1);
+      dummy.up.copy(norm);
+      var tangent = new THREE.Vector3(-norm.z, 0, norm.x).normalize();
+      if (tangent.lengthSq() < 0.001) tangent.set(1, 0, 0);
+      dummy.lookAt(pos.clone().add(tangent));
+      dummy.rotateOnAxis(new THREE.Vector3(0,1,0), ((i*37)%628)/100);
+      dummy.scale.set(s, s*(0.8+pctNorm*0.4), s);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(i, dummy.matrix);
     }
-
-    Object.keys(geoGroups).forEach(function(gIdx) {
-      var sub = geoGroups[gIdx], n = sub.length;
-      var geo = cfg.geos[gIdx];
-
-      var material = new THREE.MeshPhongMaterial({
-        vertexColors: true, shininess: 20, flatShading: false
-      });
-
-      var mesh = new THREE.InstancedMesh(geo, material, n);
-
-      for (var i = 0; i < n; i++) {
-        var p = sub[i];
-        var lat = p[0], lon = p[1], sc = p[3] / 100;
-        var s = cfg.sc * (0.5 + sc * 1.0) * (0.7 + ((i * 7) % 100) / 100 * 0.6);
-
-        var pos = ll2v(lat, lon, 1.003);
-        var norm = pos.clone().normalize();
-
-        dummy.position.copy(pos);
-        dummy.position.addScaledVector(norm, s * 0.1);
-        dummy.up.copy(norm);
-        var tangent = new THREE.Vector3(-norm.z, 0, norm.x).normalize();
-        if (tangent.length() < 0.01) tangent.set(1, 0, 0);
-        dummy.lookAt(pos.clone().add(tangent));
-        dummy.rotateOnAxis(new THREE.Vector3(0, 1, 0), ((i * 37) % 628) / 100);
-        dummy.scale.set(s, s * (0.8 + sc * 0.4), s);
-        dummy.updateMatrix();
-        mesh.setMatrixAt(i, dummy.matrix);
-      }
-
-      mesh.instanceMatrix.needsUpdate = true;
-      globeGroup.add(mesh);
-      meshGroups[cropType].push(mesh);
-      count += n;
-    });
-
-    return count;
+    mesh.instanceMatrix.needsUpdate = true;
+    globeGroup.add(mesh);
+    meshGroups[cropType] = [mesh];
   }
 
-  function removeCropLayer(cropType) {
-    if (meshGroups[cropType]) {
-      meshGroups[cropType].forEach(function(m) { globeGroup.remove(m); });
-      delete meshGroups[cropType];
-    }
+  function removeCrop(type) {
+    if(meshGroups[type]){meshGroups[type].forEach(function(m){globeGroup.remove(m);});delete meshGroups[type];}
   }
-
-  function updateStats() { /* stats bar removed */ }
 
   /* ═══════════════════════════════════════════
-     Toggle buttons: each crop loads/unloads independently
+     Button handlers
      ═══════════════════════════════════════════ */
-  document.getElementById('cropLoading').style.display = 'none';
-
   var btns = document.querySelectorAll('.crop-lyr-btn');
   btns.forEach(function(btn) {
     var touched = false;
-    btn.addEventListener('touchend', function(e) { e.preventDefault(); touched = true; toggleCrop(btn); }, { passive: false });
-    btn.addEventListener('click', function() { if (touched) { touched = false; return; } toggleCrop(btn); });
+    btn.addEventListener('touchend', function(e){e.preventDefault();touched=true;toggle(btn);},{passive:false});
+    btn.addEventListener('click', function(){if(touched){touched=false;return;}toggle(btn);});
   });
 
-  function toggleCrop(btn) {
-    var cropType = btn.getAttribute('data-crop-type');
-    var kmzUrl = btn.getAttribute('data-crop-kmz');
-    var isActive = btn.classList.contains('active');
-
-    if (isActive) {
-      // Turn off
-      btn.classList.remove('active');
-      removeCropLayer(cropType);
-      updateStats();
-    } else {
-      // Turn on
-      btn.classList.add('active');
-      btn.style.opacity = '0.6';
-
-      if (cropPointsCache[cropType]) {
-        // Already loaded, just render
-        renderCropLayer(cropType, cropPointsCache[cropType]);
-        btn.style.opacity = '';
-        updateStats();
-      } else {
-        // Load from KMZ
-        document.getElementById('cropLoading').style.display = '';
-        document.getElementById('cropLoading').textContent = 'Loading ' + CROP_TYPES[cropType].label + '…';
-
-        extractImageFromKMZ(kmzUrl)
-          .then(function(img) {
-            var points = sampleImageToPoints(img, 1.0, 15);
-            cropPointsCache[cropType] = points;
-            console.log('[3D Crops] ' + cropType + ': ' + points.length + ' points from KMZ');
-            renderCropLayer(cropType, points);
-            btn.style.opacity = '';
-            document.getElementById('cropLoading').style.display = 'none';
-            updateStats();
-          })
-          .catch(function(e) {
-            console.error('[3D Crops] Failed to load ' + cropType + ':', e);
-            btn.classList.remove('active');
-            btn.style.opacity = '';
-            document.getElementById('cropLoading').textContent = 'Failed: ' + e.message;
-            setTimeout(function() { document.getElementById('cropLoading').style.display = 'none'; }, 3000);
-          });
-      }
+  function toggle(btn) {
+    var type = btn.getAttribute('data-crop-type');
+    var url = btn.getAttribute('data-crop-kmz');
+    if (btn.classList.contains('active')) {
+      btn.classList.remove('active'); removeCrop(type); return;
     }
+    btn.classList.add('active');
+    if (cropCache[type]) { renderCrop(type, cropCache[type]); return; }
+    // Load from KMZ
+    var ld = document.getElementById('cropLoading');
+    ld.style.display=''; ld.textContent='Loading '+CROP_TYPES[type].label+'…';
+    extractImageFromKMZ(url).then(function(img){
+      var pts = sampleKMZImage(img, 1.0);
+      cropCache[type] = pts;
+      console.log('[3D Crops] '+type+': '+pts.length+' points');
+      renderCrop(type, pts);
+      ld.style.display='none';
+    }).catch(function(e){
+      console.error(e); btn.classList.remove('active');
+      ld.textContent='Failed: '+e.message;
+      setTimeout(function(){ld.style.display='none';},3000);
+    });
   }
 
-  // Interaction
+  /* ═══════════════════════════════════════════
+     Interaction
+     ═══════════════════════════════════════════ */
   var isDrag=false,prev={x:0,y:0},vel={x:0,y:0};
   var el=renderer.domElement;
   el.addEventListener('pointerdown',function(e){isDrag=true;prev={x:e.clientX,y:e.clientY};});
@@ -1432,10 +1223,10 @@ document.addEventListener("DOMContentLoaded", function() {
   el.addEventListener('pointerup',function(){isDrag=false;});
   el.addEventListener('pointerleave',function(){isDrag=false;});
   el.addEventListener('wheel',function(e){camera.position.z=Math.max(1.3,Math.min(5,camera.position.z+e.deltaY*0.002));},{passive:true});
-  var ld=0;
-  el.addEventListener('touchstart',function(e){if(e.touches.length===2)ld=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);},{passive:true});
-  el.addEventListener('touchmove',function(e){if(e.touches.length===2){var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);if(ld>0)camera.position.z=Math.max(1.3,Math.min(5,camera.position.z-(d-ld)*0.005));ld=d;}},{passive:true});
-  el.addEventListener('touchend',function(){ld=0;},{passive:true});
+  var ld2=0;
+  el.addEventListener('touchstart',function(e){if(e.touches.length===2)ld2=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);},{passive:true});
+  el.addEventListener('touchmove',function(e){if(e.touches.length===2){var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);if(ld2>0)camera.position.z=Math.max(1.3,Math.min(5,camera.position.z-(d-ld2)*0.005));ld2=d;}},{passive:true});
+  el.addEventListener('touchend',function(){ld2=0;},{passive:true});
 
   function animate(){
     requestAnimationFrame(animate);
@@ -1457,6 +1248,5 @@ document.addEventListener("DOMContentLoaded", function() {
     else{if(!(document.fullscreenElement||document.webkitFullscreenElement))(wrap.requestFullscreen||wrap.webkitRequestFullscreen).call(wrap);else(document.exitFullscreen||document.webkitExitFullscreen).call(document);}
     setTimeout(onResize,100);
   });document.addEventListener('fullscreenchange',function(){setTimeout(onResize,100);});document.addEventListener('webkitfullscreenchange',function(){setTimeout(onResize,100);});}
-
 })();
 </script>
