@@ -913,7 +913,7 @@ document.addEventListener("DOMContentLoaded", function() {
   container.appendChild(renderer.domElement);
   scene.add(new THREE.AmbientLight(0x556677, 0.5));
   var sun = new THREE.DirectionalLight(0xffeedd, 1.4); sun.position.set(5,3,5); scene.add(sun);
-  scene.add(new THREE.DirectionalLight(0x667788, 0.3)).position.set(-4,-1,-3);
+  var fill = new THREE.DirectionalLight(0x667788, 0.3); fill.position.set(-4,-1,-3); scene.add(fill);
   var globeGroup = new THREE.Group();
   scene.add(globeGroup);
 
@@ -934,7 +934,7 @@ document.addEventListener("DOMContentLoaded", function() {
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     tex.needsUpdate = true; earthMat.map = tex; earthMat.needsUpdate = true;
   };
-  earthImg.src = '/images/earth2.jpg';
+  earthImg.src = '/images/earth.jpg';
   // Atmosphere
   globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.015,48,36), new THREE.MeshPhongMaterial({color:0x6699cc,transparent:true,opacity:0.06})));
   globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.06,32,24), new THREE.MeshBasicMaterial({color:0x3366aa,transparent:true,opacity:0.045,side:THREE.BackSide})));
