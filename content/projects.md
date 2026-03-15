@@ -934,7 +934,7 @@ document.addEventListener("DOMContentLoaded", function() {
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     tex.needsUpdate = true; earthMat.map = tex; earthMat.needsUpdate = true;
   };
-  earthImg.src = '/images/earth2.jpg';
+  earthImg.src = '/images/earth.jpg';
   // Atmosphere
   globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.015,48,36), new THREE.MeshPhongMaterial({color:0x6699cc,transparent:true,opacity:0.06})));
   globeGroup.add(new THREE.Mesh(new THREE.SphereGeometry(1.06,32,24), new THREE.MeshBasicMaterial({color:0x3366aa,transparent:true,opacity:0.045,side:THREE.BackSide})));
@@ -963,109 +963,152 @@ document.addEventListener("DOMContentLoaded", function() {
     mg.setIndex(idx); return mg;
   }
 
-  function bakeColors(parts, brownCount, greenHex, brownHex) {
-    var brown=new THREE.Color(brownHex||0x6D4C41), green=new THREE.Color(greenHex||0x2e7d32);
+
+  /* ═══════════════════════════════════════════
+     Crop model builders (based on IconScout reference)
+     Custom color baking: each part gets its own color
+     ═══════════════════════════════════════════ */
+
+  // Multi-color bake: each part index maps to a specific color
+  function bakeMultiColor(parts, colorMap) {
     var totalV=0; parts.forEach(function(g){totalV+=g.attributes.position.count;});
     var colors=new Float32Array(totalV*3), off=0;
     for(var gi=0;gi<parts.length;gi++){
-      var vc=parts[gi].attributes.position.count, col=gi<brownCount?brown:green;
-      for(var v=0;v<vc;v++){var rv=0.9+Math.sin(v*7.3+gi)*0.1;
+      var vc=parts[gi].attributes.position.count;
+      var col=colorMap[gi]||colorMap['default']||new THREE.Color(0x4a7c23);
+      for(var v=0;v<vc;v++){var rv=0.92+Math.sin(v*5.1+gi*3)*0.08;
         colors[(off+v)*3]=col.r*rv;colors[(off+v)*3+1]=col.g*rv;colors[(off+v)*3+2]=col.b*rv;}
       off+=vc;
     } return colors;
   }
 
-  /* ═══════════════════════════════════════════
-     Crop model builders
-     ═══════════════════════════════════════════ */
-  // CORN: thick stalk, wide arching leaves, 1-2 cobs, tassel
-  function cornParts() {
-    var p=[];
-    p.push((function(){var g=new THREE.CylinderGeometry(0.05,0.08,2.6,8);g.translate(0,1.3,0);return g;})()); // stalk
-    // brown=1
-    for(var i=0;i<7;i++){var lf=new THREE.BoxGeometry(1.0,0.025,0.12,5,1,1);var a=lf.attributes.position.array;
-      for(var j=0;j<a.length;j+=3){a[j+1]+=a[j]*a[j]*0.25;a[j+2]+=a[j]*0.06;}
-      lf.rotateY(i*Math.PI/3.5+(i%2)*0.3);lf.translate(0,0.5+i*0.3,0);p.push(lf);}
-    // cobs (yellow-ish - still green parts array, but we handle in bake)
-    var c1=new THREE.SphereGeometry(0.1,8,6);c1.scale(1,2.2,1);c1.translate(0.12,1.6,0);p.push(c1);
-    var c2=new THREE.SphereGeometry(0.08,8,6);c2.scale(1,1.8,1);c2.translate(-0.1,1.95,0.05);p.push(c2);
-    // husk
-    var h1=new THREE.SphereGeometry(0.07,6,4);h1.scale(0.5,1.5,0.3);h1.translate(0.18,1.6,0.04);p.push(h1);
-    // tassel
-    for(var t=0;t<5;t++){var ts=new THREE.CylinderGeometry(0.006,0.002,0.3,3);ts.rotateZ((t-2)*0.2);ts.rotateY(t*1.2);ts.translate(0,2.7,0);p.push(ts);}
-    return p;
-  }
+  var C={
+    stalk:  new THREE.Color(0x3d8c3d),  // green stalk
+    leaf:   new THREE.Color(0x2d7a2d),  // dark green leaf
+    leafLt: new THREE.Color(0x4a9a3a),  // lighter leaf
+    cob:    new THREE.Color(0xdaa520),  // golden corn cob
+    husk:   new THREE.Color(0x6aaa30),  // light green husk
+    tassel: new THREE.Color(0xe8a030),  // orange tassel
+    grain:  new THREE.Color(0xc4a050),  // tan/golden grain
+    grainDk:new THREE.Color(0xa08030),  // darker grain
+    pod:    new THREE.Color(0x5a7a30),  // soybean pod green
+    bean:   new THREE.Color(0xb8a060),  // soybean tan
+    stem:   new THREE.Color(0x5a8a2a),  // wheat stem olive
+    wHead:  new THREE.Color(0xb89830),  // wheat head gold
+  };
 
-  // RICE: thin tillers from base, narrow drooping leaves, drooping panicles
-  function riceParts() {
-    var p=[];
-    // brown=0 (rice stalks are green)
-    var tl=[[-0.06,0],[0.05,0.04],[0,-0.05],[0.08,-0.02],[-0.03,0.06],[-0.07,-0.04],[0.04,-0.06]];
-    for(var s=0;s<tl.length;s++){
-      var h=1.1+(s%3)*0.15;
-      var stk=new THREE.CylinderGeometry(0.01,0.018,h,4);stk.translate(tl[s][0],h/2,tl[s][1]);p.push(stk);
-      // narrow leaf
-      var lf=new THREE.BoxGeometry(0.45,0.012,0.03,4,1,1);var a=lf.attributes.position.array;
-      for(var j=0;j<a.length;j+=3)a[j+1]+=a[j]*a[j]*0.3;
-      lf.rotateY(s*0.9+0.5);lf.translate(tl[s][0],0.25+s*0.1,tl[s][1]);p.push(lf);
-      // drooping panicle
-      var pn=new THREE.SphereGeometry(0.02,5,4);pn.scale(0.8,3,0.8);pn.rotateZ(0.5+s*0.1);pn.rotateY(s*0.9);
-      pn.translate(tl[s][0]+0.06,h+0.04,tl[s][1]);p.push(pn);
+  // ── CORN: thick stalk + big arching leaves + golden cobs with green husk + orange tassel ──
+  function buildCorn() {
+    var parts=[], cmap={};
+    // 0: Stalk
+    var stk=new THREE.CylinderGeometry(0.06,0.09,2.8,8);stk.translate(0,1.4,0);parts.push(stk);cmap[0]=C.stalk;
+    // 1-7: Large arching leaves
+    for(var i=0;i<7;i++){
+      var lf=new THREE.BoxGeometry(1.2,0.03,0.16,6,1,1);var a=lf.attributes.position.array;
+      for(var j=0;j<a.length;j+=3){a[j+1]+=a[j]*a[j]*0.2;a[j+2]+=Math.abs(a[j])*0.05;}
+      lf.rotateY(i*Math.PI/3.5+(i%2)*0.4);lf.translate(0,0.4+i*0.32,0);
+      parts.push(lf);cmap[parts.length-1]=(i%2===0)?C.leaf:C.leafLt;
     }
-    return p;
-  }
-
-  // SOYBEAN: short branching, trifoliate leaves, pods
-  function soybeanParts() {
-    var p=[];
-    p.push((function(){var g=new THREE.CylinderGeometry(0.025,0.04,0.9,6);g.translate(0,0.45,0);return g;})()); // stem
-    // brown=1
-    // branches
-    var br=[[0.3,0.5,0.1],[-0.25,0.4,-0.08],[0.2,0.65,-0.1],[-0.2,0.6,0.12]];
-    for(var b=0;b<4;b++){var bg=new THREE.CylinderGeometry(0.01,0.018,0.25,4);
-      bg.rotateZ(b%2===0?0.8:-0.8);bg.translate((b%2===0?1:-1)*0.12,0.35+b*0.12,(b<2?0.05:-0.05));p.push(bg);}
-    // trifoliate leaves
-    var lpos=[[0.1,0.7,0.04],[-0.08,0.6,-0.03],[0.06,0.85,-0.05],[-0.05,0.8,0.07],[0.12,0.5,-0.02],[-0.1,0.45,0.05],[0,0.92,0]];
-    for(var l=0;l<lpos.length;l++){for(var t=0;t<3;t++){
-      var lf=new THREE.SphereGeometry(0.05,5,4);lf.scale(1.3,0.12,0.8);
-      var ang=(t/3)*Math.PI*2+l*0.7;
-      lf.translate(lpos[l][0]+Math.cos(ang)*0.03,lpos[l][1],lpos[l][2]+Math.sin(ang)*0.03);p.push(lf);}}
-    // pods
-    var pp=[[0.05,0.38,0.02],[-0.03,0.48,-0.02],[0.07,0.58,0.01],[-0.05,0.68,0.03],[0.02,0.78,-0.02],[-0.04,0.32,0.04]];
-    for(var pd=0;pd<pp.length;pd++){var pg=new THREE.SphereGeometry(0.015,4,3);pg.scale(0.5,2.5,0.5);
-      pg.rotateZ(0.3*(pd%2===0?1:-1));pg.translate(pp[pd][0],pp[pd][1],pp[pd][2]);p.push(pg);}
-    return p;
-  }
-
-  // WHEAT: upright stalks, plump heads with awns
-  function wheatParts() {
-    var p=[];
-    // brown=0 (wheat is all golden-green)
-    var st=[[-0.05,0],[0.04,0.04],[0,-0.04],[0.07,-0.02],[-0.03,0.05],[-0.06,-0.03]];
-    for(var s=0;s<st.length;s++){
-      var h=1.5+(s%3)*0.1;
-      var stk=new THREE.CylinderGeometry(0.015,0.025,h,5);stk.translate(st[s][0],h/2,st[s][1]);p.push(stk);
-      // wheat head - elongated ellipsoid
-      var hd=new THREE.SphereGeometry(0.045,6,5);hd.scale(0.7,2.2,0.7);hd.translate(st[s][0],h+0.08,st[s][1]);p.push(hd);
-      // awns (3 per head)
-      for(var a=0;a<3;a++){var aw=new THREE.CylinderGeometry(0.004,0.001,0.12,3);
-        aw.rotateZ(0.3*(a-1));aw.translate(st[s][0],h+0.15+a*0.03,st[s][1]);p.push(aw);}
-    }
-    return p;
-  }
-
-  // Build colored geos
-  var geoConfigs=[
-    {fn:cornParts,    brown:1, green:0x4a7c23, brownHex:0x6D4C41},
-    {fn:riceParts,    brown:0, green:0x6aaa30, brownHex:0x5D4037},
-    {fn:soybeanParts, brown:1, green:0x558b2f, brownHex:0x6D4C41},
-    {fn:wheatParts,   brown:0, green:0xb8a520, brownHex:0x8d6e27}, // golden-green for wheat
-  ];
-  var coloredGeos=geoConfigs.map(function(cfg){
-    var parts=cfg.fn(),merged=mergeGeos(parts);
-    merged.setAttribute('color',new THREE.BufferAttribute(bakeColors(parts,cfg.brown,cfg.green,cfg.brownHex),3));
+    // 8-9: Two golden cobs
+    var cb1=new THREE.SphereGeometry(0.12,8,8);cb1.scale(1,2,1);cb1.translate(0.18,1.6,0);parts.push(cb1);cmap[parts.length-1]=C.cob;
+    var cb2=new THREE.SphereGeometry(0.1,8,8);cb2.scale(1,1.7,1);cb2.translate(-0.14,2.0,0.06);parts.push(cb2);cmap[parts.length-1]=C.cob;
+    // 10-11: Husk wrapping each cob
+    var hk1=new THREE.SphereGeometry(0.09,6,5);hk1.scale(0.6,1.8,0.4);hk1.translate(0.26,1.6,0);parts.push(hk1);cmap[parts.length-1]=C.husk;
+    var hk2=new THREE.SphereGeometry(0.08,6,5);hk2.scale(0.5,1.5,0.4);hk2.translate(0.1,1.55,-0.04);parts.push(hk2);cmap[parts.length-1]=C.husk;
+    var hk3=new THREE.SphereGeometry(0.07,6,5);hk3.scale(0.5,1.4,0.4);hk3.translate(-0.22,2.0,0.06);parts.push(hk3);cmap[parts.length-1]=C.husk;
+    // 12+: Tassel strands on top
+    for(var t=0;t<6;t++){var ts=new THREE.CylinderGeometry(0.008,0.003,0.4,3);
+      ts.rotateZ((t-2.5)*0.18);ts.rotateY(t*1.05);ts.translate(0,2.9,0);
+      parts.push(ts);cmap[parts.length-1]=C.tassel;}
+    var merged=mergeGeos(parts);
+    merged.setAttribute('color',new THREE.BufferAttribute(bakeMultiColor(parts,cmap),3));
     return merged;
-  });
+  }
+
+  // ── RICE: short green stem + 2-3 wide curving leaves + big drooping panicle of grains ──
+  function buildRice() {
+    var parts=[], cmap={};
+    // 0: Short thick stem
+    var stk=new THREE.CylinderGeometry(0.05,0.07,0.8,6);stk.translate(0,0.4,0);parts.push(stk);cmap[0]=C.stalk;
+    // 1: Panicle stem (curves upward then droops)
+    var pstk=new THREE.CylinderGeometry(0.02,0.03,1.2,5);pstk.translate(0,1.2,0);pstk.rotateZ(0.15);
+    parts.push(pstk);cmap[parts.length-1]=C.stalk;
+    // 2-4: Wide curving leaves
+    for(var i=0;i<3;i++){
+      var lf=new THREE.BoxGeometry(0.8,0.03,0.14,5,1,1);var a=lf.attributes.position.array;
+      for(var j=0;j<a.length;j+=3){a[j+1]-=a[j]*a[j]*0.4;} // curve DOWN strongly
+      lf.rotateY(i*2.1+0.3);lf.translate(0,0.5+i*0.15,0);
+      parts.push(lf);cmap[parts.length-1]=(i===0)?C.leaf:C.leafLt;
+    }
+    // 5+: Drooping grain panicle - many small grains along a curved line
+    for(var g=0;g<12;g++){
+      var grain=new THREE.SphereGeometry(0.04,6,5);grain.scale(0.8,1.2,0.8);
+      var t=g/12;
+      var gx=0.05+t*0.2, gy=1.8-t*t*0.8, gz=(g%2-0.5)*0.04;
+      grain.translate(gx,gy,gz);
+      parts.push(grain);cmap[parts.length-1]=(g%2===0)?C.grain:C.grainDk;
+    }
+    var merged=mergeGeos(parts);
+    merged.setAttribute('color',new THREE.BufferAttribute(bakeMultiColor(parts,cmap),3));
+    return merged;
+  }
+
+  // ── SOYBEAN: twisted pod shape + leaves on top + beans peeking out ──
+  function buildSoybean() {
+    var parts=[], cmap={};
+    // 0-2: Pod body (3 connected bulges)
+    var pod1=new THREE.SphereGeometry(0.15,8,6);pod1.scale(0.6,1,0.5);pod1.translate(0,0.3,0);pod1.rotateZ(0.3);
+    parts.push(pod1);cmap[0]=C.pod;
+    var pod2=new THREE.SphereGeometry(0.14,8,6);pod2.scale(0.55,0.9,0.45);pod2.translate(0.05,0.55,0);pod2.rotateZ(0.2);
+    parts.push(pod2);cmap[1]=C.pod;
+    var pod3=new THREE.SphereGeometry(0.12,8,6);pod3.scale(0.5,0.8,0.4);pod3.translate(0.08,0.78,0.02);pod3.rotateZ(0.1);
+    parts.push(pod3);cmap[2]=C.pod;
+    // 3-4: Beans visible at bottom
+    var bn1=new THREE.SphereGeometry(0.08,7,6);bn1.translate(-0.06,0.18,0);parts.push(bn1);cmap[3]=C.bean;
+    var bn2=new THREE.SphereGeometry(0.07,7,6);bn2.translate(0.06,0.2,0);parts.push(bn2);cmap[4]=C.bean;
+    // 5-6: Leaves on top
+    var lf1=new THREE.SphereGeometry(0.14,7,5);lf1.scale(1.8,0.15,1);lf1.rotateZ(-0.4);lf1.translate(0.1,0.95,0);
+    parts.push(lf1);cmap[5]=C.leaf;
+    var lf2=new THREE.SphereGeometry(0.1,7,5);lf2.scale(1.5,0.15,0.8);lf2.rotateZ(0.3);lf2.translate(-0.05,1.05,0.04);
+    parts.push(lf2);cmap[6]=C.leafLt;
+    // 7: Small stem at top
+    var st=new THREE.CylinderGeometry(0.015,0.02,0.15,4);st.translate(0.02,1.12,0);
+    parts.push(st);cmap[7]=C.stalk;
+    var merged=mergeGeos(parts);
+    merged.setAttribute('color',new THREE.BufferAttribute(bakeMultiColor(parts,cmap),3));
+    return merged;
+  }
+
+  // ── WHEAT: short stem + 3 curving leaves + big upright layered wheat head ──
+  function buildWheat() {
+    var parts=[], cmap={};
+    // 0: Stem
+    var stk=new THREE.CylinderGeometry(0.03,0.05,1.0,6);stk.translate(0,0.5,0);parts.push(stk);cmap[0]=C.stem;
+    // 1-3: Wide curving leaves (arch downward like in the image)
+    for(var i=0;i<3;i++){
+      var lf=new THREE.BoxGeometry(0.7,0.03,0.12,5,1,1);var a=lf.attributes.position.array;
+      for(var j=0;j<a.length;j+=3){a[j+1]-=a[j]*a[j]*0.5;} // strong downward curve
+      lf.rotateY(i*2.1);lf.translate(0,0.4+i*0.1,0);
+      parts.push(lf);cmap[parts.length-1]=C.stem;
+    }
+    // 4+: Wheat head - layered scale-like grains going up
+    for(var g=0;g<10;g++){
+      var grain=new THREE.SphereGeometry(0.06,6,5);
+      grain.scale(1.1,0.6,0.8);
+      var angle=(g%2)*Math.PI; // alternate sides
+      var gx=Math.sin(angle)*0.03;
+      var gy=1.1+g*0.08;
+      grain.translate(gx,gy,0);
+      parts.push(grain);cmap[parts.length-1]=(g%3===0)?C.grainDk:C.wHead;
+    }
+    // Top point
+    var tip=new THREE.ConeGeometry(0.04,0.12,5);tip.translate(0,1.95,0);parts.push(tip);cmap[parts.length-1]=C.wHead;
+    var merged=mergeGeos(parts);
+    merged.setAttribute('color',new THREE.BufferAttribute(bakeMultiColor(parts,cmap),3));
+    return merged;
+  }
+
+  var coloredGeos=[buildCorn(), buildRice(), buildSoybean(), buildWheat()];
 
   var CROP_TYPES={
     corn:    {geo:coloredGeos[0], sc:0.025, label:'Corn'},
