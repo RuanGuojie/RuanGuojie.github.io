@@ -639,6 +639,10 @@
       <span class="lyr-dot"></span>
       <span>Rice</span>
     </button>
+    <button type="button" class="lyr-btn" data-layer="/data/winter_wheat.kmz">
+      <span class="lyr-dot"></span>
+      <span>Winter Wheat</span>
+    </button>
   </div>
 </div>
 </div>
