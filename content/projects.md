@@ -945,7 +945,7 @@ document.addEventListener("DOMContentLoaded", function() {
     tex.needsUpdate = true;
     earthMat.map = tex; earthMat.needsUpdate = true;
   };
-  earthImg.src = '/images/earth.jpg';
+  earthImg.src = '/images/earth2.jpg';
 
   // Atmosphere
   var ag = new THREE.SphereGeometry(1.015,48,36);
@@ -1081,15 +1081,23 @@ document.addEventListener("DOMContentLoaded", function() {
     return mergeGeos(parts);
   }
 
-  // ── Tropical tree: thick trunk + large round canopy clusters ──
+  // ── Tropical tree: thick trunk + branches + lush canopy ──
   function makeTropicalTree() {
     var parts = [];
-    // Trunk
-    var trunk = new THREE.CylinderGeometry(0.08, 0.14, 1.2, 8); trunk.translate(0, 0.6, 0); parts.push(trunk);
-    // Base
-    var base = new THREE.SphereGeometry(0.25, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); parts.push(base);
-    // Canopy - large overlapping spheres
-    var blobs = [[0,1.6,0,0.55],[0.2,1.9,0.1,0.4],[-0.15,2.0,-0.1,0.38],[0.1,2.2,0,0.3],[-0.1,1.5,0.15,0.35]];
+    // Trunk with slight taper
+    var trunk = new THREE.CylinderGeometry(0.06, 0.13, 1.4, 8); trunk.translate(0, 0.7, 0); parts.push(trunk);
+    // Base mound
+    var base = new THREE.SphereGeometry(0.25, 10, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); parts.push(base);
+    // Two branches
+    var b1 = new THREE.CylinderGeometry(0.03, 0.05, 0.5, 5); b1.rotateZ(0.6); b1.translate(0.2, 1.2, 0); parts.push(b1);
+    var b2 = new THREE.CylinderGeometry(0.025, 0.04, 0.4, 5); b2.rotateZ(-0.5); b2.translate(-0.15, 1.3, 0.05); parts.push(b2);
+    // Canopy - many overlapping spheres for lush look
+    var blobs = [
+      [0,1.7,0,0.5],[0.25,1.85,0.1,0.38],[-0.2,1.9,-0.12,0.35],
+      [0.1,2.1,0.08,0.32],[-0.1,2.05,-0.05,0.3],[0,1.55,0.2,0.28],
+      [0.3,1.65,-0.1,0.25],[-0.25,1.7,0.15,0.27],[0.15,2.2,0,0.22],
+      [0,1.5,-0.18,0.26]
+    ];
     for (var b = 0; b < blobs.length; b++) {
       var s = new THREE.SphereGeometry(blobs[b][3], 10, 8);
       s.translate(blobs[b][0], blobs[b][1], blobs[b][2]);
@@ -1112,11 +1120,15 @@ document.addEventListener("DOMContentLoaded", function() {
     return mergeGeos(parts);
   }
 
-  // ── Bush: rounded cluster ──
+  // ── Bush: dense rounded cluster with variation ──
   function makeBush() {
     var parts = [];
-    var base = new THREE.SphereGeometry(0.2, 8, 6); base.scale(1, 0.25, 1); base.translate(0, 0.03, 0); parts.push(base);
-    var blobs = [[0,0.35,0,0.3],[0.18,0.3,0.1,0.22],[-0.15,0.3,-0.08,0.2],[0,0.5,0,0.2],[0.1,0.25,-0.15,0.18]];
+    var base = new THREE.SphereGeometry(0.22, 10, 6); base.scale(1, 0.22, 1); base.translate(0, 0.02, 0); parts.push(base);
+    var blobs = [
+      [0,0.3,0,0.28],[0.16,0.28,0.1,0.22],[-0.14,0.26,-0.08,0.2],
+      [0.08,0.42,0.05,0.2],[-0.06,0.4,-0.06,0.18],[0,0.22,0.14,0.17],
+      [0.12,0.18,-0.12,0.16],[-0.1,0.35,0.1,0.15],[0,0.48,0,0.14]
+    ];
     for (var b = 0; b < blobs.length; b++) {
       var s = new THREE.SphereGeometry(blobs[b][3], 8, 6);
       s.translate(blobs[b][0], blobs[b][1], blobs[b][2]);
@@ -1125,14 +1137,23 @@ document.addEventListener("DOMContentLoaded", function() {
     return mergeGeos(parts);
   }
 
-  // ── Flower bush: bush + colorful sphere blooms ──
+  // ── Flower bush: lush green body + colorful blooms ──
   function makeFlowerBush() {
     var parts = [];
-    var base = new THREE.SphereGeometry(0.18, 8, 6); base.scale(1, 0.25, 1); base.translate(0, 0.03, 0); parts.push(base);
-    // Green body
-    var body = new THREE.SphereGeometry(0.28, 8, 6); body.scale(1, 0.7, 1); body.translate(0, 0.3, 0); parts.push(body);
-    // Flower blooms on top
-    var blooms = [[0,0.55,0,0.08],[0.15,0.5,0.1,0.07],[-0.12,0.52,-0.08,0.06],[0.08,0.58,0.05,0.065],[-0.05,0.48,0.12,0.07],[0.1,0.45,-0.1,0.06]];
+    var base = new THREE.SphereGeometry(0.2, 10, 6); base.scale(1, 0.22, 1); base.translate(0, 0.02, 0); parts.push(base);
+    // Green body - multiple overlapping spheres
+    var greens = [[0,0.25,0,0.24],[0.12,0.22,0.08,0.18],[-0.1,0.2,-0.06,0.17],[0,0.35,0,0.16]];
+    for (var g = 0; g < greens.length; g++) {
+      var s = new THREE.SphereGeometry(greens[g][3], 8, 6);
+      s.translate(greens[g][0], greens[g][1], greens[g][2]);
+      parts.push(s);
+    }
+    // Flower blooms scattered on top
+    var blooms = [
+      [0,0.48,0,0.07],[0.14,0.42,0.08,0.06],[-0.1,0.44,-0.06,0.065],
+      [0.06,0.5,0.04,0.055],[-0.04,0.4,0.11,0.06],[0.1,0.38,-0.08,0.055],
+      [-0.12,0.46,0.04,0.05],[0.02,0.52,-0.05,0.05],[0.08,0.46,0.1,0.045]
+    ];
     for (var b = 0; b < blooms.length; b++) {
       var fl = new THREE.SphereGeometry(blooms[b][3], 6, 5);
       fl.translate(blooms[b][0], blooms[b][1], blooms[b][2]);
@@ -1217,7 +1238,6 @@ document.addEventListener("DOMContentLoaded", function() {
     var up = new THREE.Vector3(0, 1, 0);
     var quat = new THREE.Quaternion();
     var mat4 = new THREE.Matrix4();
-    var scaleMat = new THREE.Matrix4();
 
     Object.keys(grouped).forEach(function(type) {
       var arr = grouped[type], cfg = CFG[type];
@@ -1246,23 +1266,25 @@ document.addEventListener("DOMContentLoaded", function() {
         for (var i = 0; i < n; i++) {
           var p = sub[i], lat = p[0], lon = p[1], sc = p[4] / 100;
           var s = cfg.sc * (0.5 + sc * 1.0) * (0.7 + ((i * 7) % 100) / 100 * 0.6);
+          var sY = s * (0.8 + sc * 0.5);
 
           var pos = ll2v(lat, lon, 1.003);
           var norm = pos.clone().normalize();
 
-          // Orient: Y-axis aligned to surface normal
+          // SRT order: Scale → Rotate → Translate
+          // 1. Scale
+          mat4.makeScale(s, sY, s);
+          // 2. Rotate: align local Y-axis to surface normal
           quat.setFromUnitVectors(up, norm);
-          mat4.makeRotationFromQuaternion(quat);
-          // Random Y rotation for variety
-          var rotMat = new THREE.Matrix4().makeRotationAxis(norm, ((i * 37) % 628) / 100);
-          mat4.multiply(rotMat);
-          // Position: offset so base touches surface
-          var halfH = s * 1.2;
-          var finalPos = pos.clone().add(norm.clone().multiplyScalar(halfH * 0.1));
+          var rotMat = new THREE.Matrix4().makeRotationFromQuaternion(quat);
+          // 2b. Random spin around surface normal for variety
+          var spinMat = new THREE.Matrix4().makeRotationAxis(norm, ((i * 37) % 628) / 100);
+          rotMat.multiply(spinMat);
+          mat4.premultiply(rotMat);
+          // 3. Translate: place on surface, offset slightly so base sits on globe
+          var offset = norm.clone().multiplyScalar(sY * 0.15);
+          var finalPos = pos.clone().add(offset);
           mat4.setPosition(finalPos);
-          // Scale
-          scaleMat.makeScale(s, s * (0.8 + sc * 0.4), s);
-          mat4.multiply(scaleMat);
 
           mesh.setMatrixAt(i, mat4);
 
