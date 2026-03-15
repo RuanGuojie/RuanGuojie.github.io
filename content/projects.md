@@ -926,7 +926,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var texLoader = new THREE.TextureLoader();
   texLoader.crossOrigin = 'anonymous';
-  texLoader.load('/static/images/earth.jpg', function(tex) {
+  texLoader.load('/images/earth.jpg', function(tex) {
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     earthMat.map = tex; earthMat.needsUpdate = true;
   });
