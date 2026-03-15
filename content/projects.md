@@ -1024,19 +1024,19 @@ document.addEventListener("DOMContentLoaded", function() {
     p.push((function(){var g=new THREE.CylinderGeometry(0.025,0.04,0.9,6);g.translate(0,0.45,0);return g;})()); // stem
     // brown=2
     // branches
-    var br=[[0.3,0.5,0.1],[−0.25,0.4,−0.08],[0.2,0.65,−0.1],[−0.2,0.6,0.12]];
+    var br=[[0.3,0.5,0.1],[-0.25,0.4,-0.08],[0.2,0.65,-0.1],[-0.2,0.6,0.12]];
     for(var b=0;b<4;b++){var bg=new THREE.CylinderGeometry(0.01,0.018,0.25,4);
-      bg.rotateZ(b%2===0?0.8:−0.8);bg.translate((b%2===0?1:−1)*0.12,0.35+b*0.12,(b<2?0.05:−0.05));p.push(bg);}
+      bg.rotateZ(b%2===0?0.8:-0.8);bg.translate((b%2===0?1:-1)*0.12,0.35+b*0.12,(b<2?0.05:-0.05));p.push(bg);}
     // trifoliate leaves
-    var lpos=[[0.1,0.7,0.04],[−0.08,0.6,−0.03],[0.06,0.85,−0.05],[−0.05,0.8,0.07],[0.12,0.5,−0.02],[−0.1,0.45,0.05],[0,0.92,0]];
+    var lpos=[[0.1,0.7,0.04],[-0.08,0.6,-0.03],[0.06,0.85,-0.05],[-0.05,0.8,0.07],[0.12,0.5,-0.02],[-0.1,0.45,0.05],[0,0.92,0]];
     for(var l=0;l<lpos.length;l++){for(var t=0;t<3;t++){
       var lf=new THREE.SphereGeometry(0.05,5,4);lf.scale(1.3,0.12,0.8);
       var ang=(t/3)*Math.PI*2+l*0.7;
       lf.translate(lpos[l][0]+Math.cos(ang)*0.03,lpos[l][1],lpos[l][2]+Math.sin(ang)*0.03);p.push(lf);}}
     // pods
-    var pp=[[0.05,0.38,0.02],[−0.03,0.48,−0.02],[0.07,0.58,0.01],[−0.05,0.68,0.03],[0.02,0.78,−0.02],[−0.04,0.32,0.04]];
+    var pp=[[0.05,0.38,0.02],[-0.03,0.48,-0.02],[0.07,0.58,0.01],[-0.05,0.68,0.03],[0.02,0.78,-0.02],[-0.04,0.32,0.04]];
     for(var pd=0;pd<pp.length;pd++){var pg=new THREE.SphereGeometry(0.015,4,3);pg.scale(0.5,2.5,0.5);
-      pg.rotateZ(0.3*(pd%2===0?1:−1));pg.translate(pp[pd][0],pp[pd][1],pp[pd][2]);p.push(pg);}
+      pg.rotateZ(0.3*(pd%2===0?1:-1));pg.translate(pp[pd][0],pp[pd][1],pp[pd][2]);p.push(pg);}
     return p;
   }
 
