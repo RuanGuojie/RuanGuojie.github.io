@@ -924,12 +924,27 @@ document.addEventListener("DOMContentLoaded", function() {
   var earthMat = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 15, specular: 0x111122 });
   globeGroup.add(new THREE.Mesh(earthGeo, earthMat));
 
-  var texLoader = new THREE.TextureLoader();
-  texLoader.crossOrigin = 'anonymous';
-  texLoader.load('/images/earth.jpg', function(tex) {
+  // Load earth texture with auto-downsize for mobile (iOS max = 4096)
+  var earthImg = new Image();
+  earthImg.crossOrigin = 'anonymous';
+  earthImg.onload = function() {
+    var maxSize = Math.min(renderer.capabilities.maxTextureSize, 4096);
+    var w = earthImg.width, h = earthImg.height;
+    if (w > maxSize || h > maxSize) {
+      var ratio = Math.min(maxSize / w, maxSize / h);
+      var nw = Math.floor(w * ratio), nh = Math.floor(h * ratio);
+      var cv = document.createElement('canvas'); cv.width = nw; cv.height = nh;
+      cv.getContext('2d').drawImage(earthImg, 0, 0, nw, nh);
+      var tex = new THREE.CanvasTexture(cv);
+      console.log('[Earth] Resized ' + w + 'x' + h + ' → ' + nw + 'x' + nh);
+    } else {
+      var tex = new THREE.Texture(earthImg);
+    }
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    tex.needsUpdate = true;
     earthMat.map = tex; earthMat.needsUpdate = true;
-  });
+  };
+  earthImg.src = '/images/earth.jpg';
 
   // Atmosphere
   var ag = new THREE.SphereGeometry(1.015,48,36);
