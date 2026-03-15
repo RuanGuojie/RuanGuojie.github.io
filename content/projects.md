@@ -981,9 +981,8 @@ document.addEventListener("DOMContentLoaded", function() {
   // CORN: thick stalk, wide arching leaves, 1-2 cobs, tassel
   function cornParts() {
     var p=[];
-    p.push((function(){var g=new THREE.SphereGeometry(0.25,8,6);g.scale(1,0.3,1);g.translate(0,0.04,0);return g;})()); // soil
     p.push((function(){var g=new THREE.CylinderGeometry(0.05,0.08,2.6,8);g.translate(0,1.3,0);return g;})()); // stalk
-    // brown=2
+    // brown=1
     for(var i=0;i<7;i++){var lf=new THREE.BoxGeometry(1.0,0.025,0.12,5,1,1);var a=lf.attributes.position.array;
       for(var j=0;j<a.length;j+=3){a[j+1]+=a[j]*a[j]*0.25;a[j+2]+=a[j]*0.06;}
       lf.rotateY(i*Math.PI/3.5+(i%2)*0.3);lf.translate(0,0.5+i*0.3,0);p.push(lf);}
@@ -1000,8 +999,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // RICE: thin tillers from base, narrow drooping leaves, drooping panicles
   function riceParts() {
     var p=[];
-    p.push((function(){var g=new THREE.SphereGeometry(0.28,8,6);g.scale(1,0.18,1);g.translate(0,0.02,0);return g;})()); // water/soil
-    // brown=1
+    // brown=0 (rice stalks are green)
     var tl=[[-0.06,0],[0.05,0.04],[0,-0.05],[0.08,-0.02],[-0.03,0.06],[-0.07,-0.04],[0.04,-0.06]];
     for(var s=0;s<tl.length;s++){
       var h=1.1+(s%3)*0.15;
@@ -1020,9 +1018,8 @@ document.addEventListener("DOMContentLoaded", function() {
   // SOYBEAN: short branching, trifoliate leaves, pods
   function soybeanParts() {
     var p=[];
-    p.push((function(){var g=new THREE.SphereGeometry(0.2,8,6);g.scale(1,0.25,1);g.translate(0,0.03,0);return g;})()); // soil
     p.push((function(){var g=new THREE.CylinderGeometry(0.025,0.04,0.9,6);g.translate(0,0.45,0);return g;})()); // stem
-    // brown=2
+    // brown=1
     // branches
     var br=[[0.3,0.5,0.1],[-0.25,0.4,-0.08],[0.2,0.65,-0.1],[-0.2,0.6,0.12]];
     for(var b=0;b<4;b++){var bg=new THREE.CylinderGeometry(0.01,0.018,0.25,4);
@@ -1043,8 +1040,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // WHEAT: upright stalks, plump heads with awns
   function wheatParts() {
     var p=[];
-    p.push((function(){var g=new THREE.SphereGeometry(0.22,8,6);g.scale(1,0.25,1);g.translate(0,0.03,0);return g;})()); // soil
-    // brown=1
+    // brown=0 (wheat is all golden-green)
     var st=[[-0.05,0],[0.04,0.04],[0,-0.04],[0.07,-0.02],[-0.03,0.05],[-0.06,-0.03]];
     for(var s=0;s<st.length;s++){
       var h=1.5+(s%3)*0.1;
@@ -1060,10 +1056,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Build colored geos
   var geoConfigs=[
-    {fn:cornParts,    brown:2, green:0x4a7c23, brownHex:0x6D4C41},
-    {fn:riceParts,    brown:1, green:0x6aaa30, brownHex:0x5D4037},
-    {fn:soybeanParts, brown:2, green:0x558b2f, brownHex:0x6D4C41},
-    {fn:wheatParts,   brown:1, green:0xb8a520, brownHex:0x8d6e27}, // golden-green for wheat
+    {fn:cornParts,    brown:1, green:0x4a7c23, brownHex:0x6D4C41},
+    {fn:riceParts,    brown:0, green:0x6aaa30, brownHex:0x5D4037},
+    {fn:soybeanParts, brown:1, green:0x558b2f, brownHex:0x6D4C41},
+    {fn:wheatParts,   brown:0, green:0xb8a520, brownHex:0x8d6e27}, // golden-green for wheat
   ];
   var coloredGeos=geoConfigs.map(function(cfg){
     var parts=cfg.fn(),merged=mergeGeos(parts);
@@ -1154,7 +1150,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var lat = points[i][0], lon = points[i][1], pct = points[i][2];
       // Scale based on percentage: high% = bigger, low% = smaller
       var pctNorm = pct / 100; // 0..1
-      var s = cfg.sc * (0.3 + pctNorm * 1.2) * (0.8 + ((i*7)%100)/100*0.4);
+      var s = cfg.sc * (0.7 + pctNorm * 0.8) * (0.85 + ((i*7)%100)/100*0.3);
 
       var pos = ll2v(lat, lon, 1.003);
       var norm = pos.clone().normalize();
