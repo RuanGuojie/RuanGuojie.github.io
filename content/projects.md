@@ -1190,42 +1190,176 @@ document.addEventListener("DOMContentLoaded", function() {
     return mergeGeos(parts);
   }
 
-  // Build all geometries
-  var cornGeo = makeCorn();
-  var riceGeo = makeRice();
-  var wheatGeo = makeWheat();
-  var tropTreeGeo = makeTropicalTree();
-  var pineGeo = makePine();
-  var bushGeo = makeBush();
-  var flowerGeo = makeFlowerBush();
-  var palmGeo = makePalm();
+  // (Geometries are built inline above via cornParts, riceParts, etc.)
 
-  // ── Color palettes (clay render style) ──
-  var COLORS = {
-    tropical: [0x2d7a2d, 0x1e6e1e, 0x228b22, 0x1a5e1a, 0x2d8a2d],
-    forest:   [0x2e7d32, 0x388e3c, 0x1b5e20, 0x43a047, 0x2a6e2e],
-    crop:     [0x689f38, 0x7cb342, 0x8bc34a, 0x9ccc65, 0x558b2f],
-    grass:    [0x66bb6a, 0x4caf50, 0x81c784, 0xa5d6a7, 0x73c778],
-  };
+  // ── Bake vertex colors into geometry ──
+  // Parts before canopy/leaves get brown, rest gets green
+  function bakeColors(geos, brownCount, greenHex, brownHex) {
+    brownHex = brownHex || 0x6D4C41;
+    var brown = new THREE.Color(brownHex);
+    var green = new THREE.Color(greenHex || 0x2e7d32);
+    var totalV = 0;
+    geos.forEach(function(g) { totalV += g.attributes.position.count; });
+    var colors = new Float32Array(totalV * 3);
+    var offset = 0;
+    for (var gi = 0; gi < geos.length; gi++) {
+      var vc = geos[gi].attributes.position.count;
+      var col = gi < brownCount ? brown : green;
+      for (var v = 0; v < vc; v++) {
+        // Slight random variation per vertex
+        var rv = 0.9 + Math.sin(v * 7.3 + gi) * 0.1;
+        colors[(offset + v) * 3] = col.r * rv;
+        colors[(offset + v) * 3 + 1] = col.g * rv;
+        colors[(offset + v) * 3 + 2] = col.b * rv;
+      }
+      offset += vc;
+    }
+    return colors;
+  }
 
-  // ── Type → geometry mapping, each type gets several geo variants ──
+  // Rebuild geometries with baked vertex colors
+  function makeColoredGeo(buildFn, brownParts, greenHex, brownHex) {
+    // We need to rebuild with color attribute
+    var parts = buildFn();
+    var merged = mergeGeos(parts);
+    var colors = bakeColors(parts, brownParts, greenHex, brownHex);
+    merged.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    return merged;
+  }
+
+  // Rebuild model functions to return arrays of parts (not merged)
+  function cornParts() {
+    var p = [];
+    var stalk = new THREE.CylinderGeometry(0.06, 0.09, 2.4, 8); stalk.translate(0, 1.2, 0); p.push(stalk);
+    var base = new THREE.SphereGeometry(0.3, 8, 6); base.scale(1, 0.35, 1); base.translate(0, 0.05, 0); p.push(base);
+    // ^ brown parts = 2
+    for (var i = 0; i < 6; i++) {
+      var leaf = new THREE.BoxGeometry(0.8, 0.04, 0.15, 4, 1, 1);
+      var la = leaf.attributes.position.array;
+      for (var j = 0; j < la.length; j += 3) { la[j+1] += la[j]*la[j]*0.3; la[j+2] += la[j]*0.1; }
+      leaf.rotateY(i * Math.PI / 3); leaf.translate(0, 0.6 + i*0.28, 0); p.push(leaf);
+    }
+    var cob1 = new THREE.SphereGeometry(0.12, 8, 6); cob1.scale(1, 1.8, 1); cob1.translate(0.15, 1.5, 0); p.push(cob1);
+    var cob2 = new THREE.SphereGeometry(0.1, 8, 6); cob2.scale(1, 1.6, 1); cob2.translate(-0.12, 1.9, 0.08); p.push(cob2);
+    return p;
+  }
+
+  function riceParts() {
+    var p = [];
+    var base = new THREE.SphereGeometry(0.25, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.03, 0); p.push(base);
+    // ^ brown = 1
+    var stalks = [[-0.08,0],[0.06,0.04],[0,-0.06],[0.1,-0.02],[-0.04,0.07]];
+    for (var s = 0; s < stalks.length; s++) {
+      var stk = new THREE.CylinderGeometry(0.015, 0.025, 1.4+s*0.1, 5); stk.translate(stalks[s][0], 0.75+s*0.05, stalks[s][1]); p.push(stk);
+      var head = new THREE.SphereGeometry(0.04, 6, 5); head.scale(1, 2.5, 1); head.rotateZ(0.4+s*0.15); head.translate(stalks[s][0]+0.08, 1.45+s*0.08, stalks[s][1]); p.push(head);
+      var leaf = new THREE.BoxGeometry(0.35, 0.02, 0.06, 3, 1, 1);
+      var la = leaf.attributes.position.array; for (var j = 0; j < la.length; j += 3) la[j+1] += la[j]*la[j]*0.2;
+      leaf.rotateY(s*1.2); leaf.translate(stalks[s][0], 0.4+s*0.15, stalks[s][1]); p.push(leaf);
+    }
+    return p;
+  }
+
+  function wheatParts() {
+    var p = [];
+    var base = new THREE.SphereGeometry(0.22, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.03, 0); p.push(base);
+    // ^ brown = 1
+    var stalks = [[-0.06,0],[0.05,0.04],[0,-0.05],[0.08,-0.03],[-0.03,0.06]];
+    for (var s = 0; s < stalks.length; s++) {
+      var stk = new THREE.CylinderGeometry(0.018, 0.028, 1.6+s*0.08, 5); stk.translate(stalks[s][0], 0.85+s*0.04, stalks[s][1]); p.push(stk);
+      var head = new THREE.SphereGeometry(0.055, 6, 5); head.scale(0.7, 2.0, 0.7); head.translate(stalks[s][0], 1.7+s*0.06, stalks[s][1]); p.push(head);
+    }
+    return p;
+  }
+
+  function tropTreeParts() {
+    var p = [];
+    var trunk = new THREE.CylinderGeometry(0.06, 0.13, 1.4, 8); trunk.translate(0, 0.7, 0); p.push(trunk);
+    var base = new THREE.SphereGeometry(0.25, 10, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); p.push(base);
+    var b1 = new THREE.CylinderGeometry(0.03, 0.05, 0.5, 5); b1.rotateZ(0.6); b1.translate(0.2, 1.2, 0); p.push(b1);
+    var b2 = new THREE.CylinderGeometry(0.025, 0.04, 0.4, 5); b2.rotateZ(-0.5); b2.translate(-0.15, 1.3, 0.05); p.push(b2);
+    // ^ brown = 4
+    var blobs = [[0,1.7,0,0.5],[0.25,1.85,0.1,0.38],[-0.2,1.9,-0.12,0.35],[0.1,2.1,0.08,0.32],[-0.1,2.05,-0.05,0.3],[0,1.55,0.2,0.28],[0.3,1.65,-0.1,0.25],[-0.25,1.7,0.15,0.27]];
+    for (var b = 0; b < blobs.length; b++) { var s = new THREE.SphereGeometry(blobs[b][3], 10, 8); s.translate(blobs[b][0], blobs[b][1], blobs[b][2]); p.push(s); }
+    return p;
+  }
+
+  function pineParts() {
+    var p = [];
+    var trunk = new THREE.CylinderGeometry(0.05, 0.1, 0.9, 7); trunk.translate(0, 0.45, 0); p.push(trunk);
+    var base = new THREE.SphereGeometry(0.2, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); p.push(base);
+    // ^ brown = 2
+    var tiers = [[0.6,0.7,0.7],[0.48,0.6,1.2],[0.35,0.55,1.6],[0.2,0.4,2.0]];
+    for (var t = 0; t < tiers.length; t++) { var c = new THREE.ConeGeometry(tiers[t][0], tiers[t][1], 8); c.translate(0, tiers[t][2], 0); p.push(c); }
+    return p;
+  }
+
+  function palmParts() {
+    var p = [];
+    for (var i = 0; i < 8; i++) { var seg = new THREE.CylinderGeometry(0.04-i*0.003, 0.05-i*0.003, 0.25, 6); seg.translate(Math.sin(i*0.3)*0.03, 0.25+i*0.23, 0); p.push(seg); }
+    var base = new THREE.SphereGeometry(0.2, 8, 6); base.scale(1, 0.3, 1); base.translate(0, 0.04, 0); p.push(base);
+    // ^ brown = 9
+    for (var f = 0; f < 7; f++) { var frond = new THREE.SphereGeometry(0.12, 6, 4); frond.scale(3, 0.2, 0.8); var a = (f/7)*Math.PI*2; frond.rotateY(a); frond.rotateZ(0.5); frond.translate(Math.cos(a)*0.3, 2.1, Math.sin(a)*0.3); p.push(frond); }
+    var n1 = new THREE.SphereGeometry(0.05, 6, 5); n1.translate(0.06, 2.0, 0.04); p.push(n1);
+    return p;
+  }
+
+  function bushParts() {
+    var p = [];
+    var base = new THREE.SphereGeometry(0.22, 10, 6); base.scale(1, 0.22, 1); base.translate(0, 0.02, 0); p.push(base);
+    // ^ brown = 1
+    var blobs = [[0,0.3,0,0.28],[0.16,0.28,0.1,0.22],[-0.14,0.26,-0.08,0.2],[0.08,0.42,0.05,0.2],[-0.06,0.4,-0.06,0.18],[0,0.22,0.14,0.17],[0.12,0.18,-0.12,0.16],[-0.1,0.35,0.1,0.15],[0,0.48,0,0.14]];
+    for (var b = 0; b < blobs.length; b++) { var s = new THREE.SphereGeometry(blobs[b][3], 8, 6); s.translate(blobs[b][0], blobs[b][1], blobs[b][2]); p.push(s); }
+    return p;
+  }
+
+  function flowerParts() {
+    var p = [];
+    var base = new THREE.SphereGeometry(0.2, 10, 6); base.scale(1, 0.22, 1); base.translate(0, 0.02, 0); p.push(base);
+    // ^ brown = 1
+    var greens = [[0,0.25,0,0.24],[0.12,0.22,0.08,0.18],[-0.1,0.2,-0.06,0.17],[0,0.35,0,0.16]];
+    for (var g = 0; g < greens.length; g++) { var s = new THREE.SphereGeometry(greens[g][3], 8, 6); s.translate(greens[g][0], greens[g][1], greens[g][2]); p.push(s); }
+    // ^ green up to here = 5
+    var blooms = [[0,0.48,0,0.07],[0.14,0.42,0.08,0.06],[-0.1,0.44,-0.06,0.065],[0.06,0.5,0.04,0.055],[-0.04,0.4,0.11,0.06]];
+    for (var b = 0; b < blooms.length; b++) { var fl = new THREE.SphereGeometry(blooms[b][3], 6, 5); fl.translate(blooms[b][0], blooms[b][1], blooms[b][2]); p.push(fl); }
+    return p;
+  }
+
+  // Build colored geometries: [partsFn, brownPartCount, greenHex, brownHex]
+  var geoConfigs = [
+    { fn: cornParts,     brown: 2, green: 0x558b2f, brownHex: 0x6D4C41 },
+    { fn: riceParts,     brown: 1, green: 0x7cb342, brownHex: 0x795548 },
+    { fn: wheatParts,    brown: 1, green: 0xc0ca33, brownHex: 0x8d6e27 },
+    { fn: tropTreeParts, brown: 4, green: 0x228b22, brownHex: 0x5D4037 },
+    { fn: pineParts,     brown: 2, green: 0x2e7d32, brownHex: 0x5D4037 },
+    { fn: palmParts,     brown: 9, green: 0x2e7d32, brownHex: 0x6D4C41 },
+    { fn: bushParts,     brown: 1, green: 0x4caf50, brownHex: 0x795548 },
+    { fn: flowerParts,   brown: 1, green: 0x66bb6a, brownHex: 0x795548 },
+  ];
+
+  var coloredGeos = geoConfigs.map(function(cfg) {
+    var parts = cfg.fn();
+    var merged = mergeGeos(parts);
+    var colors = bakeColors(parts, cfg.brown, cfg.green, cfg.brownHex);
+    merged.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    return merged;
+  });
+
+  // [corn, rice, wheat, tropTree, pine, palm, bush, flower]
   var CFG = {
-    tropical: { geos: [tropTreeGeo, palmGeo, tropTreeGeo], sc: 0.014, colors: COLORS.tropical },
-    forest:   { geos: [pineGeo, tropTreeGeo, pineGeo], sc: 0.012, colors: COLORS.forest },
-    crop:     { geos: [cornGeo, wheatGeo, riceGeo], sc: 0.009, colors: COLORS.crop },
-    grass:    { geos: [bushGeo, flowerGeo, bushGeo], sc: 0.008, colors: COLORS.grass },
+    tropical: { geos: [coloredGeos[3], coloredGeos[5], coloredGeos[3]], sc: 0.014 },
+    forest:   { geos: [coloredGeos[4], coloredGeos[3], coloredGeos[4]], sc: 0.012 },
+    crop:     { geos: [coloredGeos[0], coloredGeos[2], coloredGeos[1]], sc: 0.009 },
+    grass:    { geos: [coloredGeos[6], coloredGeos[7], coloredGeos[6]], sc: 0.008 },
   };
 
   var meshGroups = {};
 
   function buildVeg(pts, filter) {
-    // Remove old
     Object.keys(meshGroups).forEach(function(k) {
       meshGroups[k].forEach(function(m) { globeGroup.remove(m); });
     });
     meshGroups = {};
 
-    // Group by type
     var grouped = {};
     for (var i = 0; i < pts.length; i++) {
       var p = pts[i], pt = TYPES[p[2]] || 'grass';
@@ -1235,15 +1369,12 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     var total = 0;
-    var up = new THREE.Vector3(0, 1, 0);
-    var quat = new THREE.Quaternion();
-    var mat4 = new THREE.Matrix4();
+    var dummy = new THREE.Object3D();
 
     Object.keys(grouped).forEach(function(type) {
       var arr = grouped[type], cfg = CFG[type];
       meshGroups[type] = [];
 
-      // Split points across geometry variants
       var geoGroups = {};
       for (var i = 0; i < arr.length; i++) {
         var gIdx = i % cfg.geos.length;
@@ -1256,49 +1387,37 @@ document.addEventListener("DOMContentLoaded", function() {
         var geo = cfg.geos[gIdx];
 
         var material = new THREE.MeshPhongMaterial({
+          vertexColors: true,
           shininess: 20,
-          flatShading: false // Smooth shading for clay look
+          flatShading: false
         });
 
         var mesh = new THREE.InstancedMesh(geo, material, n);
-        var colArr = new Float32Array(n * 3);
 
         for (var i = 0; i < n; i++) {
           var p = sub[i], lat = p[0], lon = p[1], sc = p[4] / 100;
           var s = cfg.sc * (0.5 + sc * 1.0) * (0.7 + ((i * 7) % 100) / 100 * 0.6);
-          var sY = s * (0.8 + sc * 0.5);
 
           var pos = ll2v(lat, lon, 1.003);
           var norm = pos.clone().normalize();
 
-          // SRT order: Scale → Rotate → Translate
-          // 1. Scale
-          mat4.makeScale(s, sY, s);
-          // 2. Rotate: align local Y-axis to surface normal
-          quat.setFromUnitVectors(up, norm);
-          var rotMat = new THREE.Matrix4().makeRotationFromQuaternion(quat);
-          // 2b. Random spin around surface normal for variety
-          var spinMat = new THREE.Matrix4().makeRotationAxis(norm, ((i * 37) % 628) / 100);
-          rotMat.multiply(spinMat);
-          mat4.premultiply(rotMat);
-          // 3. Translate: place on surface, offset slightly so base sits on globe
-          var offset = norm.clone().multiplyScalar(sY * 0.15);
-          var finalPos = pos.clone().add(offset);
-          mat4.setPosition(finalPos);
+          // Use Object3D for reliable transform
+          dummy.position.copy(pos);
+          dummy.position.addScaledVector(norm, s * 0.1); // lift slightly
+          // Look outward along normal, then correct so Y is up
+          dummy.up.copy(norm);
+          // Point in arbitrary tangent direction
+          var tangent = new THREE.Vector3(-norm.z, 0, norm.x).normalize();
+          if (tangent.length() < 0.01) tangent.set(1, 0, 0);
+          dummy.lookAt(pos.clone().add(tangent));
+          // Random spin
+          dummy.rotateOnAxis(new THREE.Vector3(0, 1, 0), ((i * 37) % 628) / 100);
 
-          mesh.setMatrixAt(i, mat4);
-
-          // Color with variation
-          var col = new THREE.Color(cfg.colors[i % cfg.colors.length]);
-          col.r *= (0.85 + ((i * 3) % 30) / 100);
-          col.g *= (0.85 + ((i * 7) % 30) / 100);
-          col.b *= (0.85 + ((i * 11) % 30) / 100);
-          colArr[i * 3] = col.r;
-          colArr[i * 3 + 1] = col.g;
-          colArr[i * 3 + 2] = col.b;
+          dummy.scale.set(s, s * (0.8 + sc * 0.4), s);
+          dummy.updateMatrix();
+          mesh.setMatrixAt(i, dummy.matrix);
         }
 
-        mesh.instanceColor = new THREE.InstancedBufferAttribute(colArr, 3);
         mesh.instanceMatrix.needsUpdate = true;
         globeGroup.add(mesh);
         meshGroups[type].push(mesh);
