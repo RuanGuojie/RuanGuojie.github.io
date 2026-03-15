@@ -1068,10 +1068,10 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   var CROP_TYPES={
-    corn:    {geo:coloredGeos[0], sc:0.010, label:'Corn'},
-    rice:    {geo:coloredGeos[1], sc:0.008, label:'Rice'},
-    soybean: {geo:coloredGeos[2], sc:0.007, label:'Soybean'},
-    wheat:   {geo:coloredGeos[3], sc:0.009, label:'Wheat'},
+    corn:    {geo:coloredGeos[0], sc:0.012, label:'Corn'},
+    rice:    {geo:coloredGeos[1], sc:0.012, label:'Rice'},
+    soybean: {geo:coloredGeos[2], sc:0.012, label:'Soybean'},
+    wheat:   {geo:coloredGeos[3], sc:0.012, label:'Wheat'},
   };
 
   /* ═══════════════════════════════════════════
@@ -1218,7 +1218,7 @@ document.addEventListener("DOMContentLoaded", function() {
   el.addEventListener('pointermove',function(e){if(!isDrag)return;vel.y=(e.clientX-prev.x)*0.004;vel.x=(e.clientY-prev.y)*0.004;prev={x:e.clientX,y:e.clientY};});
   el.addEventListener('pointerup',function(){isDrag=false;});
   el.addEventListener('pointerleave',function(){isDrag=false;});
-  el.addEventListener('wheel',function(e){camera.position.z=Math.max(1.3,Math.min(5,camera.position.z+e.deltaY*0.002));},{passive:true});
+  el.addEventListener('wheel',function(e){e.preventDefault();camera.position.z=Math.max(1.3,Math.min(5,camera.position.z+e.deltaY*0.002));},{passive:false});
   var ld2=0;
   el.addEventListener('touchstart',function(e){if(e.touches.length===2)ld2=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);},{passive:true});
   el.addEventListener('touchmove',function(e){if(e.touches.length===2){var d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);if(ld2>0)camera.position.z=Math.max(1.3,Math.min(5,camera.position.z-(d-ld2)*0.005));ld2=d;}},{passive:true});
