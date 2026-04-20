@@ -56,6 +56,7 @@ education:
     date_start: 2024-08-01
     date_end: 2028-06-01
     summary: |
+      Division of Plant Science and Technology, College of Agriculture, Food and Natural Resources <br>
       Precision and Automated Agriculture Lab (PAAL) <br>
       Supervisor: Jianfeng Zhou <br>
       <a href="https://www.google.com/maps/place/1406+Rollins+St,+Columbia,+MO+65201" target="_blank">
@@ -71,7 +72,7 @@ education:
     date_start: 2020-09-01
     date_end: 2023-06-01
     summary: |
-      作物栽培学与耕作学 | 硕士
+      作物栽培学与耕作学 | 硕士 <br>
       National Engineering and Technology Center for Information Agriculture. (国家信息农业工程技术中心，南京农业大学农学院/智慧农业学院) <br>
       Double First-Class Disciplines: Crop Science. (国家双一流建设学科：作物学) <br>
       Ranked #14 globally in Agriculture & Forestry in the QS World University Rankings by Subject 2025 <br>
@@ -85,7 +86,7 @@ education:
     date_start: 2016-09-01
     date_end: 2020-06-30
     summary: |
-      2016级农学丁颖创新班，华南农业大学农学院
+      2016级农学丁颖创新班，华南农业大学农学院 <br>
       Double First-Class Disciplines: Crop Science.(国家双一流建设学科：作物学) <br>
       Ranked 28th globally in Agriculture & Forestry in the QS World University Rankings by Subject 2025 <br>
       GPA: 4.04/5.0 <br>
