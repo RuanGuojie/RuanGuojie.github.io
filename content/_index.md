@@ -37,8 +37,8 @@ sections:
          (4) Linkages between the temporal dynamics of soil‐sensor observations and soil hydrological properties. <br>
          Our mission is to equip stakeholders with high-quality data and trustworthy modeling tools to improve crop production efficiency and resilience to climate change.<br>
          <br>
-         Publications: <span style="font-weight:700; font-size:1.8rem;">4</span> <br>
-         Citations: <span style="font-weight:700; font-size:1.8rem;">150</span>
+         Publications: <span style="font-weight:700; font-size:1.8rem;">5</span> <br>
+         Citations: <span style="font-weight:700; font-size:1.8rem;">160</span>
          </div>
     design:
       columns: '1'
@@ -84,6 +84,8 @@ sections:
         <img src="/uploads/poster2.jpg"
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
         <img src="/uploads/poster3.jpg"
+          style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
+        <img src="/uploads/poster4.jpg"
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
       # Page type to display. E.g. post, talk, publication...
       page_type: blog
