@@ -87,6 +87,8 @@ sections:
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
         <img src="/uploads/poster4.jpg"
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
+        <img src="/uploads/poster5.jpg"
+          style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
       # Page type to display. E.g. post, talk, publication...
       page_type: blog
       # Choose how many pages you would like to display (0 = all pages)
