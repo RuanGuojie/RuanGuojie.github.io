@@ -1,0 +1,54 @@
+---
+title: Enhancing winter wheat growth indicator prediction with multi-task learning
+  and multi-source data
+authors:
+- Haoxi Song
+- Tingxuan Zhuang
+- Xueye Li
+- Guojie Ruan
+- James Schepers
+- Dashuai Wang
+- Xiaojun Liu
+- Yongchao Tian
+- Yan Zhu
+- Weixing Cao
+- Qiang Cao
+date: '2025-01-01'
+publishDate: '2026-07-29T00:19:20.452303Z'
+publication_types:
+- article-journal
+publication: '*European Journal of Agronomy*'
+doi: https://doi.org/10.1016/j.eja.2025.127629
+abstract: Timely and accurate prediction of wheat growth indicators is crucial for
+  yield enhancement and extreme weather impact mitigation. Research on efficient monitoring
+  of growth indicators using multi-task learning combined with multi-source information
+  remains limited. Furthermore, the growth stage-specific prediction should be emphasized
+  to reveal the effect of growth stages on the indicators. This study aims to predict
+  winter wheat growth indicators at different growth stages using machine learning,
+  deep learning, and multi-task learning based on multi-source and multi-temporal
+  features, such as from spectral, moisture, and meteorological data, to evaluate
+  and improve the accuracy of prediction. Field-collected growth indicators including
+  leaf area index (LAI), chlorophyll (CHL), plant nitrogen accumulation (PNA), plant
+  dry matter (PDM), plant nitrogen content (PNC), nitrogen nutrition index (NNI),
+  and the above features were analyzed alongside feature selection based on Pearson
+  correlation coefficients (PCCfs). Models were developed using Random Forest (RF),
+  Long Short-Term Memory (LSTM), and Multi-Task Learning (MTL), with consideration
+  given to the contribution of features to indicators. The results demonstrated that
+  RF model outperformed LSTM, with average R² values ranging from 0.54 to 0.92 versus
+  0.08–0.88, respectively. The MTL enhanced model speed and accuracy, particularly
+  with large datasets or deep learning applications. Each indicator exhibited optimal
+  performance at specific growth stages, such as LAI during the jointing and PDM during
+  the flowering. Vegetation Index (VI) emerged as the most significant features for
+  growth indicators, followed by the canopy equivalent water thickness (CEWT) and
+  meteorological features. This study presents a novel approach to winter wheat growth
+  indicator prediction, significantly enhancing prediction accuracy and contributing
+  to the achievement of precise field management.
+tags:
+- Growth indicator prediction
+- Random Forest
+- Long Short-Term Memory
+- Canopy sensor
+links:
+- name: URL
+  url: https://www.sciencedirect.com/science/article/pii/S116103012500125X
+---
