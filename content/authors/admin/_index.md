@@ -40,7 +40,7 @@ profiles:
   - icon: brands/linkedin
     url: https://www.linkedin.com/in/guojie-ruan-031947326
   - icon: academicons/google-scholar
-    url: https://scholar.google.com/
+    url: https://scholar.google.com/citations?user=iu49VzMAAAAJ&hl=en&oi=ao
   - icon: academicons/orcid
     url: https://orcid.org/
 
@@ -181,4 +181,4 @@ awards:
 
 ## About Me
 
-Guojie Ruan (he/him) is from Jiangmen, Guangdong. He is self-motivated and enthusiastic PhD student specializing in precision agriculture, with a focus on crop remote sensing monitoring, precision nitrogen management, and data-driven modeling. He is committed to delivering interdisciplinary research (Plant Science, Biogeochemistry, Agricultural Informatics, and Agricultural Engineering) that can improve the model and provide a better understanding of the changing climate and human impacts on agroecosystems.
+Guojie Ruan (he/him) is from Jiangmen, Guangdong. He is self-motivated and enthusiastic PhD student specializing in precision agriculture, with a focus on crop remote sensing monitoring, precision nitrogen management, and data-driven modeling. He is committed to delivering interdisciplinary research (Plant Science, Biogeochemistry, Earth System Science, and Agricultural Engineering) that can improve the model and provide a better understanding of the changing climate and human impacts on agroecosystems.
