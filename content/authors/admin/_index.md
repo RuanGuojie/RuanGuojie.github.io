@@ -46,7 +46,8 @@ profiles:
 
 interests:
   - Precision Agriculture
-  - Plant Phenotyping and Soil Mapping
+  - Plant Phenotyping
+  - Remote sensing and GIS
   - Agroecosystem modelling
 
 education:
