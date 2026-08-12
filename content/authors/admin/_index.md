@@ -58,6 +58,7 @@ education:
     date_end: 2028-06-01
     summary: |
       Division of Plant Science and Technology, College of Agriculture, Food and Natural Resources <br>
+      AAU member universities <br>
       Precision and Automated Agriculture Lab (PAAL) <br>
       Supervisor: Jianfeng Zhou <br>
       <a href="https://www.google.com/maps/place/1406+Rollins+St,+Columbia,+MO+65201" target="_blank">
