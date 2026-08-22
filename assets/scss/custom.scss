@@ -1,0 +1,4 @@
+/* 隐藏 About 区块顶部的 "Professional Summary" 空标题行 */
+.mb-12 > .flex.items-center.gap-4.mb-8:has(> .rounded-full):has(> h2) {
+  display: none;
+}
