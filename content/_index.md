@@ -39,7 +39,7 @@ sections:
          Our mission is to equip stakeholders with high-quality data and trustworthy modeling tools to improve crop production efficiency and resilience to climate change.<br>
          <br>
          Publications: <span style="font-weight:700; font-size:1.8rem;">5</span> <br>
-         Citations: <span style="font-weight:700; font-size:1.8rem;">160</span>
+         Citations: <span style="font-weight:700; font-size:1.8rem;">164</span>
          </div>
     design:
       columns: '1'
