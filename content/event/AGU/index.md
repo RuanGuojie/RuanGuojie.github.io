@@ -10,7 +10,7 @@ address:
   region: LA
   country: United States
 
-summary: Poster presentation at the AGU Fall Meeting 2025.
+summary: Poster presentation at the AGU Fall Meeting 2025, New Orleans, LA.
 abstract: |
 
 date: '2025-12-15T09:00:00Z'
@@ -22,8 +22,6 @@ authors:
   - admin
 
 tags:
-  - Remote Sensing
-  - Precision Agriculture
   - Soil Health
 
 featured: false
