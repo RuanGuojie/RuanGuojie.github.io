@@ -5,7 +5,7 @@ title: "Spatiotemporal Mapping of Corn Leaf Nutrients: Integrating UAV-based RGB
 event: ASABE Annual International Meeting 2026
 event_url: https://www.asabe.org/AIM
 
-summary: Oral presentation at the ASABE Annual International Meeting 2026, Indianapolis, IA.
+summary: Oral presentation at the ASABE Annual International Meeting 2026, Indianapolis, IN.
 abstract: |
 
 date: '2026-07-12T09:00:00Z'
