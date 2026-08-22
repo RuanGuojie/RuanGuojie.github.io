@@ -26,21 +26,56 @@ sections:
         shape: circle # Options: circle (default), square, rounded
   - block: markdown
     content:
-      title: 'My Research'
+      title: ''
       subtitle: ''
       text: |
-         <div style="text-align: justify; font-size: 1rem;">
-         Currently, I focus on Digital Agriculture / Smart Agriculture on Plant Science. <br>
-         (1) Exploring the geostatistical (Empirical Bayesian Kriging), machine learning (Random Forest and Geographically Weighted Regression), and hybrid (Regression Kriging) Digital Soil Mapping (DSM) methods to predict soil health and fertility using ArcGIS Pro with multi-source sensing data (yield map, digital elevation model, ECa, and VIs). <br>
-         (2) Mapping in-season cross-stage and cross-scale (UAV-Satellite) corn leaf nutrient levels (N, P, K) based on spatial-temporal neural networks by integrating hyperspectral, multispectral, RGB, and thermal imagery, providing decision-making information for variable rate planting and fertilization.<br>
-         (3) Monitoring the spatiotemporal variability of crop phenological stages based on vision lauguage-based object detection model (emergence rate and tasseling percentage) <br>
-         (4) Linkages between the temporal dynamics of soil‐sensor observations and soil hydrological properties. <br>
-         (5) 3DGS-based reconstruction of outdoor tomato plants using autonomous navigation agricultural robot (UGV). <br>
-         Our mission is to equip stakeholders with high-quality data and trustworthy modeling tools to improve crop production efficiency and resilience to climate change.<br>
-         <br>
-         Publications: <span style="font-weight:700; font-size:1.8rem;">5</span> <br>
-         Citations: <span style="font-weight:700; font-size:1.8rem;">164</span>
-         </div>
+        <style>
+        .research-intro-title{font-size:1.6rem;font-weight:600;margin:0 0 .4rem;}
+        .research-intro-sub{font-size:1rem;color:var(--gray-600,#5f5e5a);line-height:1.6;margin:0 0 2rem;max-width:640px;}
+        .research-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
+        .research-card{background:var(--card-bg,#fff);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:1.4rem 1.5rem;transition:box-shadow .2s ease,transform .2s ease;}
+        .research-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-2px);}
+        .research-card .rc-title{font-size:1.05rem;font-weight:600;margin:0 0 .5rem;}
+        .research-card .rc-desc{font-size:.9rem;color:var(--gray-600,#5f5e5a);line-height:1.6;margin:0;}
+        .research-stats{display:flex;gap:3rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(0,0,0,.08);}
+        .research-stats .rs-num{font-size:1.9rem;font-weight:600;line-height:1;margin:0;}
+        .research-stats .rs-label{font-size:.8rem;color:var(--gray-500,#888);margin:.4rem 0 0;}
+        @media (prefers-color-scheme: dark){
+          .research-card{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.1);}
+          .research-intro-sub,.research-card .rc-desc{color:#a3a3a3;}
+        }
+        </style>
+
+        <div class="research-intro-title">My Research</div>
+        <div class="research-intro-sub">Digital and smart agriculture for plant science — building trustworthy data and models to improve crop production and resilience to a changing climate.</div>
+
+        <div class="research-grid">
+          <div class="research-card">
+            <div class="rc-title">Digital Soil Mapping</div>
+            <p class="rc-desc">Geostatistical (EBK), machine-learning (RF, GWR), and hybrid (Regression Kriging) methods to predict soil health and fertility from multi-source sensing data (yield map, DEM, ECa, VIs).</p>
+          </div>
+          <div class="research-card">
+            <div class="rc-title">Cross-scale Nutrient Mapping</div>
+            <p class="rc-desc">In-season, cross-stage UAV–satellite corn leaf N, P, K estimation with spatial-temporal neural networks for variable-rate planting and fertilization.</p>
+          </div>
+          <div class="research-card">
+            <div class="rc-title">Crop Phenology Monitoring</div>
+            <p class="rc-desc">Vision-language object detection to track spatiotemporal variability of phenological stages (emergence rate and tasseling percentage).</p>
+          </div>
+          <div class="research-card">
+            <div class="rc-title">Soil Sensor Dynamics</div>
+            <p class="rc-desc">Linking the temporal dynamics of soil-sensor observations to soil hydrological properties.</p>
+          </div>
+          <div class="research-card">
+            <div class="rc-title">3DGS Plant Reconstruction</div>
+            <p class="rc-desc">3D Gaussian Splatting reconstruction of outdoor tomato plants using an autonomous navigation agricultural robot (UGV).</p>
+          </div>
+        </div>
+
+        <div class="research-stats">
+          <div><p class="rs-num">5</p><p class="rs-label">Publications</p></div>
+          <div><p class="rs-num">160</p><p class="rs-label">Citations</p></div>
+        </div>
     design:
       columns: '1'
   - block: collection
