@@ -74,7 +74,7 @@ sections:
 
         <div class="research-stats">
           <div><p class="rs-num">5</p><p class="rs-label">Publications</p></div>
-          <div><p class="rs-num">160</p><p class="rs-label">Citations</p></div>
+          <div><p class="rs-num">164</p><p class="rs-label">Citations</p></div>
         </div>
     design:
       columns: '1'
