@@ -185,6 +185,6 @@ awards:
 
 <div style="text-align: center;">
 
-Guojie Ruan (he/him) is from Jiangmen, Guangdong. He is self-motivated and enthusiastic PhD student specializing in precision agriculture, with a focus on crop remote sensing monitoring, precision nitrogen management, and data-driven modeling. He is committed to delivering interdisciplinary research (Plant Science, Biogeochemistry, Earth System Science, and Agricultural Engineering) that can improve the model and provide a better understanding of the changing climate and human impacts on agroecosystems.
+Guojie Ruan (he/him) is from Jiangmen, Guangdong. He is self-motivated and enthusiastic PhD student specializing in precision agriculture, with a focus on crop remote sensing monitoring, precision nitrogen management, and data-driven modeling. He is committed to delivering interdisciplinary research (Plant Science, Biogeochemistry, Earth System Science, Agricultural Engineering, and Computer Science) that can improve the model and provide a better understanding of the changing climate and human impacts on agroecosystems.
 
 </div>
