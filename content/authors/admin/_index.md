@@ -3,7 +3,7 @@
 title: Guojie Ruan
 
 # Name pronunciation (optional)
-name_pronunciation: Gwok Git Yuen
+name_pronunciation: 
 
 # Full name (for SEO)
 first_name: Gwok Git
@@ -11,7 +11,7 @@ last_name: Yuen
 
 # Status emoji
 status:
-  icon: ☕️
+  icon: 
 
 # Is this the primary user of the site?
 superuser: true
