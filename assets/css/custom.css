@@ -1,0 +1,12 @@
+/* 顶部 biography 区块：背景图上的文字全部改白色 + 阴影，保证可读 */
+.hbx-bg-gradient h1,
+.hbx-bg-gradient h2,
+.hbx-bg-gradient h3,
+.hbx-bg-gradient p,
+.hbx-bg-gradient .prose,
+.hbx-bg-gradient .prose *,
+.hbx-bg-gradient [class*="text-gray"],
+.hbx-bg-gradient [class*="text-primary"] {
+  color: #ffffff !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
