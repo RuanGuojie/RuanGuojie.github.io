@@ -49,6 +49,8 @@ sections:
         }
         /* 隐藏 Professional Summary 标题行 */
         .mb-12 > .flex.items-center.gap-4.mb-8:first-child { display: none !important; }
+        /* 顶部背景图上的文字改白色 */
+        #section-resume-biography-3 h1, #section-resume-biography-3 h2, #section-resume-biography-3 h3, #section-resume-biography-3 p, #section-resume-biography-3 .prose, #section-resume-biography-3 .prose * { color:#fff !important; text-shadow:0 1px 6px rgba(0,0,0,.7); }
         </style>
 
         <div class="research-intro-title">My Research</div>
