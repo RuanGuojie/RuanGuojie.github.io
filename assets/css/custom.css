@@ -59,3 +59,9 @@
     background-position: center center !important;
   }
 }
+
+/* ===== Experience 时间轴圆点：去掉主题色底 ===== */
+ol li span.rounded-full.bg-primary-100,
+ol li span[class*="bg-primary"].rounded-full {
+  background: transparent !important;
+}
