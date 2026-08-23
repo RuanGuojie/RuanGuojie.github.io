@@ -44,6 +44,8 @@ sections:
           .research-card{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.1);}
           .research-intro-sub,.research-card .rc-desc{color:#a3a3a3;}
         }
+        /* 隐藏 Professional Summary 标题行 */
+        .mb-12 > .flex.items-center.gap-4.mb-8:first-child { display: none !important; }
         </style>
 
         <div class="research-intro-title">My Research</div>
