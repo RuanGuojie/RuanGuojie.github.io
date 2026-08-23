@@ -23,7 +23,7 @@ sections:
         image:
           filename: hero-bg.jpg
           filters:
-            brightness: 0.6
+            brightness: 0.3
       avatar:
         size: medium
         shape: circle
