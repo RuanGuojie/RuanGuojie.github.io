@@ -20,7 +20,7 @@ sections:
           <figure style="margin:0;">
             <img src="/uploads/gallery/DSC_0656.JPG" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
             <figcaption style="font-size:0.85rem;color:#6b7280;margin-top:0.5rem;line-height:1.4;">
-              Farm-ng in Tomato Field, 2026
+              Farm-ng Amiga Robot in Tomato Field, 2026
             </figcaption>
           </figure>
 
@@ -29,7 +29,7 @@ sections:
           <figure style="margin:0;">
             <img src="/uploads/gallery/HY.jpg" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
             <figcaption style="font-size:0.85rem;color:#6b7280;margin-top:0.5rem;line-height:1.4;">
-              Headwall Hyperspectral Sensor Mounted on Freefly Alta X, 2026
+              Headwall Co-Aligned VNIR + SWIR Hyperspectral Sensor Mounted on Freefly Alta X, 2026
             </figcaption>
           </figure>
 
