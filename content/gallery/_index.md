@@ -20,7 +20,7 @@ sections:
           <figure style="margin:0;">
             <img src="/uploads/gallery/DSC_0656.JPG" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
             <figcaption style="font-size:0.85rem;color:#6b7280;margin-top:0.5rem;line-height:1.4;">
-              田间表型平台，2025
+              Farm-ng in Tomato Field, 2026
             </figcaption>
           </figure>
 
