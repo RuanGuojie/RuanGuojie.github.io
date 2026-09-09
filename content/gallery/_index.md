@@ -17,7 +17,10 @@ sections:
       text: |
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:1.5rem;">
           <figure style="margin:0;">
-            <img src="/uploads/gallery/DSC_0656.JPG" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
+            <img src="/uploads/gallery/farm_ng1.jpg" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
+          </figure>
+          <figure style="margin:0;">
+            <img src="/uploads/gallery/farm_ng2.jpg" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
             <figcaption style="font-size:0.85rem;color:#6b7280;margin-top:0.5rem;line-height:1.4;">
               Farm-ng Amiga Robot in Tomato Field, 2026
             </figcaption>
@@ -32,6 +35,15 @@ sections:
             <img src="/uploads/gallery/sensor.jpg" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
             <figcaption style="font-size:0.85rem;color:#6b7280;margin-top:0.5rem;line-height:1.4;">
               Install Soil Sensor in the Corn/Soybean Field, 2025
+            </figcaption>
+          </figure>
+          <figure style="margin:0;">
+            <img src="/uploads/gallery/mizzou1.jpg" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
+          </figure>
+          <figure style="margin:0;">
+            <img src="/uploads/gallery/mizzou2.jpg" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
+            <figcaption style="font-size:0.85rem;color:#6b7280;margin-top:0.5rem;line-height:1.4;">
+              Mizzou Campus, 2025
             </figcaption>
           </figure>
         </div>
