@@ -42,8 +42,11 @@ sections:
           </figure>
           <figure style="margin:0;">
             <img src="/uploads/gallery/mizzou2.jpg" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
+          </figure>
+          <figure style="margin:0;">
+            <img src="/uploads/gallery/ae.jpg" style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;">
             <figcaption style="font-size:0.85rem;color:#6b7280;margin-top:0.5rem;line-height:1.4;">
-              Mizzou Campus, 2025
+              Mizzou Campus
             </figcaption>
           </figure>
         </div>
