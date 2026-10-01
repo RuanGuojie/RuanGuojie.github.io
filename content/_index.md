@@ -81,7 +81,7 @@ sections:
 
         <div class="research-stats">
           <div><p class="rs-num">5</p><p class="rs-label">Publications</p></div>
-          <div><p class="rs-num">169</p><p class="rs-label">Citations</p></div>
+          <div><p class="rs-num">172</p><p class="rs-label">Citations</p></div>
         </div>
     design:
       columns: '1'
@@ -114,7 +114,9 @@ sections:
       text: |
         <img src="/uploads/poster1.jpg"
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
-        <img src="/uploads/poster2.jpg"
+        <img src="/uploads/poster2_1.jpg"
+          style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
+          <img src="/uploads/poster2_2.jpg"
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
         <img src="/uploads/poster3.jpg"
           style="max-width: 100%; border-radius: 12px; margin-bottom: 1.5rem;">
