@@ -57,10 +57,16 @@ sections:
       text: |
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:1.5rem;">
           <figure style="margin:0;">
-            <video controls preload="metadata" playsinline style="width:100%;height:340px;object-fit:cover;border-radius:8px;display:block;background:#000;">
-              <source src="/uploads/gallery/amiga.mp4" type="video/mp4">
-            </video>
-            <figcaption style="font-size:0.85rem;color:#6b7280;margin-top:0.5rem;line-height:1.4;">
+            <iframe
+              src="https://www.youtube.com/embed/OFTmogglBt8"
+              title="Amiga Robot Field Navigation"
+              style="width:100%;max-width:340px;aspect-ratio:9/16;height:auto;border:0;border-radius:8px;display:block;margin:0 auto;background:#000;"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              loading="lazy">
+            </iframe>
+            <figcaption style="font-size:0.85rem;color:#6b7280;margin-top:0.5rem;line-height:1.4;text-align:center;">
               Amiga Robot Field Navigation, 2026
             </figcaption>
           </figure>
