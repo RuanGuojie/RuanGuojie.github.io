@@ -247,8 +247,8 @@
     ], {opacity: 1.0});
 
     var YIELDLayer2 = L.imageOverlay("/images2/Yield.png", [
-      [38.912272, -92.266306],
-      [38.908189, -92.257814]
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
     ], {opacity: 1.0});
 
     var overlayMaps2 = {
