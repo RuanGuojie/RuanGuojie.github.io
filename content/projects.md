@@ -340,6 +340,11 @@
       [38.969164, -92.184104]
     ], {opacity: 1.0});
 
+    var DEMLayer3 = L.imageOverlay("/images3/DEM.png", [
+      [38.976294, -92.188672],
+      [38.968125, -92.184138]
+    ], {opacity: 1.0});
+
     var overlayMaps3 = {
       "RGB": rgbLayer3,
       "ECa_S": ecsLayer3,
@@ -350,6 +355,7 @@
       "P": PLayer3,
       "K": KLayer3,
       "pH": PHLayer3,
+      "DEM": DEMLayer3,
     };
 
     var layerControl3 = L.control.layers(null, overlayMaps3).addTo(map3);
