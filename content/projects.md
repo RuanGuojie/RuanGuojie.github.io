@@ -243,7 +243,7 @@
 
     var DEMLayer2 = L.imageOverlay("/images2/DEM.png", [
       [38.912300, -92.266332],
-      [38.908236, -92.257854]
+      [38.908232, -92.257788]
     ], {opacity: 1.0});
 
     var YIELDLayer2 = L.imageOverlay("/images2/Yield.png", [
