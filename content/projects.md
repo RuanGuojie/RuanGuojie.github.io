@@ -283,7 +283,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    var map3 = L.map("map3").setView([38.972680, -92.185999], 16);
+    var map3 = L.map("map3").setView([38.972680, -92.185999], 10);
 
     var satellite3 = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -369,8 +369,6 @@
             layer.bindPopup(popupContent || "无属性数据");
           },
         });
-
-        map3.fitBounds(rgbLayer3.getBounds());
 
         layerControl3.addOverlay(sensorLayer3, "Samples");
 
