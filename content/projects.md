@@ -246,6 +246,11 @@
       [38.908236, -92.257854]
     ], {opacity: 1.0});
 
+    var YIELDLayer2 = L.imageOverlay("/images2/Yield.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
     var overlayMaps2 = {
       "RGB": rgbLayer2,
       "ECa_S": ecsLayer2,
@@ -257,6 +262,7 @@
       "K": KLayer2,
       "pH": PHLayer2,
       "DEM": DEMLayer2,
+      "Yield": YIELDLayer2,
     };
 
     var layerControl2 = L.control.layers(null, overlayMaps2).addTo(map2);
