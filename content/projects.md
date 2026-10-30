@@ -179,7 +179,7 @@
 </script>
 
 
-## MU Digital Farm
+## MU Digital Farm (South)
 <div id="map2" style="height: 500px; margin-top: 20px; position: relative; z-index: 1;"></div>
 
 <script>
@@ -274,6 +274,106 @@
         map2.fitBounds(sensorLayer2.getBounds());
 
         layerControl2.addOverlay(sensorLayer2, "Samples");;
+
+      });
+  });
+</script>
+
+## MU Digital Farm (North)
+<div id="map3" style="height: 500px; margin-top: 20px; position: relative; z-index: 1;"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var map3 = L.map("map3").setView([38.973630, -92.186042], 17);
+
+    var satellite3 = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        attribution:
+          "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
+        maxZoom: 19,
+      }
+    );
+    satellite3.addTo(map3);
+
+    var rgbLayer3 = L.imageOverlay("/images3/RGB.png", [
+      [38.912746, -92.267636],
+      [38.907721, -92.256181]
+    ], {opacity: 1.0}).addTo(map3);
+
+    var ecsLayer3 = L.imageOverlay("/images3/ECS.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var ecdLayer3 = L.imageOverlay("/images3/ECD.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+    
+    var TNLayer3 = L.imageOverlay("/images3/TN.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var socLayer3 = L.imageOverlay("/images3/SOC.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var WASLayer3 = L.imageOverlay("/images3/WAS.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var PLayer3 = L.imageOverlay("/images3/P.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var KLayer3 = L.imageOverlay("/images3/K.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var PHLayer3 = L.imageOverlay("/images3/PH.png", [
+      [38.912300, -92.266332],
+      [38.908232, -92.257788]
+    ], {opacity: 1.0});
+
+    var overlayMaps3 = {
+      "RGB": rgbLayer3,
+      "ECa_S": ecsLayer3,
+      "ECa_D": ecdLayer3,
+      "TN": TNLayer3,
+      "SOC": socLayer3,
+      "WAS": WASLayer3,
+      "P": PLayer3,
+      "K": KLayer3,
+      "pH": PHLayer3,
+    };
+
+    var layerControl3 = L.control.layers(null, overlayMaps3).addTo(map3);
+
+    fetch("/data/sensor3.geojson")
+      .then((response) => response.json())
+      .then((geojsonData) => {
+
+        var sensorLayer3 = L.geoJSON(geojsonData, {
+          onEachFeature: function (feature, layer) {
+            let popupContent = "";
+            if (feature.properties) {
+              popupContent = Object.entries(feature.properties)
+                .map(([key, val]) => `<strong>${key}</strong>: ${val}`)
+                .join("<br>");
+            }
+            layer.bindPopup(popupContent || "无属性数据");
+          },
+        });
+
+        map3.fitBounds(sensorLayer3.getBounds());
+
+        layerControl3.addOverlay(sensorLayer3, "Samples");
 
       });
   });
