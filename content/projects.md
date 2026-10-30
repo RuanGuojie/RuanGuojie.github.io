@@ -297,8 +297,8 @@
     satellite3.addTo(map3);
 
     var rgbLayer3 = L.imageOverlay("/images3/RGB.png", [
-      [38.912746, -92.267636],
-      [38.907721, -92.256181]
+      [38.976583, -92.188849],
+      [38.968625, -92.183846]
     ], {opacity: 1.0}).addTo(map3);
 
     var ecsLayer3 = L.imageOverlay("/images3/ECS.png", [
