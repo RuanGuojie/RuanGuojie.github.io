@@ -184,7 +184,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    var map2 = L.map("map2").setView([38.911116, -92.263274], 20);
+    var map2 = L.map("map2").setView([38.911116, -92.263274], 18);
 
     var satellite2 = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
@@ -284,7 +284,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    var map3 = L.map("map3").setView([38.972680, -92.185999], 15);
+    var map3 = L.map("map3").setView([38.972680, -92.185999], 16);
 
     var satellite3 = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
