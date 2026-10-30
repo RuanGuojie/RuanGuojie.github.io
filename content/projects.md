@@ -371,7 +371,7 @@
           },
         });
 
-        map3.fitBounds(sensorLayer3.getBounds());
+        map3.fitBounds(sensorLayer3.getBounds().pad(0.5));
 
         layerControl3.addOverlay(sensorLayer3, "Samples");
 
