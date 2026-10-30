@@ -300,12 +300,12 @@
       [38.968625, -92.183846]
     ], {opacity: 1.0}).addTo(map3);
 
-    var ecsLayer3 = L.imageOverlay("/images3/ECS.png", [
+    var ecsLayer3 = L.imageOverlay("/images3/EC_SH.png", [
       [38.912300, -92.266332],
       [38.908232, -92.257788]
     ], {opacity: 1.0});
 
-    var ecdLayer3 = L.imageOverlay("/images3/ECD.png", [
+    var ecdLayer3 = L.imageOverlay("/images3/EC_DP.png", [
       [38.912300, -92.266332],
       [38.908232, -92.257788]
     ], {opacity: 1.0});
