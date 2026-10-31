@@ -198,8 +198,8 @@
     satellite2.addTo(map2);
 
     var rgbLayer2 = L.imageOverlay("/images2/RGB.png", [
-      [38.912895, -92.267746],
-      [38.907653, -92.256083]
+      [38.912895, -92.266828],
+      [38.907775, -92.257055]
     ], {opacity: 1.0}).addTo(map2);
 
     var ecsLayer2 = L.imageOverlay("/images2/ECS.png", [
@@ -309,8 +309,8 @@
     satellite3.addTo(map3);
 
     var rgbLayer3 = L.imageOverlay("/images3/RGB.png", [
-      [38.976618, -92.188940],
-      [38.968590, -92.183753]
+      [38.976370, -92.189015],
+      [38.968578, -92.183816]
     ], {opacity: 1.0}).addTo(map3);
 
     var ecsLayer3 = L.imageOverlay("/images3/EC_SH.png", [
