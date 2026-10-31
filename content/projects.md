@@ -263,7 +263,7 @@
       "K": KLayer2,
       "pH": PHLayer2,
       "DEM": DEMLayer2,
-      "Yield": YIELDLayer2,
+      "Yield_Corn": YIELDLayer2,
     };
 
     var layerControl2 = L.control.layers(null, overlayMaps2).addTo(map2);
