@@ -187,9 +187,10 @@
     var map2 = L.map("map2").setView([38.910457, -92.261974], 16);
 
     var satellite2 = L.tileLayer(
-      "https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
-        attribution: "Tiles &copy; Esri",
+        attribution:
+          "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
         maxZoom: 19,
       }
     );
