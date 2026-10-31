@@ -242,12 +242,12 @@
       [38.908232, -92.257788]
     ], {opacity: 1.0});
 
-    var DEMLayer2 = L.imageOverlay("/images2/DEM2.png", [
+    var DEMLayer2 = L.imageOverlay("/images2/DEM.png", [
       [38.912300, -92.266332],
       [38.908236, -92.257854]
     ], {opacity: 1.0});
 
-    var YIELDLayer2 = L.imageOverlay("/images2/Yield2.png", [
+    var YIELDLayer2 = L.imageOverlay("/images2/Yield.png", [
       [38.912272, -92.266306],
       [38.908189, -92.257814]
     ], {opacity: 1.0});
