@@ -187,13 +187,13 @@
     var map2 = L.map("map2").setView([38.910457, -92.261974], 16);
 
     var satellite2 = L.tileLayer(
-      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
       {
-        attribution:
-          "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
+        attribution: "Imagery: USGS The National Map",
         maxZoom: 19,
       }
     );
+    
     satellite2.addTo(map2);
 
     var rgbLayer2 = L.imageOverlay("/images2/RGB.png", [
