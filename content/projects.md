@@ -187,9 +187,9 @@
     var map2 = L.map("map2").setView([38.910457, -92.261974], 16);
 
     var satellite2 = L.tileLayer(
-      "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
+      "https://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
-        attribution: "Imagery: USGS The National Map",
+        attribution: "Tiles &copy; Esri",
         maxZoom: 19,
       }
     );
