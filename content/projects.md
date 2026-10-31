@@ -138,7 +138,7 @@
       "ECa_S": ecsLayer,
       "ECa_D": ecdLayer,
       "DEM": demLayer,
-      "Yield": yieldLayer,
+      "Yield_soybean": yieldLayer,
       "Protein": proteinLayer,
       "TN": tnLayer,
       "SOC": socLayer,
