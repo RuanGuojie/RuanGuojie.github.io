@@ -202,6 +202,16 @@
       [38.907775, -92.257053]
     ], {opacity: 1.0}).addTo(map2);
 
+    var NDVILayer2 = L.imageOverlay("/images2/NDVI.png", [
+      [38.912717, -92.266754],
+      [38.907911, -92.257154]
+    ], {opacity: 1.0}).addTo(map2);
+
+    var NDRELayer2 = L.imageOverlay("/images2/NDRE.png", [
+      [38.912717, -92.266754],
+      [38.907911, -92.257154]
+    ], {opacity: 1.0}).addTo(map2);
+
     var ecsLayer2 = L.imageOverlay("/images2/ECS.png", [
       [38.912300, -92.266332],
       [38.908232, -92.257788]
@@ -254,6 +264,8 @@
 
     var overlayMaps2 = {
       "RGB": rgbLayer2,
+      "NDVI": NDVILayer2,
+      "NDRE": NDRELayer2,
       "ECa_S": ecsLayer2,
       "ECa_D": ecdLayer2,
       "TN": TNLayer2,
@@ -313,6 +325,16 @@
       [38.968586, -92.183822]
     ], {opacity: 1.0}).addTo(map3);
 
+    var NDVILayer3 = L.imageOverlay("/images3/NDVI.png", [
+      [38.975932, -92.188629],
+      [38.968993, -92.184209]
+    ], {opacity: 1.0}).addTo(map3);
+
+    var NDRELayer3 = L.imageOverlay("/images3/NDRE.png", [
+      [38.975932, -92.188629],
+      [38.968993, -92.184209]
+    ], {opacity: 1.0}).addTo(map3);
+
     var ecsLayer3 = L.imageOverlay("/images3/EC_SH.png", [
       [38.976245, -92.188732],
       [38.969119, -92.184018]
@@ -360,6 +382,8 @@
 
     var overlayMaps3 = {
       "RGB": rgbLayer3,
+      "NDVI": NDVILayer3,
+      "NDRE": NDRELayer3,
       "ECa_S": ecsLayer3,
       "ECa_D": ecdLayer3,
       "TN": TNLayer3,
