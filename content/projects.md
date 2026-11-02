@@ -205,12 +205,12 @@
     var NDVILayer2 = L.imageOverlay("/images2/NDVI.png", [
       [38.912717, -92.266754],
       [38.907911, -92.257154]
-    ], {opacity: 1.0}).addTo(map2);
+    ], {opacity: 1.0});
 
     var NDRELayer2 = L.imageOverlay("/images2/NDRE.png", [
       [38.912717, -92.266754],
       [38.907911, -92.257154]
-    ], {opacity: 1.0}).addTo(map2);
+    ], {opacity: 1.0});
 
     var ecsLayer2 = L.imageOverlay("/images2/ECS.png", [
       [38.912300, -92.266332],
@@ -328,12 +328,12 @@
     var NDVILayer3 = L.imageOverlay("/images3/NDVI.png", [
       [38.975932, -92.188629],
       [38.968993, -92.184209]
-    ], {opacity: 1.0}).addTo(map3);
+    ], {opacity: 1.0});
 
     var NDRELayer3 = L.imageOverlay("/images3/NDRE.png", [
       [38.975932, -92.188629],
       [38.968993, -92.184209]
-    ], {opacity: 1.0}).addTo(map3);
+    ], {opacity: 1.0});
 
     var ecsLayer3 = L.imageOverlay("/images3/EC_SH.png", [
       [38.976245, -92.188732],
