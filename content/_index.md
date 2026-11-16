@@ -80,8 +80,8 @@ sections:
         </div>
 
         <div class="research-stats">
-          <div><p class="rs-num">5</p><p class="rs-label">Publications</p></div>
-          <div><p class="rs-num">179</p><p class="rs-label">Citations</p></div>
+          <div><p class="rs-num">6</p><p class="rs-label">Publications</p></div>
+          <div><p class="rs-num">182</p><p class="rs-label">Citations</p></div>
         </div>
     design:
       columns: '1'
